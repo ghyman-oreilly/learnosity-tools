@@ -94,12 +94,13 @@ async function getActivityItems() {
     // Return the response JSON
     return dataAPIResponse.json(); 
   }
-
+  
   /* Now call the function, passing in the desired endpoint (itembank/activities in this case), and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
 
   makeDataAPICall('https://data.learnosity.com/v2022.1.LTS/itembank/activities', form)
     .then(response => {
-    console.log("response from the data API", JSON.stringify(response, null, '\t'))
+    console.log(JSON.stringify(response.data[0], ["title"], 2))
+    console.log(JSON.stringify(response.data[0]?.data.items, ["reference"], 2))
     })
     .catch(error => console.log('there was an error', error))
 
