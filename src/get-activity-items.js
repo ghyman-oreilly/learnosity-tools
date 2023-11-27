@@ -1,58 +1,75 @@
-
-//
-// Get items for a given activity 
-//
-'use strict';
-
-// Include server side Learnosity SDK, and set up variables related to user access.
-const Learnosity = require('./index'); // Include Learnosity SDK constructor
+// Vanilla node.js example with no dependencies required.
+const Learnosity = require('learnosity-sdk-nodejs');
 const config = require('./config'); // Load consumer key & secret from config.js
-const express = require('express');  // Load 'Express.js", a web server
-const app = express();               // Instantiate the web server
 
-app.set('view engine', 'ejs');       // Set EJS as our templating language
+/*
+* NOTE: 
+* For this example native node Fetch API (still experimental) needs to be 
+* enabled, and then the following global functions and classes are made 
+* available: fetch(), Request, Response, Headers, FormData.
+* To enable Fetch in node you should use v18 or greater.
+* Run 'node --experimental-fetch' or 
+* 'node <FILENAME.js> --experimental-fetch' in the terminal to enable
+*/
 
-// - - - - - - Learnosity server-side configuration - - - - - - //
+// Instantiate the SDK
+const learnositySdk = new Learnosity();
 
-// Set the web server domain.
-
+// Set the web server domain
 const domain = 'localhost';
 
-app.get('/', function (req, res) {
-    const learnositySdk = new Learnosity(); // Instantiate the SDK
-    // Reports API configuration parameters.
-    const request = learnositySdk.init(
-        'reports',                              // Select Reports API
-        // Consumer key and consumer secret are the public & private security keys required to access Learnosity APIs and data. These keys grant access to Learnosity's public demos account. Learnosity will provide keys for your own account.
-        {
-            consumer_key: config.consumerKey, // Load key from config.js
-            domain: domain                   // Set the domain (from line 20)
-        },
-        config.consumerSecret,                // Load secret from config.js
-        {
-            // Reports array to specify the type(s) of the reports to load on the page. This example uses one report type for simplicity, but you can specify multiple report types.
-            reports: [
-                {
-                    // type of the report you would like to request
-                    type: 'session-detail-by-item',
-                    // the id for the report which will match that of the html div element hook we want the report to render into
-                    // (this div can be found on line 11 of docs/quickstart/views/reports.ejs)
-                    id: 'session-detail',
-                    // The unique student identifier that was generated for the student at the time of the assessment
-                    user_id: '$ANONYMIZED_USER_ID',
-                    // session id of the assessment session we wish to report on. This one uses the id a completed session from our Demos.
-                    session_id: '8c393c87-77b6-4c14-8da7-75d39243e642'
-                }
-            ]
-        }
-    );
+// Generate a Learnosity API initialization packet to the Data API
+const dataAPIRequest = learnositySdk.init(
+   // Set the service type
+   'data',
 
-    res.render('reports', { request }); // Render the page and request.
-});
+   // Security details - dataAPIRequest.security 
+   {
+       consumer_key: config.consumerKey, // Your actual consumer key goes here 
+       domain:       domain, // Your actual domain goes here
+       user_id:      '110961' // GH user id
+   },
+   // secret 
+   config.consumerSecret, // Your actual consumer secret here
+   /* Request details - build your request object for the Data API here - 
+   dataAPIRequest.request 
+   This example fetches activities from our demos Item bank w/ the following references: */
+   {
+       references : ["c42cee1d-20d1-4027-b80a-31d6e8dd8817"]
+   },
+    // Action type - dataAPIRequest.action
+    'get'
+);
 
-app.listen(3000, function () { // Run the web application. Set the port here (3000).
-    console.log('Example app listening on port 3000!');
-});
+const form = new FormData();
+/* Note: the same can be accomplished with using URLSearchParams 
+(https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
+const form = new URLSearchParams()
+*/
+form.append("security", dataAPIRequest.security);
+form.append("request", dataAPIRequest.request);
+form.append("action", dataAPIRequest.action);
 
-// Note: for further reading, the client-side web page configuration can be found in the EJS template: 'docs/quickstart/views/reports.ejs'. //
+/* Define an async/await data api call function that takes in the following:
+*
+* @param endpoint : string
+* @param requestParams : object
+*
+*/
+const makeDataAPICall = async (endpoint, requestParams) => {
+   // Use 'await' save the successful response to a variable called dataAPIResponse
+   const dataAPIResponse = await fetch(endpoint, {
+     method: 'POST', // *GET, POST, PUT, DELETE, etc.
+     body: requestParams 
+   });
+   // Return the response JSON
+   return dataAPIResponse.json(); 
+}
 
+/* Now call the function, passing in the desired endpoint (itembank/activities in this case), and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
+
+makeDataAPICall('https://data.learnosity.com/v2022.1.LTS/itembank/activities', form)
+  .then(response => {
+   console.log("response from the data API", JSON.stringify(response, null, '\t'))
+  })
+  .catch(error => console.log('there was an error', error))
