@@ -10,7 +10,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "get-activity-items": "npm install && node ./src/get-activity-items.js"
+    "get-activity-items": "npm install && node ./src/get-activity-items.js",
+    "set-questions": "npm install && node ./src/set-questions.js"
   },
   "author": "Greg Hyman",
   "license": "ISC"
