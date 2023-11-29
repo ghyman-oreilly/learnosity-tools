@@ -22,7 +22,7 @@ const domain = 'localhost';
 // Generate a Learnosity API initialization packet to the Data API
 const dataAPIRequest = learnositySdk.init(
   // Set the service type
-  'questions',
+  'tags',
 
   // Security details - dataAPIRequest.security 
   {
@@ -32,27 +32,20 @@ const dataAPIRequest = learnositySdk.init(
   },
   // secret 
   config.consumerSecret, // Your actual consumer secret here
-  {
-    id: 'f0001',
-            name: 'Intro Activity - French 101',
-            questions: [
-                {
-                    response_id: '60005',
-                    type: 'association',
-                    stimulus: 'Match the cities to the parent nation.',
-                    stimulus_list: ['London', 'Dublin', 'Paris', 'Sydney'],
-                    possible_responses: ['Australia', 'France', 'Ireland', 'England'
-                    ],
-                    validation: {
-                        valid_responses: [
-                            ['England'],['Ireland'],['France'],['Australia']
-                        ]
-                    },
-                    instant_feedback: true
-                }
+  {   
+    items: [
+        {
+            reference: '2e1d0183-a8ac-493e-8050-c8d156d58f93',
+            tags: [
+              {
+                type: 'Publisher',
+                name: "O'Reilly Media",
+              }
             ]
+        }
+    ]
   },
-    'set'
+    'update'
 );
 
 const form = new FormData();
@@ -82,7 +75,7 @@ const makeDataAPICall = async (endpoint, requestParams) => {
 
 /* Now call the function, passing in the desired endpoint, and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
 
-makeDataAPICall('https://data.learnosity.com/v2023.1.LTS/itembank/questions', form)
+makeDataAPICall('https://data.learnosity.com/v2022.1.LTS/itembank/items/tags', form)
   .then(response => {
   console.log(response)
   })

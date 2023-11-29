@@ -11,7 +11,9 @@
   "devDependencies": {},
   "scripts": {
     "get-activity-items": "npm install && node ./src/get-activity-items.js",
-    "set-questions": "npm install && node ./src/set-questions.js"
+    "append-item-tags": "npm install && node ./src/append-item-tags.js",
+    "set-questions": "npm install && node ./src/set-questions.js",
+    "get-tags": "npm install && node ./src/get-tags.js"
   },
   "author": "Greg Hyman",
   "license": "ISC"
