@@ -35,19 +35,19 @@ const dataAPIRequest = learnositySdk.init(
   {
     "items": [
         {
-            "reference": "ff685a20-12c7-42ce-a592-b046f2f07502",
+            "reference": "test_098123091231",
             "metadata": null,
             "definition": {
                 "widgets": [
                     {
-                        "reference": "88879936-952c-442a-b3c9-05e95b6ed91f"
+                        "reference": "test_098123091231a"
                     }
                 ]
             },
             "status": "published",
             "questions": [
                 {
-                    "reference": "88879936-952c-442a-b3c9-05e95b6ed91f"
+                    "reference": "test_098123091231a"
                 }
             ],
             "tags": {}
@@ -84,7 +84,7 @@ const makeDataAPICall = async (endpoint, requestParams) => {
 
 /* Now call the function, passing in the desired endpoint, and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
 
-makeDataAPICall('https://data.learnosity.com/v2023.1.LTS/itembank/questions', form)
+makeDataAPICall('https://data.learnosity.com/v2023.1.LTS/itembank/items', form)
   .then(response => {
   console.log(response)
   })

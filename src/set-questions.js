@@ -1,6 +1,7 @@
 // Vanilla node.js example with no dependencies required.
 const Learnosity = require('learnosity-sdk-nodejs');
 const config = require('./config'); // Load consumer key & secret from config.js
+const uuid = require('uuid');        // Load the UUID library
 
 /*
 * NOTE: 
@@ -19,6 +20,9 @@ const learnositySdk = new Learnosity();
 // Set the web server domain
 const domain = 'localhost';
 
+// Generate a reference ID - CURRENTLY UNUSED
+const ref_id = uuid.v4();
+
 // Generate a Learnosity API initialization packet to the Data API
 const dataAPIRequest = learnositySdk.init(
   // Set the service type
@@ -36,16 +40,16 @@ const dataAPIRequest = learnositySdk.init(
     "questions": [
         {
             "type": "mcq",
-            "reference": "test_098123091231b",
+            "reference": "test_098123091231a",
             "data": {
                 "options": [
                     {
                         "value": "0",
-                        "label": "John will have more apples and more oranges than Lucy."
+                        "label": "Mark will have more apples and more oranges than Lucy."
                     },
                     {
                         "value": "1",
-                        "label": "John will have less apples and less oranges than Lucy."
+                        "label": "Bob will have less apples and less oranges than Sally."
                     },
                     {
                         "value": "2",
