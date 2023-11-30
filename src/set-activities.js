@@ -33,27 +33,32 @@ const dataAPIRequest = learnositySdk.init(
   // secret 
   config.consumerSecret, // Your actual consumer secret here
   {
-    "items": [
+    "activities": [
         {
-            "reference": "ff685a20-12c7-42ce-a592-b046f2f07502",
-            "metadata": null,
-            "definition": {
-                "widgets": [
-                    {
-                        "reference": "88879936-952c-442a-b3c9-05e95b6ed91f"
-                    }
-                ]
+            "title": "Test Activity",
+            "reference": "test_1234109280",
+            "status": "unpublished",
+            "data": {
+                "items": [
+                    "ORE_b554a814-73ac-4b9d-8d6d-e3800966e478",
+                    "test_098123091231"
+                ],
+                "config": {
+                    "regions": "main"
+                },
+                "rendering_type": "assess"
             },
-            "status": "published",
-            "questions": [
-                {
-                    "reference": "88879936-952c-442a-b3c9-05e95b6ed91f"
-                }
-            ],
-            "tags": {}
+            "tags": {
+                "Quiz Type": [
+                    "Formative"
+                ],
+                "Publisher": [
+                    "O'Reilly Media"
+                ]
+            }
         }
     ]
-},
+  },
     'set'
 );
 
@@ -84,7 +89,7 @@ const makeDataAPICall = async (endpoint, requestParams) => {
 
 /* Now call the function, passing in the desired endpoint, and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
 
-makeDataAPICall('https://data.learnosity.com/v2023.1.LTS/itembank/questions', form)
+makeDataAPICall('https://data.learnosity.com/v2023.1.LTS/itembank/activities', form)
   .then(response => {
   console.log(response)
   })

@@ -14,6 +14,7 @@
     "append-item-tags": "npm install && node ./src/append-item-tags.js",
     "set-questions": "npm install && node ./src/set-questions.js",
     "set-items": "npm install && node ./src/set-items.js",
+    "set-activities": "npm install && node ./src/set-activities.js",
     "get-tags": "npm install && node ./src/get-tags.js"
   },
   "author": "Greg Hyman",
