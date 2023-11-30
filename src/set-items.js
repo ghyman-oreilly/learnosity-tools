@@ -33,43 +33,24 @@ const dataAPIRequest = learnositySdk.init(
   // secret 
   config.consumerSecret, // Your actual consumer secret here
   {
-    "questions": [
+    "items": [
         {
-            "type": "mcq",
-            "reference": "test_098123091231b",
-            "data": {
-                "options": [
+            "reference": "ff685a20-12c7-42ce-a592-b046f2f07502",
+            "metadata": null,
+            "definition": {
+                "widgets": [
                     {
-                        "value": "0",
-                        "label": "John will have more apples and more oranges than Lucy."
-                    },
-                    {
-                        "value": "1",
-                        "label": "John will have less apples and less oranges than Lucy."
-                    },
-                    {
-                        "value": "2",
-                        "label": "John will have more apples than Lucy, but Lucy has more oranges."
-                    },
-                    {
-                        "value": "3",
-                        "label": "John will have more oranges than Lucy, but Lucy has more apples."
+                        "reference": "88879936-952c-442a-b3c9-05e95b6ed91f"
                     }
-                ],
-                "stimulus": "This is the stem",
-                "type": "mcq",
-                "validation": {
-                    "scoring_type": "exactMatch",
-                    "valid_response": [
-                        {
-                            "value": [
-                                "0"
-                            ],
-                            "score": 1
-                        }
-                    ]
+                ]
+            },
+            "status": "unpublished",
+            "questions": [
+                {
+                    "reference": "88879936-952c-442a-b3c9-05e95b6ed91f"
                 }
-            }
+            ],
+            "tags": {}
         }
     ]
 },

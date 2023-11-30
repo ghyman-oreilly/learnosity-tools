@@ -22,7 +22,7 @@ const domain = 'localhost';
 // Generate a Learnosity API initialization packet to the Data API
 const dataAPIRequest = learnositySdk.init(
   // Set the service type
-  'tags',
+  'data',
 
   // Security details - dataAPIRequest.security 
   {
@@ -32,19 +32,9 @@ const dataAPIRequest = learnositySdk.init(
   },
   // secret 
   config.consumerSecret, // Your actual consumer secret here
-  {   
-    items: [
-        {
-            reference: '2e1d0183-a8ac-493e-8050-c8d156d58f93',
-            tags: [
-              {
-                type: 'Publisher',
-                name: "O'Reilly Media",
-              }
-            ]
-        }
-    ]
-  },
+  
+    {"items": [{"reference":"2e1d0183-a8ac-493e-8050-c8d156d58f93","tags":[{"type": "Publisher","name":"O'Reilly Media"}]}]}
+  ,
     'update'
 );
 
