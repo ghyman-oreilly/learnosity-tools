@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const inquirer = require('inquirer');
 
-// TODO: throughout, use promises (response from data API) to avoid use of settimeout
+// TODO: update readFilesSync function to read only JSON files in specified folder
 
 async function getUserInput(){
 
@@ -143,9 +143,7 @@ async function setItems(dir){
   
   items = '{"items":[' + items.join(',') + ']}'
   
-  setTimeout(() => {
-    callDataAPI(items, 'items');
-  }, 1000)
+  await callDataAPI(items, 'items');
 
   return itemRefIds;
 
@@ -196,81 +194,72 @@ async function setActivity(){
       }
   ]}`
   
-  setTimeout(() => {
-    callDataAPI(activity, 'activities');
-  }, 2000)
-  
+  await callDataAPI(activity, 'activities');
+
   console.log("The reference ID for the activity is: " + activityRef)
 }
 
 async function callDataAPI(body, endpoint){
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Things to do before completion of the promise
-      endpoint = 'https://data.learnosity.com/v2023.1.LTS/itembank/' + endpoint
+  // Things to do before completion of the promise
+  endpoint = 'https://data.learnosity.com/v2023.1.LTS/itembank/' + endpoint
 
-      // Instantiate the SDK
-      const learnositySdk = new Learnosity();
+  // Instantiate the SDK
+  const learnositySdk = new Learnosity();
 
-      // Set the web server domain
-      const domain = 'localhost';
+  // Set the web server domain
+  const domain = 'localhost';
 
-      // Generate a Learnosity API initialization packet to the Data API
-      const dataAPIRequest = learnositySdk.init(
-        // Set the service type
-        'data',
+  // Generate a Learnosity API initialization packet to the Data API
+  const dataAPIRequest = learnositySdk.init(
+    // Set the service type
+    'data',
 
-        // Security details - dataAPIRequest.security 
-        {
-            consumer_key: config.consumerKey, // Your actual consumer key goes here 
-            domain:       domain, // Your actual domain goes here
-            user_id:      '110961' // GH user id
-        },
-        // secret 
-        config.consumerSecret, // Your actual consumer secret here
-        
-        body, // request body
-        
-        'set' // request action
-        );
+    // Security details - dataAPIRequest.security 
+    {
+        consumer_key: config.consumerKey, // Your actual consumer key goes here 
+        domain:       domain, // Your actual domain goes here
+        user_id:      '110961' // GH user id
+    },
+    // secret 
+    config.consumerSecret, // Your actual consumer secret here
+    
+    body, // request body
+    
+    'set' // request action
+    );
 
-      const form = new FormData();
-      /* Note: the same can be accomplished with using URLSearchParams 
-      (https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
-      const form = new URLSearchParams()
-      */
-      form.append("security", dataAPIRequest.security);
-      form.append("request", dataAPIRequest.request);
-      form.append("action", dataAPIRequest.action);
+  const form = new FormData();
+  /* Note: the same can be accomplished with using URLSearchParams 
+  (https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
+  const form = new URLSearchParams()
+  */
+  form.append("security", dataAPIRequest.security);
+  form.append("request", dataAPIRequest.request);
+  form.append("action", dataAPIRequest.action);
 
-      /* Define an async/await data api call function that takes in the following:
-      *
-      * @param endpoint : string
-      * @param requestParams : object
-      *
-      */
-      const makeDataAPICall = async (endpoint, requestParams) => {
-        // Use 'await' save the successful response to a variable called dataAPIResponse
-        const dataAPIResponse = await fetch(endpoint, {
-          method: 'POST', // *GET, POST, PUT, DELETE, etc.
-          body: requestParams 
-        });
-        // Return the response JSON
-        return dataAPIResponse.json(); 
-      }
+  /* Define an async/await data api call function that takes in the following:
+  *
+  * @param endpoint : string
+  * @param requestParams : object
+  *
+  */
+  const makeDataAPICall = async (endpoint, requestParams) => {
+    // Use 'await' save the successful response to a variable called dataAPIResponse
+    const dataAPIResponse = await fetch(endpoint, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      body: requestParams 
+    });
+    // Return the response JSON
+    return dataAPIResponse.json(); 
+  }
 
-      /* Now call the function, passing in the desired endpoint, and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
+  /* Now call the function, passing in the desired endpoint, and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
 
-      makeDataAPICall(endpoint, form)
-        .then(response => {
-        console.log(response)
-        })
-        .catch(error => console.log('there was an error', error))
-
-      resolve();
-    }, 200);
-  });
-  
+  await makeDataAPICall(endpoint, form)
+    .then(response => {
+    console.log(response)
+    })
+    .catch(error => console.log('there was an error', error))
 }
 
 setActivity();
