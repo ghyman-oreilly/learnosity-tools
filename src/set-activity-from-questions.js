@@ -175,9 +175,6 @@ async function setActivity(){
                   "configuration": {
                       "shuffle_items": true
                   },
-                  "navigation": {
-                      "show_intro": false
-                  },
                   "regions": "main"
               },
               "rendering_type": "assess"
