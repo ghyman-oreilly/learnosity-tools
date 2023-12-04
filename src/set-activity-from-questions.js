@@ -172,6 +172,12 @@ async function setActivity(){
           "data": {
               "items": [${itemRefIds}],
               "config": {
+                  "configuration": {
+                      "shuffle_items": true
+                  },
+                  "navigation": {
+                      "show_intro": false
+                  },
                   "regions": "main"
               },
               "rendering_type": "assess"
