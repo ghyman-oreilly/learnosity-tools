@@ -6,7 +6,6 @@ const fs = require('fs');
 const path = require('path');
 const inquirer = require('inquirer');
 
-// TODO: update readFilesSync function to read only JSON files in specified folder
 
 async function getUserInput(){
 
@@ -66,23 +65,28 @@ async function getUserInput(){
 async function readFilesSync(dir) {
   const files = [];
   const questionRefIds = [];
+  const extension = '.json';
 
   fs.readdirSync(dir).forEach(filename => {
-    const filepath = path.resolve(dir, filename);
-    const stat = fs.statSync(filepath);
-    let contents = fs.readFileSync(filepath).toString()
-    const isFile = stat.isFile();
-    
-    ref_id = uuid.v4() + '_GH'
-    questionRefIds.push(ref_id);
+    if (path.extname(filename).toLowerCase() === extension) {
 
-    contents = `{
-            "type": "mcq",
-            "reference": "${ref_id}",
-            "data": ${contents}
-        }` 
+      const filepath = path.resolve(dir, filename);
+      const stat = fs.statSync(filepath);
+      let contents = fs.readFileSync(filepath).toString()
+      const isFile = stat.isFile();
+      
+      ref_id = uuid.v4() + '_GH'
+      questionRefIds.push(ref_id);
 
-    if (isFile) files.push(contents);
+      contents = `{
+              "type": "mcq",
+              "reference": "${ref_id}",
+              "data": ${contents}
+          }` 
+
+      if (isFile) files.push(contents);
+
+    }
   });
 
   const questions = "[" + files.join(',') + "]"
