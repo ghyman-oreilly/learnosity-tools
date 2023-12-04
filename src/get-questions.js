@@ -1,6 +1,7 @@
 // Vanilla node.js example with no dependencies required.
 const Learnosity = require('learnosity-sdk-nodejs');
 const config = require('./config'); // Load consumer key & secret from config.js
+const uuid = require('uuid');        // Load the UUID library
 
 /*
 * NOTE: 
@@ -19,6 +20,9 @@ const learnositySdk = new Learnosity();
 // Set the web server domain
 const domain = 'localhost';
 
+// Generate a reference ID - CURRENTLY UNUSED
+const ref_id = uuid.v4();
+
 // Generate a Learnosity API initialization packet to the Data API
 const dataAPIRequest = learnositySdk.init(
   // Set the service type
@@ -33,28 +37,11 @@ const dataAPIRequest = learnositySdk.init(
   // secret 
   config.consumerSecret, // Your actual consumer secret here
   {
-    "items": [
-        {
-            "reference": "test_098123091231c",
-            "metadata": null,
-            "definition": {
-                "widgets": [
-                    {
-                        "reference": "2f5d8e49-883b-4fab-8f60-2d5d0fa5f10e_GH"
-                    }
-                ]
-            },
-            "status": "published",
-            "questions": [
-                {
-                    "reference": "2f5d8e49-883b-4fab-8f60-2d5d0fa5f10e_GH"
-                }
-            ],
-            "tags": {}
-        }
+    "item_references": [
+        "171c992d-34ed-412b-8c74-61358ac9520a_GH"
     ]
 },
-    'set'
+    'get'
 );
 
 const form = new FormData();
@@ -84,7 +71,7 @@ const makeDataAPICall = async (endpoint, requestParams) => {
 
 /* Now call the function, passing in the desired endpoint, and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
 
-makeDataAPICall('https://data.learnosity.com/v2023.1.LTS/itembank/items', form)
+makeDataAPICall('https://data.learnosity.com/v2023.1.LTS/itembank/questions', form)
   .then(response => {
   console.log(response)
   })
