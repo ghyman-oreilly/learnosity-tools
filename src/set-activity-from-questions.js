@@ -4,9 +4,64 @@ const config = require('./config'); // Load consumer key & secret from config.js
 const uuid = require('uuid');        // Load the UUID library
 const fs = require('fs');
 const path = require('path');
+const inquirer = require('inquirer');
 
 // TODO: throughout, use promises (response from data API) to avoid use of settimeout
-// TODO: user input parameters: activity title, tags, etc.
+
+async function getUserInput(){
+
+  const questions = [
+    {
+      type: 'input',
+      name: 'dir',
+      default: './',
+      message: "Please provide the filepath of this module's question JSON files: ",
+    },
+    {
+      type: 'input',
+      name: 'title',
+      message: "What is the name of the activity?",
+    },
+    {
+      type: 'list',
+      name: 'quizType',
+      message: "What type of quiz activity is this?",
+      choices: ["Formative", "Summative"]
+    },
+    {
+      type: 'input',
+      name: 'questionBankFPID',
+      message: "What is the Question Bank FPID?",
+    },
+    {
+      type: 'input',
+      name: 'courseFPID',
+      message: "What is the Course FPID?",
+    },
+  ];
+
+  const answers = await inquirer
+  .prompt(questions)
+  .then((answers) => {
+    return {
+      dir: answers['dir'],
+      title: answers['title'],
+      quizType: answers['quizType'],
+      questionBankFPID: answers['questionBankFPID'],
+      courseFPID: answers['courseFPID'],
+    }
+  })
+  .catch((error) => {
+    if (error.isTtyError) {
+      // Prompt couldn't be rendered in the current environment
+    } else {
+      // Something else went wrong
+    }
+  });
+
+  return answers
+
+}
 
 async function readFilesSync(dir) {
   const files = [];
@@ -38,8 +93,9 @@ async function readFilesSync(dir) {
   }
 }
 
-async function setQuestions(){
-  const readFiles = await readFilesSync('/Users/ghyman/Downloads/Module 1')
+async function setQuestions(dir){
+  dir = dir
+  const readFiles = await readFilesSync(dir)
   const questionRefIds = readFiles.questionRefIds
   let questions = readFiles.questions;
   questions = `{"questions": ${questions}}`
@@ -50,9 +106,9 @@ async function setQuestions(){
 
 }
 
-async function setItems(){
-
-  const questionRefs = await setQuestions();
+async function setItems(dir){
+  dir = dir;
+  const questionRefs = await setQuestions(dir);
   let items = [];
   const itemRefIds = [];
   
@@ -75,7 +131,11 @@ async function setItems(){
                     "reference": "${questionRef}"
                 }
             ],
-            "tags": {}
+            "tags": {
+              "Publisher": [
+                  "O'Reilly Media"
+              ]
+            }
         }`
     items.push(item);
     itemRefIds.push(itemRef);
@@ -92,14 +152,21 @@ async function setItems(){
 }
 
 async function setActivity(){
-  let itemRefIds = await setItems();
+  let userinput = await getUserInput();
+  const dir = userinput.dir;
+  const title = userinput.title;
+  const quizType = userinput.quizType;
+  const questionBankFPID = userinput.questionBankFPID;
+  const courseFPID = userinput.courseFPID;
+
+  let itemRefIds = await setItems(dir);
   itemRefIds = '"' + itemRefIds.join('","') + '"';
   
   const activityRef = uuid.v4() + '_GH';
   
   const activity = `{"activities": [
       {
-          "title": "Test Activity",
+          "title": "${title}",
           "reference": "${activityRef}",
           "status": "unpublished",
           "data": {
@@ -111,10 +178,16 @@ async function setActivity(){
           },
           "tags": {
               "Quiz Type": [
-                  "Formative"
+                  "${quizType}"
               ],
               "Publisher": [
                   "O'Reilly Media"
+              ],
+              "Question Bank FPID": [
+                  "${questionBankFPID}"
+              ],
+              "Course FPID": [
+                  "${courseFPID}"
               ]
           }
       }
@@ -125,7 +198,6 @@ async function setActivity(){
   }, 2000)
   
   console.log("The reference ID for the activity is: " + activityRef)
-  return activityRef
 }
 
 async function callDataAPI(body, endpoint){
