@@ -4,10 +4,14 @@
   "description": "Tools for obtaining info from Learnosity via API",
   "main": "index.js",
   "dependencies": {
+    "@xmldom/xmldom": "^0.8.10",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "inquirer": "^8.2.6",
-    "uuid": "^8.3.2"
+    "node-pandoc": "^0.3.0",
+    "node-pandoc-promise": "^0.0.6",
+    "uuid": "^8.3.2",
+    "xpath": "^0.0.33"
   },
   "scripts": {
     "get-activity-items": "npm install && node ./src/get-activity-items.js",
@@ -17,7 +21,8 @@
     "set-items": "npm install && node ./src/set-items.js",
     "set-activities": "npm install && node ./src/set-activities.js",
     "set-activity-from-questions": "npm install && node ./src/set-activity-from-questions.js",
-    "get-tags": "npm install && node ./src/get-tags.js"
+    "get-tags": "npm install && node ./src/get-tags.js",
+    "convert-docx": "npm install && node ./src/convert-docx.js"
   },
   "author": "Greg Hyman",
   "license": "ISC"
