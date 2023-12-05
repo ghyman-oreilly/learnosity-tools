@@ -63,20 +63,83 @@ async function readHTML(){
   let source = await convertDOCXtoHTML();
   source = '<!DOCTYPE html><html><head></head><body>' + source + '</body></html>' // we need valid, complete HTML
   const doc = new DOMParser().parseFromString(source, 'text/xml')
-  const stems = xpath.select('//div[@data-custom-style="QuestionStem"]', doc);
-  
+  const stems = xpath.select('//div[@data-custom-style="QuestionStem"]/*', doc);
+
   for (i = 0, question = ''; i < stems.length; i++) {
     const stem = stems[i];
     const precedingSiblingsCount = i + 1;
-    const optionsAndRationales = xpath.select('.//following-sibling::div[@data-custom-style="QuestionOption" and count(preceding-sibling::div[@data-custom-style="QuestionStem"])="' + precedingSiblingsCount + '"]|.//following-sibling::div[@data-custom-style="QuestionRationale"  and count(preceding-sibling::div[@data-custom-style="QuestionStem"])="' + precedingSiblingsCount + '"]', stem);
-    
-    const stemString = stem.toString();
-    question = stemString
+    const options = xpath.select('//div[@data-custom-style="QuestionStem"]/following-sibling::div[@data-custom-style="QuestionOption" and count(preceding-sibling::div[@data-custom-style="QuestionStem"])="' + precedingSiblingsCount + '"]/*', stem);
+    const rationales = xpath.select('//div[@data-custom-style="QuestionStem"]/following-sibling::div[@data-custom-style="QuestionRationale"  and count(preceding-sibling::div[@data-custom-style="QuestionStem"])="' + precedingSiblingsCount + '"]/*', stem);
 
-    for (k = 0; k < optionsAndRationales.length; k++) {
-      const optionsOrRationaleString = optionsAndRationales[k].toString();
-      question = question + optionsOrRationaleString;
+    let stemString = stem.toString();
+    let optionObjs = [];
+    let correctOptions = [];
+    let rationaleArr = [];
+    let correctFlagReg = /([\[]Correct.*?\])/i;
+    let itemPrefixReg = /^(\s*\<.[^\>]*\>)?\s*?((?:[A-Z]|(?:[0-9]*))\.\s*)/gim;
+    let multipleResponses = false
+
+    for (k = 0; k < options.length; k++) {
+      let optionString = options[k].toString();
+      const indexString = k.toString();
+      
+      // test whether option is marked as a correct answer
+      const isCorrect = new RegExp(correctFlagReg).test(optionString);
+
+      if (isCorrect) {
+        correctOptions.push(indexString);
+        optionString = optionString.replace(correctFlagReg,"");
+      }
+
+      stemString = stemString.replace(itemPrefixReg,"");
+      optionString = optionString.replace(itemPrefixReg,"");
+
+      const optionObj = {label: optionString, value: indexString};
+      optionObjs.push(optionObj);
     }
+
+    for (l = 0; l < rationales.length; l++) {
+      let rationalesString = rationales[l].toString();
+      rationalesString = rationalesString.replace(itemPrefixReg,"");
+      const indexString = l.toString();
+      rationaleArr.push(rationalesString);
+    }
+    
+    // update multiple responses flag
+    if (correctOptions.length > 1) {
+      multipleResponses = true
+    }
+
+    // write to JSON with slug/template
+    let stemJson = JSON.stringify(stemString)
+		let optionObjsJson = JSON.stringify(optionObjs)
+		let rationalesJson = JSON.stringify(rationaleArr)
+		let correctOptionsJson = JSON.stringify(correctOptions)
+
+    let quizJson = `
+      {
+        "multiple_responses": ${multipleResponses},
+        "options": ${optionObjsJson},
+        "stimulus": ${stemJson},
+        "type": "mcq",
+        "validation": {
+          "scoring_type": "exactMatch",
+          "valid_response": {
+            "score": 1,
+            "value": ${correctOptionsJson}
+          }
+        },
+        "ui_style": {
+          "type": "horizontal"
+        },
+        "metadata": {
+          "distractor_rationale_response_level": ${rationalesJson}
+        },
+        "shuffle_options": true
+      }
+    `;
+
+    console.log(quizJson);
 
   }
 
