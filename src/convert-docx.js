@@ -83,8 +83,10 @@ async function readHTML(){
     let optionObjs = [];
     let correctOptions = [];
     let rationaleArr = [];
+    let strongReg = /(<strong>|<\/strong>)/gi;
     let correctFlagReg = /([\[]Correct.*?\])/i;
     let itemPrefixReg = /^(\s*\<.[^\>]*\>)?\s*?((?:[A-Z]|(?:[0-9]*))\.\s*)/gim;
+    const itemPrefixRegReplacement = "$1";
     let multipleResponses = false
 
     for (k = 0; k < options.length; k++) {
@@ -99,8 +101,9 @@ async function readHTML(){
         optionString = optionString.replace(correctFlagReg,"");
       }
 
-      stemString = stemString.replace(itemPrefixReg,"");
-      optionString = optionString.replace(itemPrefixReg,"");
+      stemString = stemString.replace(itemPrefixReg, itemPrefixRegReplacement);
+      optionString = optionString.replace(strongReg,"");
+      optionString = optionString.replace(itemPrefixReg, itemPrefixRegReplacement);
 
       const optionObj = {label: optionString, value: indexString};
       optionObjs.push(optionObj);
