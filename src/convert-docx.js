@@ -72,6 +72,48 @@ async function readHTML(){
   const doc = new DOMParser().parseFromString(source, 'text/xml')
   const stems = xpath.select('//div[@data-custom-style="QuestionStem"]/*', doc);
   let questionStrings = []
+  const codeBlocks = xpath.select('//span[@data-custom-style="Code Block Char"]', doc);
+  const codeBlockBreaks = xpath.select('//span[@data-custom-style="Code Block Char"]/br', doc);
+  const inlineCode = xpath.select('//span[@data-custom-style="Inline Code Char"]', doc);
+
+  // TODO: add procedure to wrap Inline Code Char
+  // TODO: add procedure to remove all the custom style spans once they're no longer needed
+
+  // handling for manual breaks within code blocks
+  for (i = 0; i < codeBlockBreaks.length; i++) {
+    let codeBlockBreak = codeBlockBreaks[i];
+    codeBlockBreak.parentNode.removeChild(codeBlockBreak);
+  }
+
+  // handling for Code Block Char spans
+  for (i = 0; i < codeBlocks.length; i++) {
+    let newBlock = doc.createElement("pre");
+    let codeBlock = codeBlocks[i];
+    let parent = codeBlock.parentNode;
+
+    // wrap codeBlock in pre tag
+    codeBlock.parentNode.insertBefore(newBlock, codeBlock);
+    newBlock.appendChild(codeBlock);
+
+    // console.log(newBlock.parentNode.nodeName)
+
+    // replace encompassing p tag
+    if (parent.nodeName == "p") {
+      parent.parentNode.insertBefore(newBlock, parent);
+      parent.parentNode.removeChild(parent);
+    }
+
+  }
+
+  // handling for inline code 
+  for (i = 0; i < inlineCode.length; i++) {
+    let newBlock = doc.createElement("code");
+    let code = inlineCode[i];
+
+    // wrap inline code in code tag
+    code.parentNode.insertBefore(newBlock, code);
+    newBlock.appendChild(code);
+  }
 
   for (i = 0, question = ''; i < stems.length; i++) {
     const stem = stems[i];
