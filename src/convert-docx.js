@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const pandoc = require('node-pandoc-promise');
 const xpath = require('xpath');
 const { DOMParser, XMLSerializer } = require('@xmldom/xmldom')
+const fs = require('fs');
 
 async function getUserInput(){
 
@@ -47,7 +48,7 @@ async function convertDOCXtoHTML(){
   
   const filepaths = await processFilepath();
   const src = filepaths.src;
-  const output = filepaths.output; 
+  const path = filepaths.output; 
 
   // Arguments in either a single String or as an Array:
   // args = ['-f', 'docx+styles', '-t', 'html5', '-o', output + '/' + 'output.html'];
@@ -56,14 +57,21 @@ async function convertDOCXtoHTML(){
   // Call pandoc
   const doc = await pandoc(src, args);
 
-  return doc
+  return {
+    doc: doc,
+    path: path
+  }
 }
 
 async function readHTML(){
-  let source = await convertDOCXtoHTML();
+  let docinfo  = await convertDOCXtoHTML(); // TODO: these var names are confusing as heck; must fix!
+  let source = docinfo.doc;
+  let path = docinfo.path;
+
   source = '<!DOCTYPE html><html><head></head><body>' + source + '</body></html>' // we need valid, complete HTML
   const doc = new DOMParser().parseFromString(source, 'text/xml')
   const stems = xpath.select('//div[@data-custom-style="QuestionStem"]/*', doc);
+  let questionStrings = []
 
   for (i = 0, question = ''; i < stems.length; i++) {
     const stem = stems[i];
@@ -139,11 +147,37 @@ async function readHTML(){
       }
     `;
 
-    console.log(quizJson);
-
+    questionStrings.push(quizJson);
   }
 
+  return {
+    questionStrings: questionStrings,
+    path: path
+  }   
 
 }
 
-readHTML();
+async function writeToFile(){
+  let html = await readHTML();
+  let questionStrings = html.questionStrings;
+  let path = html.path;
+
+  for (i = 0; i < questionStrings.length; i++) {
+    let questionString = questionStrings[i];
+    let questionNumberString = String(i).padStart(2,'0');
+    let uniqueString = String(Date.now()); 
+    let filename = "question_" + questionNumberString + "_" + uniqueString + ".json"
+    let filepath = path + "/" + filename
+
+    fs.writeFile(filepath, questionString, function(err) {
+      if(err) {
+          return console.log(err);
+      }
+      console.log("The file " + filename + " was saved!");
+    }); 
+
+  }
+
+}
+
+writeToFile();

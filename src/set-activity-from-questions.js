@@ -90,7 +90,7 @@ async function readFilesSync(dir) {
   });
 
   const questions = "[" + files.join(',') + "]"
-  
+
   return {
     questionRefIds: questionRefIds, 
     questions: questions
