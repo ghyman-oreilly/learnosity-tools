@@ -38,7 +38,7 @@ const dataAPIRequest = learnositySdk.init(
   config.consumerSecret, // Your actual consumer secret here
   {
     "item_references": [
-        "171c992d-34ed-412b-8c74-61358ac9520a_GH"
+        "59aaca5c-3aee-4a5b-be1a-3efe1f486b67_GH"
     ]
 },
     'get'

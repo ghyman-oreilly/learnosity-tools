@@ -3,6 +3,7 @@ const Learnosity = require('learnosity-sdk-nodejs');
 const config = require('./config'); // Load consumer key & secret from config.js
 const uuid = require('uuid');        // Load the UUID library
 const fs = require('fs');
+const fsAsync = require('fs/promises');
 const path = require('path');
 const inquirer = require('inquirer');
 
@@ -63,19 +64,20 @@ async function getUserInput(){
 }
 
 async function readFilesSync(dir) {
-  const files = [];
+  const files = await fsAsync.readdir(dir);
   const questionRefIds = [];
   const extension = '.json';
+  const processedFiles = [];
 
-  fs.readdirSync(dir).forEach(filename => {
-    if (path.extname(filename).toLowerCase() === extension) {
+  for (const file of files) {
+    if (path.extname(file).toLowerCase() === extension) {
 
-      const filepath = path.resolve(dir, filename);
+      const filepath = path.resolve(dir, file);
       const stat = fs.statSync(filepath);
-      let contents = fs.readFileSync(filepath).toString()
+      let contents = fs.readFileSync(filepath).toString();
       const isFile = stat.isFile();
       
-      ref_id = uuid.v4() + '_GH'
+      const ref_id = await generateID('questions');
       questionRefIds.push(ref_id);
 
       contents = `{
@@ -84,12 +86,12 @@ async function readFilesSync(dir) {
               "data": ${contents}
           }` 
 
-      if (isFile) files.push(contents);
+      if (isFile) processedFiles.push(contents);
 
     }
-  });
+  }
 
-  const questions = "[" + files.join(',') + "]"
+  const questions = "[" + processedFiles.join(',') + "]"
 
   return {
     questionRefIds: questionRefIds, 
@@ -99,12 +101,12 @@ async function readFilesSync(dir) {
 
 async function setQuestions(dir){
   dir = dir
-  const readFiles = await readFilesSync(dir)
+  const readFiles = await readFilesSync(dir);
   const questionRefIds = readFiles.questionRefIds
   let questions = readFiles.questions;
   questions = `{"questions": ${questions}}`
 
-  let callapi = await callDataAPI(questions, 'questions');
+  let callapi = await callDataAPI(questions, 'set', 'questions');
 
   return questionRefIds
 
@@ -118,7 +120,7 @@ async function setItems(dir){
   
   for (i = 0; i < questionRefs.length; i++) {
     const questionRef = questionRefs[i];
-    const itemRef = uuid.v4() + '_GH';
+    const itemRef = await generateID('items');
     const item = `{
             "reference": "${itemRef}",
             "metadata": null,
@@ -147,10 +149,12 @@ async function setItems(dir){
   
   items = '{"items":[' + items.join(',') + ']}'
   
-  await callDataAPI(items, 'items');
+  await callDataAPI(items, 'set', 'items');
+
+  console.log("Created items with IDs as follows: ")
+  console.log(itemRefIds);
 
   return itemRefIds;
-
 }
 
 async function setActivity(){
@@ -164,7 +168,7 @@ async function setActivity(){
   let itemRefIds = await setItems(dir);
   itemRefIds = '"' + itemRefIds.join('","') + '"';
   
-  const activityRef = uuid.v4() + '_GH';
+  const activityRef = await generateID('activities');
   
   const activity = `{"activities": [
       {
@@ -198,12 +202,12 @@ async function setActivity(){
       }
   ]}`
   
-  await callDataAPI(activity, 'activities');
+  await callDataAPI(activity, 'set', 'activities');
 
   console.log("The reference ID for the activity is: " + activityRef)
 }
 
-async function callDataAPI(body, endpoint){
+async function callDataAPI(body, action, endpoint){
   // Things to do before completion of the promise
   endpoint = 'https://data.learnosity.com/v2023.1.LTS/itembank/' + endpoint
 
@@ -229,7 +233,7 @@ async function callDataAPI(body, endpoint){
     
     body, // request body
     
-    'set' // request action
+    action // request action
     );
 
   const form = new FormData();
@@ -259,15 +263,41 @@ async function callDataAPI(body, endpoint){
 
   /* Now call the function, passing in the desired endpoint, and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
 
-  await makeDataAPICall(endpoint, form)
+  const response = await makeDataAPICall(endpoint, form)
     .then(response => {
-    console.log(response)
+      return response
     })
     .catch(error => console.log('there was an error', error))
+  
+  return response
+}
+
+async function generateID(endpoint) {
+  
+  let ref_id = uuid.v4();
+  let tries = 0
+  
+  const checkID = async function(ref_id, endpoint) {
+    const body = `{"references":["${ref_id}"]}`
+    const response = await callDataAPI(body, 'get', endpoint);
+    const records = response.meta.records;
+    return records
+  }
+
+  let records = await checkID(ref_id, endpoint);
+
+  while(records != 0 && tries <= 5){
+    ref_id = uuid.v4();
+    records = await checkID(ref_id, endpoint);
+    tries++;
+
+    if (tries == 5){
+      console.log("Unable to produce a unique ID in 5 tries. Exiting...")
+      return
+    }
+  }
+
+  return ref_id
 }
 
 setActivity();
-
-
-
-
