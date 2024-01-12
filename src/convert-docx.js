@@ -52,7 +52,7 @@ async function convertDOCXtoHTML(){
 
   // Arguments in either a single String or as an Array:
   // args = ['-f', 'docx+styles', '-t', 'html5', '-o', output + '/' + 'output.html'];
-  args = ['-f', 'docx+styles', '-t', 'html5'];
+  args = ['-f', 'docx+styles', '-t', 'html5', '--wrap=none'];
  
   // Call pandoc
   const doc = await pandoc(src, args);
