@@ -76,7 +76,6 @@ async function readHTML(){
   const codeBlockBreaks = xpath.select('//span[@data-custom-style="Code Block Char"]/br', doc);
   const inlineCode = xpath.select('//span[@data-custom-style="Inline Code Char"]', doc);
 
-  // TODO: add procedure to wrap Inline Code Char
   // TODO: add procedure to remove all the custom style spans once they're no longer needed
 
   // handling for manual breaks within code blocks
@@ -93,9 +92,12 @@ async function readHTML(){
 
     // wrap codeBlock in pre tag
     codeBlock.parentNode.insertBefore(newBlock, codeBlock);
-    newBlock.appendChild(codeBlock);
+    
+    while (codeBlock.firstChild) { 
+      newBlock.appendChild(codeBlock.firstChild); // move codeBlock (span) children, one at a time, to new pre block
+    } 
 
-    // console.log(newBlock.parentNode.nodeName)
+    codeBlock.parentNode.removeChild(codeBlock); // remove original codeBlock span
 
     // replace encompassing p tag
     if (parent.nodeName == "p") {
@@ -112,7 +114,12 @@ async function readHTML(){
 
     // wrap inline code in code tag
     code.parentNode.insertBefore(newBlock, code);
-    newBlock.appendChild(code);
+
+    while (code.firstChild) { 
+      newBlock.appendChild(code.firstChild); // move code (span) children, one at a time, to new code block
+    } 
+
+    code.parentNode.removeChild(code); // remove original code span
   }
 
   for (i = 0, question = ''; i < stems.length; i++) {
