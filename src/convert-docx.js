@@ -63,20 +63,26 @@ async function convertDOCXtoHTML(){
   }
 }
 
-async function readHTML(){
-  let docinfo  = await convertDOCXtoHTML(); // TODO: these var names are confusing as heck; must fix!
+async function readHTML() {
+  let docinfo = await convertDOCXtoHTML();
   let source = docinfo.doc;
   let path = docinfo.path;
 
-  source = '<!DOCTYPE html><html><head></head><body>' + source + '</body></html>' // we need valid, complete HTML
-  const doc = new DOMParser().parseFromString(source, 'text/xml')
-  const stems = xpath.select('//div[@data-custom-style="QuestionStem"]/*', doc);
-  let questionStrings = []
-  const codeBlocks = xpath.select('//span[@data-custom-style="Code Block Char"]', doc);
+  source = '<!DOCTYPE html><html><head></head><body>' + source + '</body></html>';
+  const doc = new DOMParser().parseFromString(source, 'text/xml');
+  const divElements = xpath.select('//div[starts-with(@data-custom-style, "Question")]', doc);
+  const inlineElements = xpath.select('//span[starts-with(@data-custom-style, "Code Block Char") or starts-with(@data-custom-style, "Inline Code Char")]', doc);
   const codeBlockBreaks = xpath.select('//span[@data-custom-style="Code Block Char"]/br', doc);
-  const inlineCode = xpath.select('//span[@data-custom-style="Inline Code Char"]', doc);
 
-  // TODO: add procedure to remove all the custom style spans once they're no longer needed
+  let questionStrings = [];
+
+  let currentPredecessor = null;
+  let currentPredecessorText = '';
+  let multipleResponses = false;
+  let optionObjs = [];
+  let correctOptions = [];
+  let rationaleArr = [];
+  let stemText = '';
 
   // handling for manual breaks within code blocks
   for (i = 0; i < codeBlockBreaks.length; i++) {
@@ -84,97 +90,142 @@ async function readHTML(){
     codeBlockBreak.parentNode.removeChild(codeBlockBreak);
   }
 
-  // handling for Code Block Char spans
-  for (i = 0; i < codeBlocks.length; i++) {
-    let newBlock = doc.createElement("pre");
-    let codeBlock = codeBlocks[i];
-    let parent = codeBlock.parentNode;
+// Handle inlines first
+  for (let i = 0; i < inlineElements.length; i++) {
+    const inline = inlineElements[i];
+    const elementType = inline.getAttribute('data-custom-style');
 
-    // wrap codeBlock in pre tag
-    codeBlock.parentNode.insertBefore(newBlock, codeBlock);
-    
-    while (codeBlock.firstChild) { 
-      newBlock.appendChild(codeBlock.firstChild); // move codeBlock (span) children, one at a time, to new pre block
-    } 
-
-    codeBlock.parentNode.removeChild(codeBlock); // remove original codeBlock span
-
-    // replace encompassing p tag
-    if (parent.nodeName == "p") {
-      parent.parentNode.insertBefore(newBlock, parent);
-      parent.parentNode.removeChild(parent);
+    // Apply transformations for CodeBlock and InlineCode
+    if (elementType === 'Code Block Char') {
+      wrapElementWithPreTag(inline);
+    } else if (elementType === 'Inline Code Char') {
+      wrapElementWithCodeTag(inline);
     }
-
   }
 
-  // handling for inline code 
-  for (i = 0; i < inlineCode.length; i++) {
-    let newBlock = doc.createElement("code");
-    let code = inlineCode[i];
+// Handle divs
+for (let i = 0; i < divElements.length; i++) {
+  const element = divElements[i];
+  const para = element.childNodes[1]; // assumes paragraph node is preceded by one newline
+  const elementType = element.getAttribute('data-custom-style');
 
-    // wrap inline code in code tag
-    code.parentNode.insertBefore(newBlock, code);
-
-    while (code.firstChild) { 
-      newBlock.appendChild(code.firstChild); // move code (span) children, one at a time, to new code block
-    } 
-
-    code.parentNode.removeChild(code); // remove original code span
-  }
-
-  for (i = 0, question = ''; i < stems.length; i++) {
-    const stem = stems[i];
-    const precedingSiblingsCount = i + 1;
-    const options = xpath.select('//div[@data-custom-style="QuestionStem"]/following-sibling::div[@data-custom-style="QuestionOption" and count(preceding-sibling::div[@data-custom-style="QuestionStem"])="' + precedingSiblingsCount + '"]/*', stem);
-    const rationales = xpath.select('//div[@data-custom-style="QuestionStem"]/following-sibling::div[@data-custom-style="QuestionRationale"  and count(preceding-sibling::div[@data-custom-style="QuestionStem"])="' + precedingSiblingsCount + '"]/*', stem);
-
-    let stemString = stem.toString();
-    let optionObjs = [];
-    let correctOptions = [];
-    let rationaleArr = [];
-    let strongReg = /(<strong>|<\/strong>)/gi;
-    let correctFlagReg = /([\[]Correct.*?\])/i;
-    let itemPrefixReg = /^(\s*\<.[^\>]*\>)?\s*?((?:[A-Z]|(?:[0-9]*))\.\s*)/gim;
-    const itemPrefixRegReplacement = "$1";
-    let multipleResponses = false
-
-    for (k = 0; k < options.length; k++) {
-      let optionString = options[k].toString();
-      const indexString = k.toString();
-      
-      // test whether option is marked as a correct answer
-      const isCorrect = new RegExp(correctFlagReg).test(optionString);
-
-      if (isCorrect) {
-        correctOptions.push(indexString);
-        optionString = optionString.replace(correctFlagReg,"");
+  if (elementType.includes('Continued')) {
+    // Append continuation text to the current predecessor
+    if (currentPredecessor !== null && currentPredecessorText !== '') {
+      currentPredecessorText += new XMLSerializer().serializeToString(para).trim();
+    }
+  } else {
+    // Set the new current predecessor only for elements with specific data-custom-style values
+    if (elementType.startsWith('Question')) {
+      // Process the previous predecessor before starting a new one
+      if (currentPredecessor !== null && currentPredecessorText !== '') {
+        processPredecessor(currentPredecessor, currentPredecessorText);
       }
 
-      stemString = stemString.replace(itemPrefixReg, itemPrefixRegReplacement);
-      optionString = optionString.replace(strongReg,"");
-      optionString = optionString.replace(itemPrefixReg, itemPrefixRegReplacement);
+      currentPredecessor = elementType;
+      currentPredecessorText = new XMLSerializer().serializeToString(para).trim();
+    }
+  }
+}
 
-      const optionObj = {label: optionString, value: indexString};
-      optionObjs.push(optionObj);
+// Process the last predecessor
+if (currentPredecessor !== null && currentPredecessorText !== '') {
+  processPredecessor(currentPredecessor, currentPredecessorText);
+}
+
+  function wrapElementWithCodeTag(element) {
+    const codeTag = element.ownerDocument.createElement('code');
+    element.parentNode.insertBefore(codeTag, element);
+
+    while (element.firstChild) {
+      codeTag.appendChild(element.firstChild);
     }
 
-    for (l = 0; l < rationales.length; l++) {
-      let rationalesString = rationales[l].toString();
-      rationalesString = rationalesString.replace(itemPrefixReg,"");
-      const indexString = l.toString();
-      rationaleArr.push(rationalesString);
+    element.parentNode.removeChild(element);
+  }
+
+  function wrapElementWithPreTag(element) {
+    const preTag = element.ownerDocument.createElement('pre');
+    element.parentNode.insertBefore(preTag, element);
+
+    // move children to parent (enclosing para, which we can't remove yet, as it could contain 'correct' flag)
+    while (element.firstChild) {
+      preTag.appendChild(element.firstChild);
     }
+
+    element.parentNode.removeChild(element);
+
+  }
+
+  function processPredecessor(type, text) {
+    const strongReg = /(<strong>|<\/strong>)/gi;
+    const itemPrefixReg = /^(\s*\<.[^\>]*\>)?\s*?((?:[A-Z]|(?:[0-9]*))\.\s*)/gim;
+    const itemPrefixRegReplacement = "$1";
+    const paraReg = /<p>\s*(<pre>)|(<\/pre>)\s*<\/p>/g;
+    const paraRegReplacement = "$1$2";
+
+    // perform some text cleanup
+    text = text.replace(strongReg,"");
+    text = text.replace(itemPrefixReg, itemPrefixRegReplacement);
+    text = text.replace(paraReg, paraRegReplacement); // this must come after the prefix replacement
+
+    // Processing logic for different predecessor types
+    switch (type) {
+      case 'QuestionStem':
+        // Create a new quiz question if there is already data for the previous question
+        if (stemText !== '') {
+          createQuizQuestion();
+        }
+        // Customize logic for processing QuestionStem
+        stemText = text;
+        break;
+      case 'QuestionOption':
+        // Customize logic for processing QuestionOption
+        // For demonstration, wrap the text in JSON
+        const indexString = optionObjs.length.toString();
+        const isCorrect = /\[Correct[^\]]*\]/i.test(text);
+        let optionText = text.replace(/\[Correct[^\]]*\]/i, '').trim();
+        optionText = optionText.replace(itemPrefixReg, itemPrefixRegReplacement); // 'duplicated' here in case the prefix follows the correct flag
+        optionText = optionText.replace(paraReg, paraRegReplacement); // ditto here
+        const optionObj = { label: optionText, value: indexString };
+        optionObjs.push(optionObj);
+
+        if (isCorrect) {
+          correctOptions.push(indexString);
+        }
+        break;
+      case 'QuestionRationale':
+        // Customize logic for processing QuestionRationale
+        // For demonstration, wrap the text in JSON
+        rationaleArr.push(text);
+        break;
+      default:
+        break;
+    }
+  }
+
+  // Create a new quiz question with the accumulated data
+  function createQuizQuestion() {
     
-    // update multiple responses flag
+    // Set single or multiple response
     if (correctOptions.length > 1) {
-      multipleResponses = true
+      multipleResponses = true;
+    }
+    if (correctOptions.length == 0) {
+      console.log("One or more quiz items are missing a correct response flag. Please fix and rerun the script. Exiting.")
+      process.exit()
     }
 
-    // write to JSON with slug/template
-    let stemJson = JSON.stringify(stemString)
-		let optionObjsJson = JSON.stringify(optionObjs)
-		let rationalesJson = JSON.stringify(rationaleArr)
-		let correctOptionsJson = JSON.stringify(correctOptions)
+    // Test # options = # rationales
+    if (optionObjs.length != rationaleArr.length) {
+      console.log("The number of options doesn't equal the number of rationales for at least one quiz question. Please fix and rerun script. Exiting.")
+      process.exit()
+    }
+
+    let stemJson = JSON.stringify(stemText);
+    let optionObjsJson = JSON.stringify(optionObjs);
+    let correctOptionsJson = JSON.stringify(correctOptions);
+    let rationalesJson = JSON.stringify(rationaleArr);
 
     let quizJson = `
       {
@@ -199,15 +250,26 @@ async function readHTML(){
       }
     `;
 
+    // Push the JSON string to questionStrings
     questionStrings.push(quizJson);
+
+    // Reset data for the next question
+    stemText = '';
+    optionObjs = [];
+    correctOptions = [];
+    rationaleArr = [];
+    multipleResponses = false;
   }
+
+  // Create a new quiz question for the last set of elements
+  createQuizQuestion();
 
   return {
     questionStrings: questionStrings,
     path: path
-  }   
-
+  };
 }
+
 
 async function writeToFile(){
   let html = await readHTML();
