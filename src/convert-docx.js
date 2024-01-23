@@ -71,8 +71,8 @@ async function readHTML() {
   source = '<!DOCTYPE html><html><head></head><body>' + source + '</body></html>';
   const doc = new DOMParser().parseFromString(source, 'text/xml');
   const divElements = xpath.select('//div[starts-with(@data-custom-style, "Question")]', doc);
-  const inlineElements = xpath.select('//span[starts-with(@data-custom-style, "Code Block Char") or starts-with(@data-custom-style, "Inline Code Char")]', doc);
-  const codeBlockBreaks = xpath.select('//span[@data-custom-style="Code Block Char"]/br', doc);
+  const inlineElements = xpath.select('//span[starts-with(@data-custom-style, "Code Block") or starts-with(@data-custom-style, "Inline Code")]', doc);
+  const codeBlockBreaks = xpath.select('//span[@data-custom-style="Code Block"]/br', doc);
 
   let questionStrings = [];
 
@@ -96,9 +96,9 @@ async function readHTML() {
     const elementType = inline.getAttribute('data-custom-style');
 
     // Apply transformations for CodeBlock and InlineCode
-    if (elementType === 'Code Block Char') {
+    if (elementType === 'Code Block') {
       wrapElementWithPreTag(inline);
-    } else if (elementType === 'Inline Code Char') {
+    } else if (elementType === 'Inline Code') {
       wrapElementWithCodeTag(inline);
     }
   }
@@ -213,12 +213,14 @@ if (currentPredecessor !== null && currentPredecessorText !== '') {
     }
     if (correctOptions.length == 0) {
       console.log("One or more quiz items are missing a correct response flag. Please fix and rerun the script. Exiting.")
+      console.log("Question stem: " + stemText)
       process.exit()
     }
 
     // Test # options = # rationales
     if (optionObjs.length != rationaleArr.length) {
       console.log("The number of options doesn't equal the number of rationales for at least one quiz question. Please fix and rerun script. Exiting.")
+      console.log("Question stem: " + stemText)
       process.exit()
     }
 
