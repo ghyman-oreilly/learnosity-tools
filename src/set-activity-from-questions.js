@@ -151,8 +151,11 @@ async function setItems(dir){
   
   await callDataAPI(items, 'set', 'items');
 
-  console.log("Created items with IDs as follows: ")
-  console.log(itemRefIds);
+  const output = "Created items with IDs as follows: \n" + JSON.stringify(itemRefIds)
+
+  await writeOutput(dir, output)
+
+  console.log(output)
 
   return itemRefIds;
 }
@@ -204,7 +207,11 @@ async function setActivity(){
   
   await callDataAPI(activity, 'set', 'activities');
 
-  console.log("The reference ID for the activity is: " + activityRef)
+  const output = "\nThe reference ID for the activity is: " + activityRef
+
+  await writeOutput(dir, output)
+
+  console.log(output)
 }
 
 async function callDataAPI(body, action, endpoint){
@@ -298,6 +305,15 @@ async function generateID(endpoint) {
   }
 
   return ref_id
+}
+
+async function writeOutput(filepath, output) {
+
+  const outputPath = filepath + '/output.txt' 
+
+  fs.appendFile(outputPath, output, function (err) {
+    if (err) throw err;
+  });
 }
 
 setActivity();
