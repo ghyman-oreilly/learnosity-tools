@@ -168,6 +168,22 @@ async function readHTML() {
       }
     }
 
+    // function to clean up question elements
+    function elementCleanup(text){
+      const strongReg = /(<strong>|<\/strong>)/gi;
+      const itemPrefixReg = /^(\s*\<.[^\>]*\>)?\s*?((?:[A-Z]|(?:[0-9]*))\.\s*)/gim;
+      const itemPrefixRegReplacement = "$1";
+      const paraReg = /<p>\s*(<pre>)|(<\/pre>)\s*<\/p>/g;
+      const paraRegReplacement = "$1$2";
+
+      // perform some text cleanup
+      text = text.replace(strongReg,"");
+      text = text.replace(itemPrefixReg, itemPrefixRegReplacement);
+      text = text.replace(paraReg, paraRegReplacement); // this must come after the prefix replacement
+
+      return text
+    }
+
     // function to serialize node children to string
     function serialize(element) {
       if (element.hasChildNodes) {
@@ -182,8 +198,10 @@ async function readHTML() {
 
     // function to create question body from elements
     function createQuestionBody(multipleResponses, options, correctOptions, questionStem, rationales) {
+      multipleResponses = JSON.stringify(multipleResponses);
       options = JSON.stringify(options);
       correctOptions = JSON.stringify(correctOptions);
+      questionStem = JSON.stringify(questionStem);
       rationales = JSON.stringify(rationales);
 
       let questionBody = `
@@ -266,7 +284,7 @@ async function readHTML() {
                   questionBodies.push(questionBody);
                 }
 
-                questionStem = serialize(nextElement);
+                questionStem = elementCleanup(serialize(nextElement));
                 optionCounter = 0 // reset option counter (zero-indexed)
                 options = []; // Reset array when encountering a stem
                 correctOptions = []; // Reset array when encountering a stem
@@ -285,13 +303,13 @@ async function readHTML() {
                   multipleResponses = true
                 }
 
-                questionOption = questionOption.replace(/\[Correct[^\]]*\]/i, '').trim();
+                questionOption = elementCleanup(questionOption.replace(/\[Correct[^\]]*\]/i, '').trim());
                 // options.push(questionOption);
-                options.push({label: questionOption, value: optionCounter})
+                options.push({label: questionOption, value: optionCounter.toString()})
                 optionCounter++ // increment option counter
                 break;
             case 'QuestionRationale':
-                questionRationale = serialize(nextElement);
+                questionRationale = elementCleanup(serialize(nextElement));
                 rationales.push(questionRationale);
                 break;
           }
