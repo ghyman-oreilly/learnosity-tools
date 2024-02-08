@@ -107,19 +107,23 @@ async function readHTML() {
     // remove useless nodes from doc
     clean(doc)
     
-    const quizTitleElements = xpath.select('//h1[starts-with(@class, "QuizTitle")]', doc);
-    const quizTypeElements = xpath.select('//div[starts-with(@data-custom-style, "QuizType")]', doc);
-    const questionElements = xpath.select('//div[starts-with(@data-custom-style, "Question")]', doc);
+    // Combine continuation elements with their predecessors
+    let continuationElements = xpath.select('//div[contains(@data-custom-style, "Continued")]', doc);
+    while (continuationElements.length > 0) {
+        for (let i = continuationElements.length - 1; i >= 0; i--) {
+            let continuationElement = continuationElements[i];
+
+            // Loop through children of continuation element, moving them to previousSibling
+            while (continuationElement.firstChild) {
+                continuationElement.previousSibling.appendChild(continuationElement.firstChild);
+            }
+            continuationElement.parentNode.removeChild(continuationElement);
+        }
+        continuationElements = xpath.select('//div[contains(@data-custom-style, "Continued")]', doc);
+    }
+
     const inlineElements = xpath.select('//span[starts-with(@data-custom-style, "Code Block") or starts-with(@data-custom-style, "Inline Code")]', doc);
     const codeBlockBreaks = xpath.select('//span[@data-custom-style="Code Block"]/br', doc);
-
-    let currentPredecessor = null;
-    let currentPredecessorText = '';
-    let multipleResponses = false;
-    let optionObjs = [];
-    let correctOptions = [];
-    let rationaleArr = [];
-    let stemText = '';
 
     // handling for manual breaks within code blocks
     for (i = 0; i < codeBlockBreaks.length; i++) {
@@ -164,11 +168,33 @@ async function readHTML() {
       }
     }
 
+    // function to serialize node children to string
+    function serialize(element) {
+      if (element.hasChildNodes) {
+        let string = '';
+        while (element.firstChild) {
+          string += element.firstChild.toString();
+          element.removeChild(element.firstChild)
+        }
+        return string
+      }
+    }
+
+    // function to create question body from elements
+    function createQuestionBody() {
+      
+
+    }
+
     let quizCounter = 0;
     let questionCounter = 0;
     let questionBodies = [];
 
     let quizzes = [];
+
+    const quizTitleElements = xpath.select('//h1[starts-with(@class, "QuizTitle")]', doc);
+    const quizTypeElements = xpath.select('//div[starts-with(@data-custom-style, "QuizType")]', doc);
+    const questionElements = xpath.select('//div[starts-with(@data-custom-style, "Question")]', doc);
 
     // Loop through quiz titles
     for (let i = 0; i < quizTitleElements.length; i++) {
@@ -183,7 +209,7 @@ async function readHTML() {
         quizTitle = quizTitleElement.textContent.trim();
         let nextElement = quizTitleElement.nextSibling;
 
-        let questionStem; // Initialize questionStem variable here
+        let questionStem = ''; // Initialize questionStem variable here
         let options = []; // Initialize options array
         let rationales = []; // Initialize rationales array
 
@@ -196,70 +222,56 @@ async function readHTML() {
           // skip elements that don't have data-custom-style attr (like [rationale] tag)
           while (nextElement && !nextElement.getAttribute('data-custom-style')) {
               nextElement = nextElement.nextSibling; // move to next sibling
+              elementType = nextElement.getAttribute('data-custom-style');
           }
 
           switch(elementType) {
-              case 'QuizType':
-                  quizType = nextElement.textContent.trim();
-                  break;
-              case 'QuestionStem':
-                  questionCounter++; // Increment question counter
+            case 'QuizType':
+                quizType = nextElement.textContent.trim();
+                break;
+            case 'QuestionStem':
+                questionCounter++; // Increment question counter
 
-                  // if questionCounter > 1, record previous question
-                  if (questionCounter > 1) {
-                    let questionBody = `
-                        {
-                            "multiple_responses": 'TODO',
-                            "options": ${options},
-                            "stimulus": ${questionStem},
-                            "type": "mcq",
-                            "validation": {
-                                "scoring_type": "exactMatch",
-                                "valid_response": {
-                                    "score": 1,
-                                    "value": 'TODO'
-                                }
-                            },
-                            "ui_style": {
-                                "type": "horizontal"
-                            },
-                            "metadata": {
-                                "distractor_rationale_response_level": ${rationales}
-                            },
-                            "shuffle_options": true
-                        }
-                    `;
-                    questionBodies.push(questionBody);
-                  }
+                // if questionCounter > 1, record previous question
+                if (questionCounter > 1) {
+                  let questionBody = `
+                      {
+                          "multiple_responses": 'TODO',
+                          "options": ${options},
+                          "stimulus": ${questionStem},
+                          "type": "mcq",
+                          "validation": {
+                              "scoring_type": "exactMatch",
+                              "valid_response": {
+                                  "score": 1,
+                                  "value": 'TODO'
+                              }
+                          },
+                          "ui_style": {
+                              "type": "horizontal"
+                          },
+                          "metadata": {
+                              "distractor_rationale_response_level": ${rationales}
+                          },
+                          "shuffle_options": true
+                      }
+                  `;
+                  questionBodies.push(questionBody);
+                }
 
-                  questionStem = nextElement.firstChild;
-                  options = []; // Reset array when encountering a stem
-                  rationales = []; // Reset array when encountering a stem
-                  break;
-              case 'QuestionStemContinued':
-                  questionStem += nextElement.firstChild; // Add continuation to stem
-                  break;
-              case 'QuestionOption':
-                  questionOption = nextElement.firstChild;
-                  if (!nextElement.nextSibling.getAttribute('data-custom-style') || nextElement.nextSibling.getAttribute('data-custom-style') !== 'QuestionOptionContinued') {
-                      options.push(questionOption);
-                  }
-                  // TODO: logic for correct option
-                  break;
-              case 'QuestionOptionContinued':
-                  questionOption += nextElement.firstChild;
-                  options.push(questionOption);
-                  break;
-              case 'QuestionRationale':
-                  questionRationale = nextElement.firstChild;
-                  if (!nextElement.nextSibling || !nextElement.nextSibling.getAttribute('data-custom-style') || nextElement.nextSibling.getAttribute('data-custom-style') !== 'QuestionRationaleContinued') {
-                      rationales.push(questionRationale);
-                  }
-                  break;
-              case 'QuestionRationaleContinued':
-                  questionRationale += nextElement.firstChild;
-                  rationales.push(questionRationale);
-                  break;
+                questionStem = serialize(nextElement);
+                options = []; // Reset array when encountering a stem
+                rationales = []; // Reset array when encountering a stem
+                break;
+            case 'QuestionOption':
+                questionOption = serialize(nextElement);
+                options.push(questionOption);
+                // TODO: logic for correct option
+                break;
+            case 'QuestionRationale':
+                questionRationale = serialize(nextElement);
+                rationales.push(questionRationale);
+                break;
           }
           nextElement = nextElement.nextSibling; // Move to next sibling
         }
