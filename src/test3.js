@@ -4,6 +4,9 @@ const xpath = require('xpath');
 const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const fs = require('fs');
 const path = require('path');
+const config = require('./config'); // Load consumer key & secret from config.js
+const uuid = require('uuid');
+const Learnosity = require('learnosity-sdk-nodejs');
 
 async function getUserInput() {
   try {
@@ -204,8 +207,10 @@ async function readHTML() {
       questionStem = JSON.stringify(questionStem);
       rationales = JSON.stringify(rationales);
 
-      let questionBody = `
-          {
+      let questionBody = `{
+              "type": "mcq",
+              "reference": "",
+              "data": {
               "multiple_responses": ${multipleResponses},
               "options": ${options},
               "stimulus": ${questionStem},
@@ -224,6 +229,7 @@ async function readHTML() {
                   "distractor_rationale_response_level": ${rationales}
               },
               "shuffle_options": true
+          }
           }
       `;
       return questionBody
@@ -320,8 +326,8 @@ async function readHTML() {
         questionBody = createQuestionBody(multipleResponses, options, correctOptions, questionStem, rationales);
         questionBodies.push(questionBody);
 
-        // TODO: logic for multiple correct responses: true/false
-        // TODO: accumulate indices of correct responses
+        // add reference Ids to question bodies
+        questionBodies = await generateIDs(questionBodies, 'questions');
 
         const quiz = {
           quizTitle: quizTitle,
@@ -339,6 +345,128 @@ async function readHTML() {
     console.error('Error reading HTML:', error);
     throw error;
   }
+}
+
+async function createQuizzes(){
+  let quizzes = await readHTML();
+}
+
+async function generateIDs(objArray, endpoint) {
+  let refIds = [];
+  let newArray = [];
+
+  // Generate reference IDs for each object
+  for (let i = 0; i < objArray.length; i++) {
+    let refId = uuid.v4();
+    refIds.push(refId);
+  }
+
+  // Function to check if refIds are unique
+  const checkID = async (refIds, endpoint) => {
+    const body = JSON.stringify({ references: refIds });
+    const response = await callDataAPI(body, 'get', endpoint);
+    const records = response.meta.records;
+    return records;
+  };
+
+  // Check if any reference IDs are not unique
+  let records = await checkID(refIds, endpoint);
+  let tries = 0;
+
+  // Continue generating new reference IDs until all are unique
+  while (records !== 0 && tries <= 5) {
+    for (let i = 0; i < objArray.length; i++) {
+      refIds[i] = uuid.v4();
+    }
+    records = await checkID(refIds, endpoint);
+    tries++;
+
+    if (tries === 5) {
+      console.log("Unable to produce unique IDs in 5 tries. Exiting...");
+      return null;
+    }
+  }
+
+  if (objArray.length != refIds.length) {
+    console.log("Problem generating refIds. Exiting...");
+  }
+
+  // merge refIds with objects
+  for (let i = 0; i < objArray.length; i++) {
+    let object = JSON.parse(objArray[i]);
+    let refId = refIds[i];
+
+    object.reference = refId;
+    newArray.push(JSON.stringify(object));
+    
+  }
+
+  return newArray;
+}
+
+async function callDataAPI(body, action, endpoint){
+  // Things to do before completion of the promise
+  endpoint = 'https://data.learnosity.com/v2023.1.LTS/itembank/' + endpoint
+
+  // Instantiate the SDK
+  const learnositySdk = new Learnosity();
+
+  // Set the web server domain
+  const domain = 'localhost';
+
+  // Generate a Learnosity API initialization packet to the Data API
+  const dataAPIRequest = learnositySdk.init(
+    // Set the service type
+    'data',
+
+    // Security details - dataAPIRequest.security 
+    {
+        consumer_key: config.consumerKey, // Your actual consumer key goes here 
+        domain:       domain, // Your actual domain goes here
+        user_id:      '110961' // GH user id
+    },
+    // secret 
+    config.consumerSecret, // Your actual consumer secret here
+    
+    body, // request body
+    
+    action // request action
+    );
+
+  const form = new FormData();
+  /* Note: the same can be accomplished with using URLSearchParams 
+  (https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
+  const form = new URLSearchParams()
+  */
+  form.append("security", dataAPIRequest.security);
+  form.append("request", dataAPIRequest.request);
+  form.append("action", dataAPIRequest.action);
+
+  /* Define an async/await data api call function that takes in the following:
+  *
+  * @param endpoint : string
+  * @param requestParams : object
+  *
+  */
+  const makeDataAPICall = async (endpoint, requestParams) => {
+    // Use 'await' save the successful response to a variable called dataAPIResponse
+    const dataAPIResponse = await fetch(endpoint, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      body: requestParams 
+    });
+    // Return the response JSON
+    return dataAPIResponse.json(); 
+  }
+
+  /* Now call the function, passing in the desired endpoint, and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
+
+  const response = await makeDataAPICall(endpoint, form)
+    .then(response => {
+      return response
+    })
+    .catch(error => console.log('there was an error', error))
+  
+  return response
 }
 
 async function printQuizzes() {
@@ -370,6 +498,4 @@ async function printQuizzes() {
 }
 
 printQuizzes();
-
-
 
