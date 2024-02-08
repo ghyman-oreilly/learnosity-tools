@@ -181,9 +181,30 @@ async function readHTML() {
     }
 
     // function to create question body from elements
-    function createQuestionBody() {
-      
-
+    function createQuestionBody(options, questionStem, rationales) {
+      let questionBody = `
+          {
+              "multiple_responses": 'TODO',
+              "options": ${options},
+              "stimulus": ${questionStem},
+              "type": "mcq",
+              "validation": {
+                  "scoring_type": "exactMatch",
+                  "valid_response": {
+                      "score": 1,
+                      "value": 'TODO'
+                  }
+              },
+              "ui_style": {
+                  "type": "horizontal"
+              },
+              "metadata": {
+                  "distractor_rationale_response_level": ${rationales}
+              },
+              "shuffle_options": true
+          }
+      `;
+      return questionBody
     }
 
     let quizCounter = 0;
@@ -212,6 +233,7 @@ async function readHTML() {
         let questionStem = ''; // Initialize questionStem variable here
         let options = []; // Initialize options array
         let rationales = []; // Initialize rationales array
+        let questionBody;
 
         while (nextElement && (!nextElement.getAttribute('class') || nextElement.getAttribute('class') !== 'QuizTitle')) {
           // Parse quiz elements here
@@ -233,29 +255,9 @@ async function readHTML() {
                 questionCounter++; // Increment question counter
 
                 // if questionCounter > 1, record previous question
+                // creates and pushes questionBody for all but last question in a given quiz
                 if (questionCounter > 1) {
-                  let questionBody = `
-                      {
-                          "multiple_responses": 'TODO',
-                          "options": ${options},
-                          "stimulus": ${questionStem},
-                          "type": "mcq",
-                          "validation": {
-                              "scoring_type": "exactMatch",
-                              "valid_response": {
-                                  "score": 1,
-                                  "value": 'TODO'
-                              }
-                          },
-                          "ui_style": {
-                              "type": "horizontal"
-                          },
-                          "metadata": {
-                              "distractor_rationale_response_level": ${rationales}
-                          },
-                          "shuffle_options": true
-                      }
-                  `;
+                  questionBody = createQuestionBody(options, questionStem, rationales);
                   questionBodies.push(questionBody);
                 }
 
@@ -275,7 +277,11 @@ async function readHTML() {
           }
           nextElement = nextElement.nextSibling; // Move to next sibling
         }
-            
+        
+        // create a push questionBody for last question in a given quiz
+        questionBody = createQuestionBody(options, questionStem, rationales);
+        questionBodies.push(questionBody);
+
         // TODO: logic for multiple correct responses: true/false
         // TODO: accumulate indices of correct responses
 
