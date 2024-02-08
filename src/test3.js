@@ -181,10 +181,14 @@ async function readHTML() {
     }
 
     // function to create question body from elements
-    function createQuestionBody(options, questionStem, rationales) {
+    function createQuestionBody(multipleResponses, options, correctOptions, questionStem, rationales) {
+      options = JSON.stringify(options);
+      correctOptions = JSON.stringify(correctOptions);
+      rationales = JSON.stringify(rationales);
+
       let questionBody = `
           {
-              "multiple_responses": 'TODO',
+              "multiple_responses": ${multipleResponses},
               "options": ${options},
               "stimulus": ${questionStem},
               "type": "mcq",
@@ -192,7 +196,7 @@ async function readHTML() {
                   "scoring_type": "exactMatch",
                   "valid_response": {
                       "score": 1,
-                      "value": 'TODO'
+                      "value": ${correctOptions}
                   }
               },
               "ui_style": {
@@ -214,8 +218,6 @@ async function readHTML() {
     let quizzes = [];
 
     const quizTitleElements = xpath.select('//h1[starts-with(@class, "QuizTitle")]', doc);
-    const quizTypeElements = xpath.select('//div[starts-with(@data-custom-style, "QuizType")]', doc);
-    const questionElements = xpath.select('//div[starts-with(@data-custom-style, "Question")]', doc);
 
     // Loop through quiz titles
     for (let i = 0; i < quizTitleElements.length; i++) {
@@ -232,8 +234,11 @@ async function readHTML() {
 
         let questionStem = ''; // Initialize questionStem variable here
         let options = []; // Initialize options array
+        let correctOptions = []; // Initialize correctOptions array
         let rationales = []; // Initialize rationales array
         let questionBody;
+        let optionCounter;
+        let multipleResponses;
 
         while (nextElement && (!nextElement.getAttribute('class') || nextElement.getAttribute('class') !== 'QuizTitle')) {
           // Parse quiz elements here
@@ -257,18 +262,33 @@ async function readHTML() {
                 // if questionCounter > 1, record previous question
                 // creates and pushes questionBody for all but last question in a given quiz
                 if (questionCounter > 1) {
-                  questionBody = createQuestionBody(options, questionStem, rationales);
+                  questionBody = createQuestionBody(multipleResponses, options, correctOptions, questionStem, rationales);
                   questionBodies.push(questionBody);
                 }
 
                 questionStem = serialize(nextElement);
+                optionCounter = 0 // reset option counter (zero-indexed)
                 options = []; // Reset array when encountering a stem
+                correctOptions = []; // Reset array when encountering a stem
                 rationales = []; // Reset array when encountering a stem
+                multipleResponses = false; // reset flag
                 break;
             case 'QuestionOption':
                 questionOption = serialize(nextElement);
-                options.push(questionOption);
-                // TODO: logic for correct option
+                
+                // test for correct option(s)
+                const isCorrect = /\[Correct[^\]]*\]/i.test(questionOption);
+                if (isCorrect) {
+                  correctOptions.push(optionCounter.toString()); 
+                }
+                if (correctOptions.length > 1) {
+                  multipleResponses = true
+                }
+
+                questionOption = questionOption.replace(/\[Correct[^\]]*\]/i, '').trim();
+                // options.push(questionOption);
+                options.push({label: questionOption, value: optionCounter})
+                optionCounter++ // increment option counter
                 break;
             case 'QuestionRationale':
                 questionRationale = serialize(nextElement);
@@ -277,9 +297,9 @@ async function readHTML() {
           }
           nextElement = nextElement.nextSibling; // Move to next sibling
         }
-        
+
         // create a push questionBody for last question in a given quiz
-        questionBody = createQuestionBody(options, questionStem, rationales);
+        questionBody = createQuestionBody(multipleResponses, options, correctOptions, questionStem, rationales);
         questionBodies.push(questionBody);
 
         // TODO: logic for multiple correct responses: true/false
