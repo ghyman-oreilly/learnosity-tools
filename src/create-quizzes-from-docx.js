@@ -651,14 +651,13 @@ async function callDataAPI(body, action, endpoint){
 
 async function printQuizzes(quizzes, docPath) {
     try {        
-        const outputFilePath = path.join(docPath, 'output.txt');
+        const outputFilePath = path.join(docPath, 'quiz-details.txt');
         const outputStream = fs.createWriteStream(outputFilePath);
 
         quizzes.forEach((quiz, index) => {
             outputStream.write(`Quiz ${index + 1}:\n`);
             outputStream.write(`Title: ${quiz.quizTitle}\n`);
             outputStream.write(`Type: ${quiz.quizType}\n`);
-            outputStream.write(`Question Bodies:\n`);
             quiz.questionBodies.forEach((questionBody, i) => {
                 outputStream.write(`\tQuestion ${i + 1}:\n`);
                 outputStream.write(`\t${questionBody}\n`);
