@@ -177,7 +177,7 @@ async function setActivity(){
       {
           "title": "${title}",
           "reference": "${activityRef}",
-          "status": "unpublished",
+          "status": "published",
           "data": {
               "items": [${itemRefIds}],
               "config": {
