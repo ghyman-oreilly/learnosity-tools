@@ -327,14 +327,15 @@ async function readHTML() {
         questionBodies.push(questionBody);
 
         // create refIds for questions
-        let refIds = await generateIDs(questionBodies.length, 'questions');
+        let questionrefIds = [];
+        questionrefIds = await generateIDs(questionBodies.length, 'questions');
 
         // loop through question bodies, adding refIds
-        if (questionBodies.length == refIds.length) {
+        if (questionBodies.length == questionrefIds.length) {
           for (k = 0; k < questionBodies.length; k++) {
             let questionBody = JSON.parse(questionBodies[k]);
-            let refId = refIds[k];
-            questionBody.reference = refId;
+            let questionrefId = questionrefIds[k];
+            questionBody.reference = questionrefId;
             questionBodies[k] = JSON.stringify(questionBody)
           }
         } else {
@@ -351,7 +352,7 @@ async function readHTML() {
     }
     return {
       quizzes: quizzes,
-      path: path
+      path: path,
     }
   } catch (error) {
     console.error('Error reading HTML:', error);
@@ -364,6 +365,9 @@ async function createQuizzes(){
     let quizzes = await readHTML();
     let path = quizzes.path;
     quizzes = quizzes.quizzes
+    let activities = [] // array for quizzes
+
+    // TODO: need to obtain questionbank and course IDs
 
     // TODO: potentially move logic for adding refids to question bodies here (see await generateIDs and loop that follows in readHTML)
 
@@ -385,13 +389,19 @@ async function createQuizzes(){
 
     let callapi
 
-    // TODO: create questions and return refIds
+    // generate quiz IDs
+    let quizRefIds = await generateIDs(quizzes.length, 'activities');
+
+    if (quizRefIds.length != quizzes.length) {
+      throw new Error('Number of quiz refIds did not match number of quizzes.');
+    }
+
     // loop through quizzes
     for (i = 0; i < quizzes.length; i++) {
       let quiz = quizzes[i];
       let questions = quiz.questionBodies;
-      let refIds = [];
-
+      let questionRefIds = [];
+      let itemRefIds = [];
       let body = `{"questions": [${questions}]}`
 
       // generate questions
@@ -401,28 +411,102 @@ async function createQuizzes(){
       for (let k = 0; k < questions.length; k++) {
         let question = questions[k];
         let questionRefId = JSON.parse(question).reference;
-        refIds.push({questionRefId: questionRefId});
+        questionRefIds.push(questionRefId);
       }
-      console.log(refIds);
-
-      // generate items
-
 
       // generate item IDs
-      // TODO: this may not work, because function is expecting an array of objects
-      // TODO: if it does work, returned value may be confusing, b/c members will contain multiple refIds (question and item)
-      refIds = await generateIDs(refIds, 'items');
+      itemRefIds = await generateIDs(questionRefIds.length, 'items');
 
-      console.log(refIds);
+      let items = [];
 
+      // prepare items
+      if (questionRefIds.length == itemRefIds.length) {
+        for (let k = 0; k < itemRefIds.length; k++) {
+          let itemRefId = itemRefIds[k];
+          let questionRefId = questionRefIds[k];
+
+          const item = `{
+            "reference": "${itemRefId}",
+            "metadata": null,
+            "definition": {
+                "widgets": [
+                    {
+                        "reference": "${questionRefId}"
+                    }
+                ]
+            },
+            "status": "published",
+            "questions": [
+                {
+                    "reference": "${questionRefId}"
+                }
+            ],
+            "tags": {
+              "Publisher": [
+                  "O'Reilly Media"
+              ]
+            }
+          }`
+
+          items.push(item);
+
+        }
+      } else {
+        throw new Error('Number of question refIds did not match number of item refIds.');
+      }
+
+      
+      body = `{"items": [${items}]}`
+
+      // generate items
+      callapi = await callDataAPI(body, 'set', 'items');
+
+      // prepare quizzes
+      let activityRefId = quizRefIds[i];
+      let quizTitle = quiz.quizTitle;
+      let quizType = quiz.quizType
+      
+      itemRefIds = '"' + itemRefIds.join('","') + '"'
+      const activity = `{
+          "title": "${quizTitle}",
+          "reference": "${activityRefId}",
+          "status": "unpublished",
+          "data": {
+              "items": [${itemRefIds}],
+              "config": {
+                  "configuration": {
+                      "shuffle_items": true
+                  },
+                  "regions": "main"
+              },
+              "rendering_type": "assess"
+          },
+          "tags": {
+              "Quiz Type": [
+                  "${quizType}"
+              ],
+              "Publisher": [
+                  "O'Reilly Media"
+              ],
+              "Question Bank FPID": [
+                  "TODO"
+              ],
+              "Course FPID": [
+                  "TODO"
+              ]
+            }
+          }`
+
+      activities.push(activity);
     }
-
-
-    // TODO: create refIds for items
-    // TODO: create items with item and question refIds, return item ref IDs
-    // TODO: create refIds for activities
-    // TODO: create activities with activity and item refIds, return activity refIds
  
+
+    // create quizzes
+    body = `{"activities": [${activities}]}`
+
+    callapi = await callDataAPI(body, 'set', 'activities');
+
+
   } catch (error) {
     console.error('Error creating quizzes: ', error);
     throw error; // Rethrow the error to propagate it up the chain
