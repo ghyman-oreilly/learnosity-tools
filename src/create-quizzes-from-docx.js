@@ -680,7 +680,6 @@ async function printRefIds(activities, docPath) {
 
         activities.forEach((activity) => {
           activity = JSON.parse(activity);
-          console.log(activity)
           outputStream.write(`Generated quiz with title ${activity.title} and ref Id: ${activity.reference}\n`)
           outputStream.write(`Generated items with ref Ids:\n`)
           activity.data.items.forEach((item) => {
