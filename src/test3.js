@@ -348,60 +348,131 @@ async function readHTML() {
 }
 
 async function createQuizzes(){
-  let quizzes = await readHTML();
+  try {
+    let quizzes = await readHTML();
+    let path = quizzes.path;
+    quizzes = quizzes.quizzes
+
+    // TODO: potentially move logic for adding refids to question bodies here (see await generateIDs in readHTML)
+
+    // print quiz details output and hold for user Y/N to proceed with quiz creation
+    let printOutput = await printQuizzes(quizzes, path);
+    let continueFlag = await inquirer.prompt({
+          type: 'list',
+          choices: ['Yes','No'],
+          name: 'continueFlag',
+          message: 'Please review the quiz details before continuing.\nDo you wish to proceed with creating the quizzes?',
+        });
+
+    continueFlag = continueFlag.continueFlag
+
+    if (continueFlag != 'Yes') {
+      console.log("Exiting...");
+      process.exit();
+    }
+
+    let callapi
+
+    // TODO: create questions and return refIds
+    // loop through quizzes
+    for (i = 0; i < quizzes.length; i++) {
+      let quiz = quizzes[i];
+      let questions = quiz.questionBodies;
+      let refIds = [];
+
+      let body = `{"questions": [${questions}]}`
+
+      // generate questions
+      callapi = await callDataAPI(body, 'set', 'questions');
+
+      // collect question IDs
+      for (k = 0; k < questions.length; k++) {
+        let question = questions[k];
+        let questionRefId = JSON.parse(question).reference;
+        refIds.push({questionRefId: questionRefId});
+      }
+      console.log(refIds);
+
+      // generate items
+
+
+      // generate item IDs
+      // TODO: this may not work, because function is expecting an array of objects
+      // TODO: if it does work, returned value may be confusing, b/c members will contain multiple refIds (question and item)
+      refIds = await generateIDs(refIds, 'items');
+
+      console.log(refIds);
+
+    }
+
+
+    // TODO: create refIds for items
+    // TODO: create items with item and question refIds, return item ref IDs
+    // TODO: create refIds for activities
+    // TODO: create activities with activity and item refIds, return activity refIds
+ 
+  } catch (error) {
+    console.error('Error creating quizzes: ', error);
+    throw error; // Rethrow the error to propagate it up the chain
+  }
 }
 
-async function generateIDs(objArray, endpoint) {
-  let refIds = [];
-  let newArray = [];
+async function generateIDs(objArr, endpoint) {
+  try {
+    let refIds = [];
+    let newArray = [];
 
-  // Generate reference IDs for each object
-  for (let i = 0; i < objArray.length; i++) {
-    let refId = uuid.v4();
-    refIds.push(refId);
-  }
-
-  // Function to check if refIds are unique
-  const checkID = async (refIds, endpoint) => {
-    const body = JSON.stringify({ references: refIds });
-    const response = await callDataAPI(body, 'get', endpoint);
-    const records = response.meta.records;
-    return records;
-  };
-
-  // Check if any reference IDs are not unique
-  let records = await checkID(refIds, endpoint);
-  let tries = 0;
-
-  // Continue generating new reference IDs until all are unique
-  while (records !== 0 && tries <= 5) {
-    for (let i = 0; i < objArray.length; i++) {
-      refIds[i] = uuid.v4();
+    // Generate reference IDs for each object
+    for (let i = 0; i < objArr.length; i++) {
+      let refId = uuid.v4();
+      refIds.push(refId);
     }
-    records = await checkID(refIds, endpoint);
-    tries++;
 
-    if (tries === 5) {
-      console.log("Unable to produce unique IDs in 5 tries. Exiting...");
-      return null;
+    // Function to check if refIds are unique
+    const checkID = async (refIds, endpoint) => {
+      const body = JSON.stringify({ references: refIds });
+      const response = await callDataAPI(body, 'get', endpoint);
+      const records = response.meta.records;
+      return records;
+    };
+
+    // Check if any reference IDs are not unique
+    let records = await checkID(refIds, endpoint);
+    let tries = 0;
+
+    // Continue generating new reference IDs until all are unique
+    while (records !== 0 && tries <= 5) {
+      for (let i = 0; i < objArr.length; i++) {
+        refIds[i] = uuid.v4();
+      }
+      records = await checkID(refIds, endpoint);
+      tries++;
+
+      if (tries === 5) {
+        console.log("Unable to produce unique IDs in 5 tries. Exiting...");
+        return null;
+      }
     }
+
+    if (objArr.length != refIds.length) {
+      console.log("Problem generating refIds. Exiting...");
+    }
+
+    // merge refIds with objects
+    for (let i = 0; i < objArr.length; i++) {
+      let object = JSON.parse(objArr[i]);
+      let refId = refIds[i];
+
+      object.reference = refId;
+      newArray.push(JSON.stringify(object));
+      
+    }
+
+    return newArray;
+  } catch {
+    console.error('Error generating IDs: ', error);
+    throw error; // Rethrow the error to propagate it up the chain
   }
-
-  if (objArray.length != refIds.length) {
-    console.log("Problem generating refIds. Exiting...");
-  }
-
-  // merge refIds with objects
-  for (let i = 0; i < objArray.length; i++) {
-    let object = JSON.parse(objArray[i]);
-    let refId = refIds[i];
-
-    object.reference = refId;
-    newArray.push(JSON.stringify(object));
-    
-  }
-
-  return newArray;
 }
 
 async function callDataAPI(body, action, endpoint){
@@ -464,17 +535,13 @@ async function callDataAPI(body, action, endpoint){
     .then(response => {
       return response
     })
-    .catch(error => console.log('there was an error', error))
+    .catch(error => console.log('There was an error calling the Learnosity API: ', error))
   
   return response
 }
 
-async function printQuizzes() {
-    try {
-        let quizzes = await readHTML();
-        const docPath = quizzes.path;
-        quizzes = quizzes.quizzes;
-        
+async function printQuizzes(quizzes, docPath) {
+    try {        
         const outputFilePath = path.join(docPath, 'output.txt');
         const outputStream = fs.createWriteStream(outputFilePath);
 
@@ -491,11 +558,11 @@ async function printQuizzes() {
         });
 
         outputStream.end();
-        console.log(`Output written to ${outputFilePath}`);
+        console.log(`Quiz details written to ${outputFilePath}`);
     } catch (error) {
         console.error('Error writing output:', error);
     }
 }
 
-printQuizzes();
+createQuizzes();
 
