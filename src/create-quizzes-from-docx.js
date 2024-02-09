@@ -492,7 +492,7 @@ async function createQuizzes(){
       const activity = `{
           "title": "${quizTitle}",
           "reference": "${activityRefId}",
-          "status": "unpublished",
+          "status": "published",
           "data": {
               "items": [${itemRefIds}],
               "config": {
