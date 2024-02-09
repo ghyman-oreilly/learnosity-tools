@@ -326,8 +326,20 @@ async function readHTML() {
         questionBody = createQuestionBody(multipleResponses, options, correctOptions, questionStem, rationales);
         questionBodies.push(questionBody);
 
-        // add reference Ids to question bodies
-        questionBodies = await generateIDs(questionBodies, 'questions');
+        // create refIds for questions
+        let refIds = await generateIDs(questionBodies.length, 'questions');
+
+        // loop through question bodies, adding refIds
+        if (questionBodies.length == refIds.length) {
+          for (k = 0; k < questionBodies.length; k++) {
+            let questionBody = JSON.parse(questionBodies[k]);
+            let refId = refIds[k];
+            questionBody.reference = refId;
+            questionBodies[k] = JSON.stringify(questionBody)
+          }
+        } else {
+          throw new Error('Number of refIds does not match number of questions.');
+        }
 
         const quiz = {
           quizTitle: quizTitle,
@@ -353,7 +365,7 @@ async function createQuizzes(){
     let path = quizzes.path;
     quizzes = quizzes.quizzes
 
-    // TODO: potentially move logic for adding refids to question bodies here (see await generateIDs in readHTML)
+    // TODO: potentially move logic for adding refids to question bodies here (see await generateIDs and loop that follows in readHTML)
 
     // print quiz details output and hold for user Y/N to proceed with quiz creation
     let printOutput = await printQuizzes(quizzes, path);
@@ -386,7 +398,7 @@ async function createQuizzes(){
       callapi = await callDataAPI(body, 'set', 'questions');
 
       // collect question IDs
-      for (k = 0; k < questions.length; k++) {
+      for (let k = 0; k < questions.length; k++) {
         let question = questions[k];
         let questionRefId = JSON.parse(question).reference;
         refIds.push({questionRefId: questionRefId});
@@ -417,13 +429,12 @@ async function createQuizzes(){
   }
 }
 
-async function generateIDs(objArr, endpoint) {
+async function generateIDs(num, endpoint) {
   try {
     let refIds = [];
-    let newArray = [];
 
     // Generate reference IDs for each object
-    for (let i = 0; i < objArr.length; i++) {
+    for (let i = 0; i < num; i++) {
       let refId = uuid.v4();
       refIds.push(refId);
     }
@@ -454,21 +465,11 @@ async function generateIDs(objArr, endpoint) {
       }
     }
 
-    if (objArr.length != refIds.length) {
+    if (num != refIds.length) {
       console.log("Problem generating refIds. Exiting...");
     }
 
-    // merge refIds with objects
-    for (let i = 0; i < objArr.length; i++) {
-      let object = JSON.parse(objArr[i]);
-      let refId = refIds[i];
-
-      object.reference = refId;
-      newArray.push(JSON.stringify(object));
-      
-    }
-
-    return newArray;
+    return refIds
   } catch {
     console.error('Error generating IDs: ', error);
     throw error; // Rethrow the error to propagate it up the chain
