@@ -651,7 +651,7 @@ async function callDataAPI(body, action, endpoint){
 
 async function printQuizzes(quizzes, docPath) {
     try {        
-        const outputFilePath = path.join(docPath, 'quiz-details.txt');
+        const outputFilePath = path.join(docPath, 'review-file.txt');
         const outputStream = fs.createWriteStream(outputFilePath);
 
         quizzes.forEach((quiz, index) => {
@@ -674,12 +674,12 @@ async function printQuizzes(quizzes, docPath) {
 
 async function printRefIds(activities, docPath) {
     try {        
-        const outputFilePath = path.join(docPath, 'refIds.txt');
+        const outputFilePath = path.join(docPath, 'ref-ids.txt');
         const outputStream = fs.createWriteStream(outputFilePath, {flags:'a'});
 
         activities.forEach((activity) => {
           activity = JSON.parse(activity);
-          outputStream.write(`Generated quiz with title ${activity.title} and ref Id: ${activity.reference}\n`)
+          outputStream.write(`Generated quiz with title "${activity.title}" and ref Id: ${activity.reference}\n`)
           outputStream.write(`Generated items with ref Ids:\n`)
           activity.data.items.forEach((item) => {
             outputStream.write(`${item}\n`)
