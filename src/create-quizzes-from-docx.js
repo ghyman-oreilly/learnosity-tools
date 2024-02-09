@@ -16,12 +16,24 @@ async function getUserInput() {
         name: 'src',
         message: 'Please provide the filepath of the DOCX file to convert: ',
       },
+      {
+        type: 'input',
+        name: 'questionBankISBN',
+        message: 'Please provide the question bank ISBN: ',
+      },
+      {
+        type: 'input',
+        name: 'courseID',
+        message: 'Please provide the course FPID or book ISBN: ',
+      }
     ];
 
     const answers = await inquirer.prompt(questions);
 
     return {
       src: answers['src'],
+      questionBankISBN: answers['questionBankISBN'],
+      courseID: answers['courseID']
     };
   } catch (error) {
     console.error('Error getting user input:', error);
@@ -36,10 +48,14 @@ async function processFilepath() {
     // Check if userinput is not null or undefined before accessing its properties
     if (userinput && userinput.src) {
       const src = userinput.src;
+      const questionBankISBN = userinput.questionBankISBN;
+      const courseID = userinput.courseID;
       const output = src.substring(0, src.lastIndexOf('/'));
 
       return {
         src: src,
+        questionBankISBN: questionBankISBN,
+        courseID: courseID,
         output: output,
       };
     } else {
@@ -57,6 +73,8 @@ async function convertDOCXtoHTML() {
     
     if (filepaths && filepaths.src && filepaths.output) {
       const src = filepaths.src;
+      const questionBankISBN = filepaths.questionBankISBN;
+      const courseID = filepaths.courseID;
       const path = filepaths.output;
 
       const args = ['-f', 'docx+styles', '-t', 'html5', '--wrap=none'];
@@ -69,6 +87,8 @@ async function convertDOCXtoHTML() {
 
       return {
         doc: doc,
+        questionBankISBN: questionBankISBN,
+        courseID: courseID,
         path: path,
       };
     } else {
@@ -89,6 +109,8 @@ async function readHTML() {
     }
     
     let source = docinfo.doc;
+    const questionBankISBN = docinfo.questionBankISBN;
+    const courseID = docinfo.courseID;
     const path = docinfo.path;
 
     source = '<!DOCTYPE html><html><head></head><body>' + source + '</body></html>';
@@ -353,6 +375,8 @@ async function readHTML() {
     return {
       quizzes: quizzes,
       path: path,
+      questionBankISBN: questionBankISBN,
+      courseID: courseID
     }
   } catch (error) {
     console.error('Error reading HTML:', error);
@@ -364,12 +388,10 @@ async function createQuizzes(){
   try {
     let quizzes = await readHTML();
     let path = quizzes.path;
+    let questionBankISBN = quizzes.questionBankISBN;
+    let courseID = quizzes.courseID;
     quizzes = quizzes.quizzes
     let activities = [] // array for quizzes
-
-    // TODO: need to obtain questionbank and course IDs
-
-    // TODO: potentially move logic for adding refids to question bodies here (see await generateIDs and loop that follows in readHTML)
 
     // print quiz details output and hold for user Y/N to proceed with quiz creation
     let printOutput = await printQuizzes(quizzes, path);
@@ -489,15 +511,16 @@ async function createQuizzes(){
                   "O'Reilly Media"
               ],
               "Question Bank FPID": [
-                  "TODO"
+                  "${questionBankISBN}"
               ],
               "Course FPID": [
-                  "TODO"
+                  "${courseID}"
               ]
             }
           }`
 
       activities.push(activity);
+    
     }
  
 
@@ -506,6 +529,7 @@ async function createQuizzes(){
 
     callapi = await callDataAPI(body, 'set', 'activities');
 
+    printRefIds(activities, path);
 
   } catch (error) {
     console.error('Error creating quizzes: ', error);
@@ -646,6 +670,29 @@ async function printQuizzes(quizzes, docPath) {
         console.log(`Quiz details written to ${outputFilePath}`);
     } catch (error) {
         console.error('Error writing output:', error);
+    }
+}
+
+async function printRefIds(activities, docPath) {
+    try {        
+        const outputFilePath = path.join(docPath, 'refIds.txt');
+        const outputStream = fs.createWriteStream(outputFilePath, {flags:'a'});
+
+        activities.forEach((activity) => {
+          activity = JSON.parse(activity);
+          console.log(activity)
+          outputStream.write(`Generated quiz with title ${activity.title} and ref Id: ${activity.reference}\n`)
+          outputStream.write(`Generated items with ref Ids:\n`)
+          activity.data.items.forEach((item) => {
+            outputStream.write(`${item}\n`)
+          });
+          outputStream.write('\n')
+        });
+
+        outputStream.end();
+        console.log(`Ref ids of created quiz elements written to ${outputFilePath}`);
+    } catch (error) {
+        console.error('Error writing ref Ids to file: ', error);
     }
 }
 
