@@ -223,38 +223,54 @@ async function readHTML() {
 
     // function to create question body from elements
     function createQuestionBody(multipleResponses, options, correctOptions, questionStem, rationales) {
-      multipleResponses = JSON.stringify(multipleResponses);
-      options = JSON.stringify(options);
-      correctOptions = JSON.stringify(correctOptions);
-      questionStem = JSON.stringify(questionStem);
-      rationales = JSON.stringify(rationales);
+      try {
 
-      let questionBody = `{
-              "type": "mcq",
-              "reference": "",
-              "data": {
-              "multiple_responses": ${multipleResponses},
-              "options": ${options},
-              "stimulus": ${questionStem},
-              "type": "mcq",
-              "validation": {
-                  "scoring_type": "exactMatch",
-                  "valid_response": {
-                      "score": 1,
-                      "value": ${correctOptions}
-                  }
-              },
-              "ui_style": {
-                  "type": "horizontal"
-              },
-              "metadata": {
-                  "distractor_rationale_response_level": ${rationales}
-              },
-              "shuffle_options": true
-          }
-          }
-      `;
-      return questionBody
+        if (!correctOptions || correctOptions.length < 1) {
+          console.log('Question is missing a correct answer flag: ' + questionStem);
+          throw new Error('At least one quiz question is missing a correct answer flag. Please fix and rerun.')
+        }
+        
+        if (!options || !rationales || options.length != rationales.length) {
+          console.log('Question has unequal number of options and rationales ' + questionStem);
+          throw new Error('At least one quiz question has an unequal number of options and rationales. Please fix and rerun.')
+        }
+
+        multipleResponses = JSON.stringify(multipleResponses);
+        options = JSON.stringify(options);
+        correctOptions = JSON.stringify(correctOptions);
+        questionStem = JSON.stringify(questionStem);
+        rationales = JSON.stringify(rationales);
+
+        let questionBody = `{
+                "type": "mcq",
+                "reference": "",
+                "data": {
+                "multiple_responses": ${multipleResponses},
+                "options": ${options},
+                "stimulus": ${questionStem},
+                "type": "mcq",
+                "validation": {
+                    "scoring_type": "exactMatch",
+                    "valid_response": {
+                        "score": 1,
+                        "value": ${correctOptions}
+                    }
+                },
+                "ui_style": {
+                    "type": "horizontal"
+                },
+                "metadata": {
+                    "distractor_rationale_response_level": ${rationales}
+                },
+                "shuffle_options": true
+            }
+            }
+        `;
+        return questionBody
+      } catch {
+        console.error('Error creating question body:', error);
+        throw error;
+      }
     }
 
     let quizCounter = 0;
