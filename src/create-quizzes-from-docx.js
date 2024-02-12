@@ -349,14 +349,14 @@ async function readHTML() {
         questionBodies.push(questionBody);
 
         // create refIds for questions
-        let questionrefIds = [];
-        questionrefIds = await generateIDs(questionBodies.length, 'questions');
+        let questionRefIds = [];
+        questionRefIds = await generateIDs(questionBodies.length, 'questions');
 
         // loop through question bodies, adding refIds
-        if (questionBodies.length == questionrefIds.length) {
+        if (questionBodies.length == questionRefIds.length) {
           for (k = 0; k < questionBodies.length; k++) {
             let questionBody = JSON.parse(questionBodies[k]);
-            let questionrefId = questionrefIds[k];
+            let questionrefId = questionRefIds[k];
             questionBody.reference = questionrefId;
             questionBodies[k] = JSON.stringify(questionBody)
           }
@@ -367,7 +367,8 @@ async function readHTML() {
         const quiz = {
           quizTitle: quizTitle,
           quizType: quizType,
-          questionBodies: questionBodies
+          questionBodies: questionBodies,
+          questionRefIds: questionRefIds
         };
         quizzes.push(quiz);
 
@@ -422,19 +423,12 @@ async function createQuizzes(){
     for (i = 0; i < quizzes.length; i++) {
       let quiz = quizzes[i];
       let questions = quiz.questionBodies;
-      let questionRefIds = [];
+      let questionRefIds = quiz.questionRefIds;
       let itemRefIds = [];
       let body = `{"questions": [${questions}]}`
 
       // generate questions
       callapi = await callDataAPI(body, 'set', 'questions');
-
-      // collect question IDs
-      for (let k = 0; k < questions.length; k++) {
-        let question = questions[k];
-        let questionRefId = JSON.parse(question).reference;
-        questionRefIds.push(questionRefId);
-      }
 
       // generate item IDs
       itemRefIds = await generateIDs(questionRefIds.length, 'items');
