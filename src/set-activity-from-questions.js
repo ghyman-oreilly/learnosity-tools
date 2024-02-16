@@ -9,58 +9,66 @@ const inquirer = require('inquirer');
 
 
 async function getUserInput(){
+  try {
+    const questions = [
+      {
+        type: 'input',
+        name: 'dir',
+        default: './',
+        message: "Please provide the filepath of this module's question JSON files: ",
+      },
+      {
+        type: 'input',
+        name: 'title',
+        message: "What is the name of the activity?",
+      },
+      {
+        type: 'list',
+        name: 'quizType',
+        message: "What type of quiz activity is this?",
+        choices: ["Formative", "Summative"]
+      },
+      {
+        type: 'input',
+        name: 'questionBankFPID',
+        message: "What is the Question Bank FPID?",
+      },
+      {
+        type: 'input',
+        name: 'courseFPID',
+        message: "What is the Course FPID?",
+      },
+    ];
 
-  const questions = [
-    {
-      type: 'input',
-      name: 'dir',
-      default: './',
-      message: "Please provide the filepath of this module's question JSON files: ",
-    },
-    {
-      type: 'input',
-      name: 'title',
-      message: "What is the name of the activity?",
-    },
-    {
-      type: 'list',
-      name: 'quizType',
-      message: "What type of quiz activity is this?",
-      choices: ["Formative", "Summative"]
-    },
-    {
-      type: 'input',
-      name: 'questionBankFPID',
-      message: "What is the Question Bank FPID?",
-    },
-    {
-      type: 'input',
-      name: 'courseFPID',
-      message: "What is the Course FPID?",
-    },
-  ];
+    const answers = await inquirer
+    .prompt(questions)
+    .then((answers) => {  
+      return {
+        dir: answers['dir'],
+        title: answers['title'],
+        quizType: answers['quizType'],
+        questionBankFPID: answers['questionBankFPID'],
+        courseFPID: answers['courseFPID'],
+      }
+    })
+    .catch((error) => {
+      if (error.isTtyError) {
+        // Issue rendering prompts
+      } else {
+        // Something else went wrong
+      }
+    });
 
-  const answers = await inquirer
-  .prompt(questions)
-  .then((answers) => {
-    return {
-      dir: answers['dir'],
-      title: answers['title'],
-      quizType: answers['quizType'],
-      questionBankFPID: answers['questionBankFPID'],
-      courseFPID: answers['courseFPID'],
+    if (!answers || !answers.dir || !answers.title || !answers.quizType || !answers.questionBankFPID || !answers.courseFPID) {
+        throw new Error("All prompt fields must contain a value. Please run the script again.");
     }
-  })
-  .catch((error) => {
-    if (error.isTtyError) {
-      // Prompt couldn't be rendered in the current environment
-    } else {
-      // Something else went wrong
-    }
-  });
 
-  return answers
+    return answers
 
+  } catch(error) {
+      console.error('Error getting user input: ', error);
+      throw error;
+  }
 }
 
 async function readFilesSync(dir) {
