@@ -23,7 +23,8 @@
     "set-activities": "npm install && node ./src/set-activities.js",
     "set-activity-from-questions": "npm install && node ./src/set-activity-from-questions.js",
     "get-tags": "npm install && node ./src/get-tags.js",
-    "convert-docx": "npm install && node ./src/convert-docx.js"
+    "convert-docx": "npm install && node ./src/convert-docx.js",
+    "create-quizzes-from-docx": "npm install && node ./src/create-quizzes-from-docx.js"
   },
   "author": "Greg Hyman",
   "license": "ISC"
