@@ -119,7 +119,7 @@ async function readHTML() {
     function clean(node) {
       for(var n = 0; n < node.childNodes.length; n ++) {
         var child = node.childNodes[n];
-        if (child.nodeType === 8 || (child.nodeType === 3 && !/\S/.test(child.nodeValue))) {
+        if (child.nodeType === 8 || (child.nodeType === 3 && !/\S/.test(child.nodeValue) && !/^\u00A0*$/.test(child.nodeValue))) { // remove comments, and text nodees that contain only whitespace (unless whitespace is nonbreaking spaces)
           node.removeChild(child);
           n --;
         }
@@ -131,7 +131,14 @@ async function readHTML() {
 
     // remove useless nodes from doc
     clean(doc)
-    
+
+    // // Serialize XML to string
+    // const serializer = new XMLSerializer();
+    // const xmlString = serializer.serializeToString(doc);
+
+    // // Output the XML string for analysis/debugging
+    // console.log(xmlString);
+   
     // Combine continuation elements with their predecessors
     let continuationElements = xpath.select('//div[contains(@data-custom-style, "Continued")]', doc);
     while (continuationElements.length > 0) {
