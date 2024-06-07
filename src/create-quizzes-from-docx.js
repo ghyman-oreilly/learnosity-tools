@@ -25,15 +25,23 @@ async function getUserInput() {
         type: 'input',
         name: 'courseID',
         message: 'Please provide the course FPID or book ISBN: ',
+      },
+      {
+        type: 'list',
+        name: 'hasRationales',
+        choices: ["Yes", "No"],
+        message: 'Do your quizzes have rationales?',
       }
     ];
 
     const answers = await inquirer.prompt(questions);
+    let hasRationales = answers['hasRationales'] === "Yes"; // convert to boolean
 
     return {
       src: answers['src'],
       questionBankISBN: answers['questionBankISBN'],
-      courseID: answers['courseID']
+      courseID: answers['courseID'],
+      hasRationales: hasRationales
     };
   } catch (error) {
     console.error('Error getting user input:', error);
@@ -50,12 +58,14 @@ async function processFilepath() {
       const src = userinput.src;
       const questionBankISBN = userinput.questionBankISBN;
       const courseID = userinput.courseID;
+      const hasRationales = userinput.hasRationales;
       const output = src.substring(0, src.lastIndexOf('/'));
 
       return {
         src: src,
         questionBankISBN: questionBankISBN,
         courseID: courseID,
+        hasRationales: hasRationales,
         output: output,
       };
     } else {
@@ -75,6 +85,7 @@ async function convertDOCXtoHTML() {
       const src = filepaths.src;
       const questionBankISBN = filepaths.questionBankISBN;
       const courseID = filepaths.courseID;
+      const hasRationales = filepaths.hasRationales;
       const path = filepaths.output;
 
       const args = ['-f', 'docx+styles', '-t', 'html5', '--wrap=none'];
@@ -89,6 +100,7 @@ async function convertDOCXtoHTML() {
         doc: doc,
         questionBankISBN: questionBankISBN,
         courseID: courseID,
+        hasRationales: hasRationales,
         path: path,
       };
     } else {
@@ -111,6 +123,7 @@ async function readHTML() {
     let source = docinfo.doc;
     const questionBankISBN = docinfo.questionBankISBN;
     const courseID = docinfo.courseID;
+    const hasRationales = docinfo.hasRationales;
     const path = docinfo.path;
 
     source = '<!DOCTYPE html><html><head></head><body>' + source + '</body></html>';
@@ -229,7 +242,7 @@ async function readHTML() {
     }
 
     // function to create question body from elements
-    function createQuestionBody(multipleResponses, options, correctOptions, questionStem, rationales) {
+    function createQuestionBody(hasRationales, multipleResponses, options, correctOptions, questionStem, rationales) {
       try {
 
         if (!correctOptions || correctOptions.length < 1) {
@@ -237,7 +250,7 @@ async function readHTML() {
           throw new Error('At least one quiz question is missing a correct answer flag. Please fix and rerun.')
         }
         
-        if (!options || !rationales || options.length != rationales.length) {
+        if (hasRationales && (!options || !rationales || options.length != rationales.length)) {
           console.log('Question has unequal number of options and rationales ' + questionStem);
           throw new Error('At least one quiz question has an unequal number of options and rationales. Please fix and rerun.')
         }
@@ -246,7 +259,7 @@ async function readHTML() {
         options = JSON.stringify(options);
         correctOptions = JSON.stringify(correctOptions);
         questionStem = JSON.stringify(questionStem);
-        rationales = JSON.stringify(rationales);
+        rationales = hasRationales ? JSON.stringify(rationales) : null;
 
         let questionBody = `{
                 "type": "mcq",
@@ -331,7 +344,7 @@ async function readHTML() {
                 // if questionCounter > 1, record previous question
                 // creates and pushes questionBody for all but last question in a given quiz
                 if (questionCounter > 1) {
-                  questionBody = createQuestionBody(multipleResponses, options, correctOptions, questionStem, rationales);
+                  questionBody = createQuestionBody(hasRationales, multipleResponses, options, correctOptions, questionStem, rationales);
                   questionBodies.push(questionBody);
                 }
 
@@ -368,7 +381,7 @@ async function readHTML() {
         }
 
         // create a push questionBody for last question in a given quiz
-        questionBody = createQuestionBody(multipleResponses, options, correctOptions, questionStem, rationales);
+        questionBody = createQuestionBody(hasRationales, multipleResponses, options, correctOptions, questionStem, rationales);
         questionBodies.push(questionBody);
 
         // create refIds for questions
