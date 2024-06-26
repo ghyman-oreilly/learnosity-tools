@@ -1,6 +1,6 @@
 // Vanilla node.js example with no dependencies required.
 const Learnosity = require('learnosity-sdk-nodejs');
-const config = require('./config'); // Load consumer key & secret from config.js
+const config = require('../config'); // Load consumer key & secret from config.js
 
 /*
 * NOTE: 
