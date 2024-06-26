@@ -255,12 +255,24 @@ async function readHTML() {
           throw new Error('At least one quiz question has an unequal number of options and rationales. Please fix and rerun.')
         }
 
+        const optionsLen = options.length;
         multipleResponses = JSON.stringify(multipleResponses);
         options = JSON.stringify(options);
         correctOptions = JSON.stringify(correctOptions);
         questionStem = JSON.stringify(questionStem);
         rationales = hasRationales ? JSON.stringify(rationales) : null;
+        let shouldShuffle = true;
 
+        const shuffleTwoOptionQuestions = config.shuffleTwoOptionQuestions; // flag (possibly temporary) to allow toggling of behavior to shuffle two-option questions (e.g., True/False questions)
+
+        if (typeof shuffleTwoOptionQuestions !== 'boolean') {
+          throw new Error('The `shuffleTwoOptionQuestions` flag in config.js must be set to `true` or `false`.')
+        }
+
+        if (shuffleTwoOptionQuestions == false && optionsLen == 2) {
+          shouldShuffle = false;
+        }
+  
         let questionBody = `{
                 "type": "mcq",
                 "reference": "",
@@ -282,7 +294,7 @@ async function readHTML() {
                 "metadata": {
                     "distractor_rationale_response_level": ${rationales}
                 },
-                "shuffle_options": true
+                "shuffle_options": ${shouldShuffle}
             }
             }
         `;
