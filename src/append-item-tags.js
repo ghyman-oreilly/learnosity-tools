@@ -28,9 +28,9 @@ async function main() {
 	const dir = await processFilepath(idsFilepath);
 	const activityRefIds = await readReferenceIdsFromTxtFile(idsFilepath);
 	const tags = await readJSONFromFile(tagsFilepath);
-	let activities = await getEntities(activityRefIds, "activities");
+	let activities = await getEntities({entityType: "activities", refIds: activityRefIds});
 	let itemRefIds = getItemReferenceIdsFromActivities(activities);
-	// let items = await getEntities(itemRefIds, "items"); // this could be used if we were going to add the stems to the confirmation file, say
+	// let items = await getEntities({entityType: "items", refIds: itemRefIds}); // this could be used if we were going to add the stems to the confirmation file, say
 
 	let reviewTxt = `Activities with items to be tagged: ${activityRefIds}\n\nItems to be tagged: ${itemRefIds}\n\nTags to be appended:\n${JSON.stringify(tags)}`
 	const unixTimestampMillis = Date.now();
