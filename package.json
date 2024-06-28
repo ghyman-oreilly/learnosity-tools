@@ -16,7 +16,6 @@
   },
   "scripts": {
     "get-activity-items": "npm install && node ./src/get-activity-items.js",
-    "append-item-tags": "npm install && node ./src/examples/append-item-tags.js",
     "get-questions": "npm install && node ./src/examples/get-questions.js",
     "get-activities": "npm install && node ./src/examples/get-activities.js",
     "set-questions": "npm install && node ./src/examples/set-questions.js",
@@ -26,6 +25,7 @@
     "get-tags": "npm install && node ./src/examples/get-tags.js",
     "convert-docx": "npm install && node ./src/convert-docx.js",
     "create-quizzes-from-docx": "npm install && node ./src/create-quizzes-from-docx.js",
+    "append-item-tags": "npm install && node ./src/append-item-tags.js",
     "archive-activities-and-items": "npm install && node ./src/archive-activities-and-items.js"
   },
   "author": "Greg Hyman",
