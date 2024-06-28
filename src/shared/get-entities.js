@@ -1,11 +1,18 @@
 const { callDataAPI } = require('./call-learnosity');
 
-async function getEntities(refIds, entityType) {
+async function getEntities({entityType, refIds = null, customPayload = null}) {
   try {
-    const payloadObject = {
-      "references": refIds
-    };
-    
+    if (customPayload === null) {
+      if (refIds !== null) {
+        const payloadObject = {
+          "references": refIds
+        };   
+      } else {
+        throw error
+      } 
+    } else {
+      const payloadObject = customPayload;
+    }   
     const payloadBody = JSON.stringify(payloadObject);
     let entities = await callDataAPI(payloadBody, "get", entityType);
     entities = entities.data;
