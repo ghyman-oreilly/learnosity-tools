@@ -1,75 +1,69 @@
+<<<<<<<< HEAD:src/examples/append-item-tags.js
 // Vanilla node.js example with no dependencies required.
 const Learnosity = require('learnosity-sdk-nodejs');
 const config = require('../config'); // Load consumer key & secret from config.js
+========
+>>>>>>>> main:src/append-item-tags.js
 
-/*
-* NOTE: 
-* For this example native node Fetch API (still experimental) needs to be 
-* enabled, and then the following global functions and classes are made 
-* available: fetch(), Request, Response, Headers, FormData.
-* To enable Fetch in node you should use v18 or greater.
-* Run 'node --experimental-fetch' or 
-* 'node <FILENAME.js> --experimental-fetch' in the terminal to enable
-*/
+const getUserInput = require('./shared/get-user-input');
+const processFilepath = require('./shared/process-file-path');
+const readReferenceIdsFromTxtFile = require('./shared/read-ids-from-txt-file');
+const getEntities = require('./shared/get-entities');
+const getItemReferenceIdsFromActivities = require('./shared/get-item-ref-ids-from-activities');
+const printToFile = require('./shared/print-to-file');
+const promptUserToConfirmContinue = require('./shared/prompt-to-confirm-continue');
+const appendTagsToEntities = require('./shared/append-tags-to-entities');
+const readJSONFromFile = require('./shared/read-json-from-file');
 
+async function main() {
+  const questions = [
+      {
+        type: 'input',
+        name: 'idsSrc',
+        message: 'Please provide the filepath of the text file containing the ACTIVITY ref IDs for the ITEMS to which you wish to append tags (one ID per line): ',
+      },
+	  {
+        type: 'input',
+        name: 'tagsSrc',
+        message: 'Please provide the filepath of the JSON file containing the tags you wish to append to the items (file must contain valid JSON): ',
+      }
+    ];
+	const answers = await getUserInput(questions);
+	let idsFilepath = answers.idsSrc;
+	let tagsFilepath = answers.tagsSrc;
+	const dir = await processFilepath(idsFilepath);
+	const activityRefIds = await readReferenceIdsFromTxtFile(idsFilepath);
+	const tags = await readJSONFromFile(tagsFilepath);
+	let activities = await getEntities(activityRefIds, "activities");
+	let itemRefIds = getItemReferenceIdsFromActivities(activities);
+	// let items = await getEntities(itemRefIds, "items"); // this could be used if we were going to add the stems to the confirmation file, say
 
-// Instantiate the SDK
-const learnositySdk = new Learnosity();
+	let reviewTxt = `Activities with items to be tagged: ${activityRefIds}\n\nItems to be tagged: ${itemRefIds}\n\nTags to be appended:\n${JSON.stringify(tags)}`
+	const unixTimestampMillis = Date.now();
+	const reviewFilename = `review-file-${unixTimestampMillis}.txt`
+ 
+	const { confirmationFilePrinted, confirmationFilepath } = await printToFile(reviewTxt, dir, reviewFilename);
 
-// Set the web server domain
-const domain = 'localhost';
+	if (confirmationFilePrinted && confirmationFilepath) {
+		console.log(`Confirmation file written to ${confirmationFilepath}`);
+	}
+    
+	const continueMessage = "Please review the confirmation file and indicate whether you wish to continue:"
+	const continueFlag = await promptUserToConfirmContinue(continueMessage);
 
-// Generate a Learnosity API initialization packet to the Data API
-const dataAPIRequest = learnositySdk.init(
-  // Set the service type
-  'data',
+    if (continueFlag != 'Yes') {
+      console.log("Exiting...");
+      process.exit();
+    }
 
-  // Security details - dataAPIRequest.security 
-  {
-      consumer_key: config.consumerKey, // Your actual consumer key goes here 
-      domain:       domain, // Your actual domain goes here
-      user_id:      '110961' // GH user id
-  },
-  // secret 
-  config.consumerSecret, // Your actual consumer secret here
-  
-    {"items": [{"reference":"2e1d0183-a8ac-493e-8050-c8d156d58f93","tags":[{"type": "Publisher","name":"O'Reilly Media"}]}]}
-  ,
-    'update'
-);
+	let appendCallResponse = await appendTagsToEntities("items", itemRefIds, tags)
 
-const form = new FormData();
-/* Note: the same can be accomplished with using URLSearchParams 
-(https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
-const form = new URLSearchParams()
-*/
-form.append("security", dataAPIRequest.security);
-form.append("request", dataAPIRequest.request);
-form.append("action", dataAPIRequest.action);
+	if (appendCallResponse.meta.status === true) {
+	console.log(`Items tags succesfully updated...`)
+	} else {
+	console.log(`API response (see below) indicates item tags may not have been successfully updated. Please check...\n${JSON.stringify(appendCallResponse)}`)
+	}
 
-/* Define an async/await data api call function that takes in the following:
-*
-* @param endpoint : string
-* @param requestParams : object
-*
-*/
-const makeDataAPICall = async (endpoint, requestParams) => {
-  // Use 'await' save the successful response to a variable called dataAPIResponse
-  const dataAPIResponse = await fetch(endpoint, {
-    method: 'POST', // *GET, POST, PUT, DELETE, etc.
-    body: requestParams 
-  });
-  // Return the response JSON
-  return dataAPIResponse.json(); 
 }
 
-/* Now call the function, passing in the desired endpoint, and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
-
-makeDataAPICall('https://data.learnosity.com/v2022.1.LTS/itembank/items/tags', form)
-  .then(response => {
-  console.log(response)
-  })
-  .catch(error => console.log('there was an error', error))
-
-
-
+main();

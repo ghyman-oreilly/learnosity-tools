@@ -1,0 +1,17 @@
+{
+	"Level": [
+		"Beginner"
+	],
+	"Topic": [
+		"Business Negotiation",
+		"Promotions & Employee Development",
+		"Professional Communication"
+	],
+	"Role": [
+		"manager",
+		"engineering manager",
+		"senior software engineer",
+		"staff engineer",
+		"tech lead"
+	]
+}

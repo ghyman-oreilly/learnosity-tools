@@ -145,14 +145,92 @@ async function readHTML() {
     // remove useless nodes from doc
     clean(doc)
 
-    // // Serialize XML to string
-    // const serializer = new XMLSerializer();
-    // const xmlString = serializer.serializeToString(doc);
+    // define permitted values for each attribute to iterate over during cleanup
+    // exact strings and regex patterns can be used 
+    const permittedAttrValuesMap = {
+      "class": [/Quiz.*/, /Question.*/, "Code Block", "Inline Code", "table table-bordered lrn_width_auto"],
+      "style": null
+    }
+    // remove junk attributes from doc
+    removeJunkAttr(permittedAttrValuesMap);
 
-    // // Output the XML string for analysis/debugging
-    // console.log(xmlString);
+    // function to remove junk attributes
+    function removeJunkAttr(permittedAttrValuesMap) {
+      for (const [attr, permittedValues] of Object.entries(permittedAttrValuesMap)) {
+        const nodes = xpath.select(`//*[@${attr}]`, doc);
+        if (!permittedValues) {
+          nodes.forEach(node => {
+              node.removeAttribute(attr);
+          });
+        } else {
+          nodes.forEach(node => {
+              const attrValue = node.getAttribute(attr);
+
+              // Check if the attribute value matches any of the permitted values
+              const isValid = permittedValues.some(value => {
+                  // If the permitted value is a regex, test it against the attribute value
+                  if (value instanceof RegExp) {
+                      return value.test(attrValue);
+                  }
+                  // Otherwise, check for exact match
+                  return value === attrValue;
+              });
+
+              // If no match is found, remove the attribute
+              if (!isValid) {
+                  node.removeAttribute(attr);
+              }
+          });
+        }
+      }
+    }
+
+    // handle tables (move to preceding sibling and do some cleanup)
+    const tables = xpath.select('//table', doc);
+    const tableClassesToAdd = "table table-bordered lrn_width_auto"
+    removeChildrenFromParent(tables, './colgroup');
+    addClassesToElement(tables, tableClassesToAdd)
+    encloseElementsWithinPreviousSiblings(tables);
    
-    // Combine continuation elements with their predecessors
+    // function for removing particular child elements from parent elements
+    function removeChildrenFromParent(elements, childrenToRemoveXPATH) {
+      if (elements) {
+        for (const element of elements) {
+          const childrenToRemove = xpath.select(childrenToRemoveXPATH, element);
+          childrenToRemove.forEach(child => {
+              child.parentNode.removeChild(child);
+          });
+        }
+      }
+    }
+
+    // function to add specified classes to specified elements
+    function addClassesToElement(elements, classesToAdd) {
+        if (elements) {
+            elements.forEach(element => {
+              const existingClasses = element.getAttribute('class') || '';
+              const newClasses = `${existingClasses} ${classesToAdd}`.trim();
+              element.setAttribute('class', newClasses);
+            });
+        } else {
+            console.error('Invalid element provided.');
+        }
+    }
+
+    // function for handling tables and similar elements (move to enclose in previous sibling)
+    function encloseElementsWithinPreviousSiblings(elements) {
+      if (elements) {
+        for (const element of elements) {
+          console.log(element)
+          let previousSib = element.previousSibling;
+          if (previousSib) {
+            previousSib.appendChild(element);
+          }
+        }
+      }
+    }
+
+    // Combine continuation elements with their previous sibling
     let continuationElements = xpath.select('//div[contains(@data-custom-style, "Continued")]', doc);
     while (continuationElements.length > 0) {
         for (let i = continuationElements.length - 1; i >= 0; i--) {
