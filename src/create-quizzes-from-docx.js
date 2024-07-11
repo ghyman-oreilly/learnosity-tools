@@ -291,8 +291,11 @@ async function readHTML() {
       }
     }
 
+    // set variable from config option for removing mark tags
+    const stripMarksConfig = config.stripMarks;
+
     // function to clean up question elements
-    function elementCleanup(text){
+    function elementCleanup(text, stripMarks = stripMarksConfig){
       const strongReg = /(<strong>|<\/strong>)/gi;
       const itemPrefixReg = /^(\s*\<.[^\>]*\>)?\s*?((?:[A-Z]|(?:[0-9]*))\.\s*)/gim;
       const itemPrefixRegReplacement = "$1";
@@ -303,6 +306,12 @@ async function readHTML() {
       text = text.replace(strongReg,"");
       text = text.replace(itemPrefixReg, itemPrefixRegReplacement);
       text = text.replace(paraReg, paraRegReplacement); // this must come after the prefix replacement
+
+      // remove strip marks unless config specifies not to
+      if (stripMarks != 'undefined' && stripMarks != false) {
+        const markReg = /(<mark>|<\/mark>)/gi;
+        text = text.replace(markReg,"");
+      }
 
       return text
     }
