@@ -595,6 +595,9 @@ async function createQuizzes(){
             "tags": {
               "Publisher": [
                   "O'Reilly Media"
+              ],
+              "Course FPID": [
+                  "${courseID}"
               ]
             }
           }`
