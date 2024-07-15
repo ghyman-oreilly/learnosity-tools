@@ -31,17 +31,25 @@ async function getUserInput() {
         name: 'hasRationales',
         choices: ["Yes", "No"],
         message: 'Do your quizzes have rationales?',
-      }
+      },
+      {
+        type: 'list',
+        name: 'addTags',
+        choices: ["Yes", "No"],
+        message: 'Do you wish to add addl activity and item tags (e.g., Level, Topic, Role) via JSON file?',
+      },
     ];
 
     const answers = await inquirer.prompt(questions);
-    let hasRationales = answers['hasRationales'] === "Yes"; // convert to boolean
+    const hasRationales = answers['hasRationales'] === "Yes"; // convert to boolean
+    const addTags = answers['addTags'] === "Yes";
 
     return {
       src: answers['src'],
       questionBankISBN: answers['questionBankISBN'],
       courseID: answers['courseID'],
-      hasRationales: hasRationales
+      hasRationales: hasRationales,
+      addTags: addTags
     };
   } catch (error) {
     console.error('Error getting user input:', error);
@@ -59,13 +67,32 @@ async function processFilepath() {
       const questionBankISBN = userinput.questionBankISBN;
       const courseID = userinput.courseID;
       const hasRationales = userinput.hasRationales;
+      const addTags = userinput.addTags;
       const output = src.substring(0, src.lastIndexOf('/'));
+      let tagsJSON
+
+      if (addTags) {
+        const answer = await inquirer.prompt({name: "tagsFile", message: 'Please provide the filepath of the JSON file containing your tags: '})
+        const tagsFile = answer.tagsFile;
+        if (!fs.existsSync(tagsFile)) {
+          console.log("Tags file not found. Exiting.");
+          process.exit();
+        }
+        try {
+          const tagsData = fs.readFileSync(tagsFile, 'utf8');
+          tagsJSON = JSON.parse(tagsData);
+        } catch (err) {
+          console.error('Error reading or parsing JSON:', err);
+          process.exit(1);
+        }
+      } 
 
       return {
         src: src,
         questionBankISBN: questionBankISBN,
         courseID: courseID,
         hasRationales: hasRationales,
+        tagsJSON: tagsJSON,
         output: output,
       };
     } else {
@@ -86,6 +113,7 @@ async function convertDOCXtoHTML() {
       const questionBankISBN = filepaths.questionBankISBN;
       const courseID = filepaths.courseID;
       const hasRationales = filepaths.hasRationales;
+      const tagsJSON = filepaths.tagsJSON;
       const path = filepaths.output;
 
       const args = ['-f', 'docx+styles', '-t', 'html5', '--wrap=none'];
@@ -101,6 +129,7 @@ async function convertDOCXtoHTML() {
         questionBankISBN: questionBankISBN,
         courseID: courseID,
         hasRationales: hasRationales,
+        tagsJSON: tagsJSON,
         path: path,
       };
     } else {
@@ -124,6 +153,7 @@ async function readHTML() {
     const questionBankISBN = docinfo.questionBankISBN;
     const courseID = docinfo.courseID;
     const hasRationales = docinfo.hasRationales;
+    const tagsJSON = docinfo.tagsJSON;
     const path = docinfo.path;
 
     source = '<!DOCTYPE html><html><head></head><body>' + source + '</body></html>';
@@ -512,7 +542,8 @@ async function readHTML() {
       quizzes: quizzes,
       path: path,
       questionBankISBN: questionBankISBN,
-      courseID: courseID
+      courseID: courseID,
+      tagsJSON: tagsJSON
     }
   } catch (error) {
     console.error('Error reading HTML:', error);
@@ -526,6 +557,7 @@ async function createQuizzes(){
     let path = quizzes.path;
     let questionBankISBN = quizzes.questionBankISBN;
     let courseID = quizzes.courseID;
+    const newTags = quizzes.tagsJSON;
     quizzes = quizzes.quizzes
     let activities = [] // array for quizzes
 
@@ -569,6 +601,29 @@ async function createQuizzes(){
       itemRefIds = await generateIDs(questionRefIds.length, 'items');
 
       let items = [];
+      
+      // core item tags
+      let itemTags = {
+              "Publisher": [
+                  "O'Reilly Media"
+              ],
+              "Course FPID": [
+                  courseID
+              ]
+            };
+
+      // merge any additional tags into tags object
+      if (newTags !== undefined) {
+        for (const [key, value] of Object.entries(newTags)) {
+          if (itemTags[key]) {
+            itemTags[key] = [...itemTags[key], ...value];
+          } else {
+            itemTags[key] = value;
+          }
+        }
+      }
+
+      itemTags = JSON.stringify(itemTags);
 
       // prepare items
       if (questionRefIds.length == itemRefIds.length) {
@@ -592,14 +647,7 @@ async function createQuizzes(){
                     "reference": "${questionRefId}"
                 }
             ],
-            "tags": {
-              "Publisher": [
-                  "O'Reilly Media"
-              ],
-              "Course FPID": [
-                  "${courseID}"
-              ]
-            }
+            "tags": ${itemTags}
           }`
 
           items.push(item);
@@ -620,6 +668,35 @@ async function createQuizzes(){
       let quizTitle = quiz.quizTitle;
       let quizType = quiz.quizType
       
+      // core acitivity tags
+      let activityTags = {
+              "Quiz Type": [
+                  quizType
+              ],
+              "Publisher": [
+                  "O'Reilly Media"
+              ],
+              "Question Bank FPID": [
+                  questionBankISBN
+              ],
+              "Course FPID": [
+                  courseID
+              ]
+            }
+
+      // merge any additional tags into tags object
+      if (newTags !== undefined) {
+        for (const [key, value] of Object.entries(newTags)) {
+          if (activityTags[key]) {
+            activityTags[key] = [...activityTags[key], ...value];
+          } else {
+            activityTags[key] = value;
+          }
+        }
+      }
+
+      activityTags = JSON.stringify(activityTags);
+
       itemRefIds = '"' + itemRefIds.join('","') + '"'
       const activity = `{
           "title": "${quizTitle}",
@@ -635,20 +712,7 @@ async function createQuizzes(){
               },
               "rendering_type": "assess"
           },
-          "tags": {
-              "Quiz Type": [
-                  "${quizType}"
-              ],
-              "Publisher": [
-                  "O'Reilly Media"
-              ],
-              "Question Bank FPID": [
-                  "${questionBankISBN}"
-              ],
-              "Course FPID": [
-                  "${courseID}"
-              ]
-            }
+          "tags": ${activityTags}
           }`
 
       activities.push(activity);
