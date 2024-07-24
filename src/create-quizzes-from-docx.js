@@ -782,7 +782,7 @@ async function generateIDs(num, endpoint) {
 
 async function callDataAPI(body, action, endpoint){
   // Things to do before completion of the promise
-  endpoint = 'https://data.learnosity.com/v2023.1.LTS/itembank/' + endpoint
+  endpoint = 'https://data.learnosity.com/v2024.2.LTS/itembank/' + endpoint
 
   // Instantiate the SDK
   const learnositySdk = new Learnosity();
