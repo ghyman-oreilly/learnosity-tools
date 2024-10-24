@@ -8,3 +8,5 @@ module.exports = {
 module.exports.shuffleTwoOptionQuestions = false; // set flag for shuffle handling of two-option questions (e.g., True/False questions)
 
 module.exports.stripMarks = true; // set flag for behavior that strips mark tags from quiz HTML
+
+module.exports.enableDiagnostic = false; // enable or disable diagnostic quiz imports

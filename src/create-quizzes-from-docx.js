@@ -7,14 +7,22 @@ const path = require('path');
 const config = require('./config'); // Load consumer key & secret from config.js
 const uuid = require('uuid');
 const Learnosity = require('learnosity-sdk-nodejs');
+const readJSONFromFile = require('./shared/read-json-from-file');
 
-async function getUserInput() {
+async function getUserInput(enableDiagnostic=false) {
   try {
     const questions = [
       {
         type: 'input',
         name: 'src',
         message: 'Please provide the filepath of the DOCX file to convert: ',
+      },
+      {
+      type: 'list',
+      name: 'quizType',
+      message: 'Is this a Standard or Diagnostic Quiz?',
+      choices: ['Standard', 'Diagnostic'],
+      when: enableDiagnostic === true,
       },
       {
         type: 'input',
@@ -25,139 +33,74 @@ async function getUserInput() {
         type: 'input',
         name: 'courseID',
         message: 'Please provide the course FPID or book ISBN: ',
+        when: (answers) => answers.quizType === 'Diagnostic',
       },
       {
         type: 'list',
         name: 'hasRationales',
         choices: ["Yes", "No"],
         message: 'Do your quizzes have rationales?',
+        when: (answers) => answers.quizType === 'Standard',
       },
       {
         type: 'list',
         name: 'addTags',
         choices: ["Yes", "No"],
         message: 'Do you wish to add addl activity and item tags (e.g., Level, Topic, Role) via JSON file?',
+        when: (answers) => answers.quizType === 'Standard',
+      },
+      {
+        type: 'input',
+        name: 'tagsFile',
+        message: 'Please provide the filepath of the JSON file containing your tags: ',
+        when: (answers) => answers.addTags === 'Yes',
       },
     ];
 
     const answers = await inquirer.prompt(questions);
-    const hasRationales = answers['hasRationales'] === "Yes"; // convert to boolean
-    const addTags = answers['addTags'] === "Yes";
+    let hasRationales = 'hasRationales' in answers ? answers['hasRationales'] : false;
+    hasRationales = hasRationales === "Yes"; // convert to boolean
+    let addTags = 'addTags' in answers ? answers['addTags'] : '';
+    addTags = addTags === "Yes";
 
-    return {
-      src: answers['src'],
-      questionBankISBN: answers['questionBankISBN'],
-      courseID: answers['courseID'],
-      hasRationales: hasRationales,
-      addTags: addTags
-    };
+    return [
+      answers['src'] ?? '',
+      'quizType' in answers ? answers['quizType'] : 'Standard',
+      answers['questionBankISBN'],
+      'courseID' in answers ? answers['courseID'] : '',
+      hasRationales ?? false,
+      addTags ?? '',
+      'tagsFile' in answers ? answers['tagsFile'] : '',
+    ];
   } catch (error) {
     console.error('Error getting user input:', error);
     throw error; // Rethrow the error to propagate it up the chain
   }
 }
 
-async function processFilepath() {
+async function convertDOCXtoHTML(filepath) {
   try {
-    const userinput = await getUserInput();
-
-    // Check if userinput is not null or undefined before accessing its properties
-    if (userinput && userinput.src) {
-      const src = userinput.src;
-      const questionBankISBN = userinput.questionBankISBN;
-      const courseID = userinput.courseID;
-      const hasRationales = userinput.hasRationales;
-      const addTags = userinput.addTags;
-      const output = src.substring(0, src.lastIndexOf('/'));
-      let tagsJSON
-
-      if (addTags) {
-        const answer = await inquirer.prompt({name: "tagsFile", message: 'Please provide the filepath of the JSON file containing your tags: '})
-        const tagsFile = answer.tagsFile;
-        if (!fs.existsSync(tagsFile)) {
-          console.log("Tags file not found. Exiting.");
-          process.exit();
-        }
-        try {
-          const tagsData = fs.readFileSync(tagsFile, 'utf8');
-          tagsJSON = JSON.parse(tagsData);
-        } catch (err) {
-          console.error('Error reading or parsing JSON:', err);
-          process.exit(1);
-        }
-      } 
-
-      return {
-        src: src,
-        questionBankISBN: questionBankISBN,
-        courseID: courseID,
-        hasRationales: hasRationales,
-        tagsJSON: tagsJSON,
-        output: output,
-      };
-    } else {
-      throw new Error('Invalid user input');
-    }
-  } catch (error) {
-    console.error('Error processing filepath:', error);
-    throw error;
-  }
-}
-
-async function convertDOCXtoHTML() {
-  try {
-    const filepaths = await processFilepath();
-    
-    if (filepaths && filepaths.src && filepaths.output) {
-      const src = filepaths.src;
-      const questionBankISBN = filepaths.questionBankISBN;
-      const courseID = filepaths.courseID;
-      const hasRationales = filepaths.hasRationales;
-      const tagsJSON = filepaths.tagsJSON;
-      const path = filepaths.output;
-
       const args = ['-f', 'docx+styles', '-t', 'html5', '--wrap=none'];
 
-      const doc = await pandoc(src, args);
+      const doc = await pandoc(filepath, args);
 
       if (!doc) {
         throw new Error('HTML output not received from pandoc')
       }
 
-      return {
-        doc: doc,
-        questionBankISBN: questionBankISBN,
-        courseID: courseID,
-        hasRationales: hasRationales,
-        tagsJSON: tagsJSON,
-        path: path,
-      };
-    } else {
-      throw new Error('Invalid filepath');
-    }
+      return doc
+
   } catch (error) {
     console.error('Error converting DOCX to HTML:', error);
     throw error;
   }
 }
 
-async function readHTML() {
+async function processHTML(html, questionBankISBN, courseID, hasRationales, tagsJSON, outputPath) {
   try {
-    const docinfo = await convertDOCXtoHTML();
-    
-    if (!docinfo || !docinfo.doc || !docinfo.path) {
-      throw new Error('HTML not received from convertDOCXtoHTML function')
-    }
-    
-    let source = docinfo.doc;
-    const questionBankISBN = docinfo.questionBankISBN;
-    const courseID = docinfo.courseID;
-    const hasRationales = docinfo.hasRationales;
-    const tagsJSON = docinfo.tagsJSON;
-    const path = docinfo.path;
-
-    source = '<!DOCTYPE html><html><head></head><body>' + source + '</body></html>';
-    const doc = new DOMParser().parseFromString(source, 'text/xml');
+      
+    html = '<!DOCTYPE html><html><head></head><body>' + html + '</body></html>';
+    const doc = new DOMParser().parseFromString(html, 'text/xml');
     
     function clean(node) {
       for(var n = 0; n < node.childNodes.length; n ++) {
@@ -538,31 +481,20 @@ async function readHTML() {
         quizzes.push(quiz);
 
     }
-    return {
-      quizzes: quizzes,
-      path: path,
-      questionBankISBN: questionBankISBN,
-      courseID: courseID,
-      tagsJSON: tagsJSON
-    }
+    return quizzes
   } catch (error) {
     console.error('Error reading HTML:', error);
     throw error;
   }
 }
 
-async function createQuizzes(){
+async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outputPath){
   try {
-    let quizzes = await readHTML();
-    let path = quizzes.path;
-    let questionBankISBN = quizzes.questionBankISBN;
-    let courseID = quizzes.courseID;
-    const newTags = quizzes.tagsJSON;
-    quizzes = quizzes.quizzes
+
     let activities = [] // array for quizzes
 
     // print quiz details output and hold for user Y/N to proceed with quiz creation
-    let printOutput = await printQuizzes(quizzes, path);
+    await printQuizzes(quizzes, outputPath);
     let continueFlag = await inquirer.prompt({
           type: 'list',
           choices: ['Yes','No'],
@@ -613,8 +545,8 @@ async function createQuizzes(){
             };
 
       // merge any additional tags into tags object
-      if (newTags !== undefined) {
-        for (const [key, value] of Object.entries(newTags)) {
+      if (tagsJSON !== undefined) {
+        for (const [key, value] of Object.entries(tagsJSON)) {
           if (itemTags[key]) {
             itemTags[key] = [...itemTags[key], ...value];
           } else {
@@ -685,8 +617,8 @@ async function createQuizzes(){
             }
 
       // merge any additional tags into tags object
-      if (newTags !== undefined) {
-        for (const [key, value] of Object.entries(newTags)) {
+      if (tagsJSON !== undefined) {
+        for (const [key, value] of Object.entries(tagsJSON)) {
           if (activityTags[key]) {
             activityTags[key] = [...activityTags[key], ...value];
           } else {
@@ -725,7 +657,7 @@ async function createQuizzes(){
 
     callapi = await callDataAPI(body, 'set', 'activities');
 
-    printRefIds(activities, path);
+    printRefIds(activities, outputPath);
 
   } catch (error) {
     console.error('Error creating quizzes: ', error);
@@ -890,5 +822,22 @@ async function printRefIds(activities, docPath) {
     }
 }
 
-createQuizzes();
+async function main() {
+  const enableDiagnostic = config.enableDiagnostic;
+  const [src, quizType, questionBankISBN, courseID, hasRationales, addTags, tagsFile] = await getUserInput(enableDiagnostic);
+  const outputPath = src.substring(0, src.lastIndexOf('/'));
+  let tagsData = '';
+
+  if (tagsFile != '') {
+    tagsData = readJSONFromFile(tagsFile);
+  }
+
+  const html = await convertDOCXtoHTML(src);
+  const quizzes = await processHTML(html, questionBankISBN, courseID, hasRationales, tagsData, outputPath)
+
+  createQuizzes(quizzes, questionBankISBN, courseID, tagsData, outputPath);  
+}
+
+main();
+
 
