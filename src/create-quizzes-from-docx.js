@@ -6,8 +6,10 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./config'); // Load consumer key & secret from config.js
 const uuid = require('uuid');
-const Learnosity = require('learnosity-sdk-nodejs');
+const { callDataAPI } = require('./shared/call-learnosity');
 const readJSONFromFile = require('./shared/read-json-from-file');
+const { StandardQuestion, DiagnosticQuestion } = require('./classModules/questions')
+const { StandardQuiz, DiagnosticQuiz } = require('./classModules/quizzes')
 
 async function getUserInput(enableDiagnostic=false) {
   try {
@@ -33,7 +35,7 @@ async function getUserInput(enableDiagnostic=false) {
         type: 'input',
         name: 'courseID',
         message: 'Please provide the course FPID or book ISBN: ',
-        when: (answers) => answers.quizType === 'Diagnostic',
+        when: (answers) => answers.quizType === 'Standard',
       },
       {
         type: 'list',
@@ -96,7 +98,7 @@ async function convertDOCXtoHTML(filepath) {
   }
 }
 
-async function processHTML(html, questionBankISBN, courseID, hasRationales, tagsJSON, outputPath) {
+async function processHTML(html, hasRationales, quizType) {
   try {
       
     html = '<!DOCTYPE html><html><head></head><body>' + html + '</body></html>';
@@ -301,104 +303,52 @@ async function processHTML(html, questionBankISBN, courseID, hasRationales, tags
       }
     }
 
-    // function to create question body from elements
-    function createQuestionBody(hasRationales, multipleResponses, options, correctOptions, questionStem, rationales) {
-      try {
-
-        if (!correctOptions || correctOptions.length < 1) {
-          console.log('Question is missing a correct answer flag: ' + questionStem);
-          throw new Error('At least one quiz question is missing a correct answer flag. Please fix and rerun.')
-        }
-        
-        if (hasRationales && (!options || !rationales || options.length != rationales.length)) {
-          console.log('Question has unequal number of options and rationales ' + questionStem);
-          throw new Error('At least one quiz question has an unequal number of options and rationales. Please fix and rerun.')
-        }
-
-        const optionsLen = options.length;
-        multipleResponses = JSON.stringify(multipleResponses);
-        options = JSON.stringify(options);
-        correctOptions = JSON.stringify(correctOptions);
-        questionStem = JSON.stringify(questionStem);
-        rationales = hasRationales ? JSON.stringify(rationales) : null;
-        let shouldShuffle = true;
-
-        const shuffleTwoOptionQuestions = config.shuffleTwoOptionQuestions; // flag (possibly temporary) to allow toggling of behavior to shuffle two-option questions (e.g., True/False questions)
-
-        if (typeof shuffleTwoOptionQuestions !== 'boolean') {
-          throw new Error('The `shuffleTwoOptionQuestions` flag in config.js must be set to `true` or `false`.')
-        }
-
-        if (shuffleTwoOptionQuestions == false && optionsLen == 2) {
-          shouldShuffle = false;
-        }
-  
-        let questionBody = `{
-                "type": "mcq",
-                "reference": "",
-                "data": {
-                "multiple_responses": ${multipleResponses},
-                "options": ${options},
-                "stimulus": ${questionStem},
-                "type": "mcq",
-                "validation": {
-                    "scoring_type": "exactMatch",
-                    "valid_response": {
-                        "score": 1,
-                        "value": ${correctOptions}
-                    }
-                },
-                "ui_style": {
-                    "type": "horizontal"
-                },
-                "metadata": {
-                    "distractor_rationale_response_level": ${rationales}
-                },
-                "shuffle_options": ${shouldShuffle}
-            }
-            }
-        `;
-        return questionBody
-      } catch {
-        console.error('Error creating question body:', error);
-        throw error;
-      }
-    }
-
     let quizCounter = 0;
     let questionCounter = 0;
-    let questionBodies = [];
+    let questions = [];
 
     let quizzes = [];
+    let shuffleTwoOptionQuestions = config.shuffleTwoOptionQuestions;
 
     const quizTitleElements = xpath.select('//h1[starts-with(@class, "QuizTitle")]', doc);
+    const quizSectionElements = xpath.select('//h1[starts-with(@class, "QuizSection")]', doc);
 
     // Loop through quiz titles
     for (let i = 0; i < quizTitleElements.length; i++) {
+        let quiz;
+
+        if (quizType === 'Diagnostic') {
+          quiz = new DiagnosticQuiz();
+        } else {
+          quiz = new StandardQuiz();
+        }
+
         let quizTitleElement = quizTitleElements[i];
 
         quizCounter++; // Increment quiz counter
 
         // Reset question counter and question bodies array for each new quiz
         questionCounter = 0;
-        questionBodies = [];
+        questions = [];
 
-        quizTitle = quizTitleElement.textContent.trim();
+        quiz.title = quizTitleElement.textContent.trim();
         let nextElement = quizTitleElement.nextSibling;
+        let optionCounter
+        let question
+        let questionStem 
+        let options
+        let correctOptions
+        let rationales
+        let difficultyLevel
+        let skill
 
-        let questionStem = ''; // Initialize questionStem variable here
-        let options = []; // Initialize options array
-        let correctOptions = []; // Initialize correctOptions array
-        let rationales = []; // Initialize rationales array
-        let questionBody;
-        let optionCounter;
-        let multipleResponses;
+        if (quizType === 'Diagnostic') {
+          skill = quiz.title.replace(/\s*/, '-')
+        }
 
         while (nextElement && (!nextElement.getAttribute('class') || nextElement.getAttribute('class') !== 'QuizTitle')) {
           // Parse quiz elements here
           let elementType = nextElement.getAttribute('data-custom-style');
-          let questionOption;
-          let questionRationale;
 
           // skip elements that don't have data-custom-style attr (like [rationale] tag)
           while (nextElement && !nextElement.getAttribute('data-custom-style')) {
@@ -406,18 +356,43 @@ async function processHTML(html, questionBankISBN, courseID, hasRationales, tags
               elementType = nextElement.getAttribute('data-custom-style');
           }
 
-          switch(elementType) {
-            case 'QuizType':
-                quizType = nextElement.textContent.trim();
+          switch(true) {
+            case /^QuizType$/.test(elementType):
+                if (quizType === 'Diagnostic') {
+                  throw new Error("Diagnostic quizzes must not contain QuizType elements. Please fix and rerun");
+                }
+                quiz.moduleType = nextElement.textContent.trim();
                 break;
-            case 'QuestionStem':
+            case /^QuizSection/.test(elementType):
+                if (quizType === 'Standard') {
+                  throw new Error("Standard quizzes must not contain QuizSection elements. Please fix and rerun");
+                }
+                difficultyLevel = elementType.replace(/^QuizSection/, '');
+                if (!["Beginner", "Intermediate", "Advanced"].includes(difficultyLevel)) {
+                  throw new Error("Invalid section difficulty level value encountered. Exiting.");
+                }
+                break
+            case /^QuestionStem$/.test(elementType):
                 questionCounter++; // Increment question counter
 
-                // if questionCounter > 1, record previous question
-                // creates and pushes questionBody for all but last question in a given quiz
+                // if questionCounter > 1, record previous question (all but last question)
                 if (questionCounter > 1) {
-                  questionBody = createQuestionBody(hasRationales, multipleResponses, options, correctOptions, questionStem, rationales);
-                  questionBodies.push(questionBody);
+                  question.assignQuestionPropValues({ options, correctOptions, questionStem, shuffleTwoOptionQuestions, rationales, difficultyLevel, skill })
+                  questions.push(question);
+                }
+
+                // initialize instance of quiz class depending on intended type
+                if (quizType === 'Diagnostic') {
+                  if (quizSectionElements.length != 3) {
+                    throw new Error('Diagnostic quizzes must contain 3 QuizSection elements. Please fix and rerun.')
+                  } else if (quizTitleElements.legnth != 1) {
+                    throw new Error('Diagnostic quizzes must contain 1 QuizTitle element. Please fix and rerun.')
+                  }
+                    else {
+                    question = new DiagnosticQuestion(difficultyLevel, skill);
+                  }
+                } else {
+                  question = new StandardQuestion();
                 }
 
                 questionStem = elementCleanup(serialize(nextElement));
@@ -425,9 +400,8 @@ async function processHTML(html, questionBankISBN, courseID, hasRationales, tags
                 options = []; // Reset array when encountering a stem
                 correctOptions = []; // Reset array when encountering a stem
                 rationales = []; // Reset array when encountering a stem
-                multipleResponses = false; // reset flag
                 break;
-            case 'QuestionOption':
+            case /^QuestionOption$/.test(elementType):    
                 questionOption = serialize(nextElement);
                 
                 // test for correct option(s)
@@ -435,16 +409,12 @@ async function processHTML(html, questionBankISBN, courseID, hasRationales, tags
                 if (isCorrect) {
                   correctOptions.push(optionCounter.toString()); 
                 }
-                if (correctOptions.length > 1) {
-                  multipleResponses = true
-                }
 
                 questionOption = elementCleanup(questionOption.replace(/\[Correct[^\]]*\]/i, '').trim());
-                // options.push(questionOption);
                 options.push({label: questionOption, value: optionCounter.toString()})
                 optionCounter++ // increment option counter
                 break;
-            case 'QuestionRationale':
+            case /^QuestionRationale$/.test(elementType):
                 questionRationale = elementCleanup(serialize(nextElement));
                 rationales.push(questionRationale);
                 break;
@@ -452,32 +422,26 @@ async function processHTML(html, questionBankISBN, courseID, hasRationales, tags
           nextElement = nextElement.nextSibling; // Move to next sibling
         }
 
-        // create a push questionBody for last question in a given quiz
-        questionBody = createQuestionBody(hasRationales, multipleResponses, options, correctOptions, questionStem, rationales);
-        questionBodies.push(questionBody);
+        // last question: assign props and push question to array 
+        question.assignQuestionPropValues({ options, correctOptions, questionStem, shuffleTwoOptionQuestions, rationales, difficultyLevel, skill })
+        questions.push(question);
 
         // create refIds for questions
         let questionRefIds = [];
-        questionRefIds = await generateIDs(questionBodies.length, 'questions');
+        questionRefIds = await generateIDs(questions.length, 'questions');
 
-        // loop through question bodies, adding refIds
-        if (questionBodies.length == questionRefIds.length) {
-          for (k = 0; k < questionBodies.length; k++) {
-            let questionBody = JSON.parse(questionBodies[k]);
+        // loop through questions, adding refIds
+        if (questions.length == questionRefIds.length) {
+          for (k = 0; k < questions.length; k++) {
+            let question = questions[k];
             let questionrefId = questionRefIds[k];
-            questionBody.reference = questionrefId;
-            questionBodies[k] = JSON.stringify(questionBody)
+            question.questionRefId = questionrefId;
           }
         } else {
           throw new Error('Number of refIds does not match number of questions.');
         }
 
-        const quiz = {
-          quizTitle: quizTitle,
-          quizType: quizType,
-          questionBodies: questionBodies,
-          questionRefIds: questionRefIds
-        };
+        quiz.questions = questions;
         quizzes.push(quiz);
 
     }
@@ -521,8 +485,8 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
     // loop through quizzes
     for (i = 0; i < quizzes.length; i++) {
       let quiz = quizzes[i];
-      let questions = quiz.questionBodies;
-      let questionRefIds = quiz.questionRefIds;
+      let questions = quiz.questions;
+     
       let itemRefIds = [];
       let body = `{"questions": [${questions}]}`
 
@@ -530,63 +494,37 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
       callapi = await callDataAPI(body, 'set', 'questions');
 
       // generate item IDs
-      itemRefIds = await generateIDs(questionRefIds.length, 'items');
+      itemRefIds = await generateIDs(questions.length, 'items');
 
       let items = [];
       
-      // core item tags
-      let itemTags = {
-              "Publisher": [
-                  "O'Reilly Media"
-              ],
-              "Course FPID": [
-                  courseID
-              ]
-            };
-
+      // TODO: update to work with object-oriented approach
       // merge any additional tags into tags object
-      if (tagsJSON !== undefined) {
-        for (const [key, value] of Object.entries(tagsJSON)) {
-          if (itemTags[key]) {
-            itemTags[key] = [...itemTags[key], ...value];
-          } else {
-            itemTags[key] = value;
-          }
-        }
-      }
-
-      itemTags = JSON.stringify(itemTags);
+      // if (tagsJSON !== undefined) {
+      //   for (const [key, value] of Object.entries(tagsJSON)) {
+      //     if (itemTags[key]) {
+      //       itemTags[key] = [...itemTags[key], ...value];
+      //     } else {
+      //       itemTags[key] = value;
+      //     }
+      //   }
+      // }
+      //itemTags = JSON.stringify(itemTags);
 
       // prepare items
-      if (questionRefIds.length == itemRefIds.length) {
+      if (questions.length == itemRefIds.length) {
         for (let k = 0; k < itemRefIds.length; k++) {
+          let question = questions[k];
           let itemRefId = itemRefIds[k];
-          let questionRefId = questionRefIds[k];
+          question.itemRefId = itemRefId;
 
-          const item = `{
-            "reference": "${itemRefId}",
-            "metadata": null,
-            "definition": {
-                "widgets": [
-                    {
-                        "reference": "${questionRefId}"
-                    }
-                ]
-            },
-            "status": "published",
-            "questions": [
-                {
-                    "reference": "${questionRefId}"
-                }
-            ],
-            "tags": ${itemTags}
-          }`
+          const item = question.getItemPropsAsJson();
 
           items.push(item);
 
         }
       } else {
-        throw new Error('Number of question refIds did not match number of item refIds.');
+        throw new Error('Number of questions did not match number of item refIds.');
       }
 
       
@@ -596,56 +534,21 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
       callapi = await callDataAPI(body, 'set', 'items');
 
       // prepare quizzes
-      let activityRefId = quizRefIds[i];
-      let quizTitle = quiz.quizTitle;
-      let quizType = quiz.quizType
-      
-      // core acitivity tags
-      let activityTags = {
-              "Quiz Type": [
-                  quizType
-              ],
-              "Publisher": [
-                  "O'Reilly Media"
-              ],
-              "Question Bank FPID": [
-                  questionBankISBN
-              ],
-              "Course FPID": [
-                  courseID
-              ]
-            }
+      quiz.refId = quizRefIds[i];
 
+      // TODO: update to work with object-oriented approach
       // merge any additional tags into tags object
-      if (tagsJSON !== undefined) {
-        for (const [key, value] of Object.entries(tagsJSON)) {
-          if (activityTags[key]) {
-            activityTags[key] = [...activityTags[key], ...value];
-          } else {
-            activityTags[key] = value;
-          }
-        }
-      }
+      // if (tagsJSON !== undefined) {
+      //   for (const [key, value] of Object.entries(tagsJSON)) {
+      //     if (activityTags[key]) {
+      //       activityTags[key] = [...activityTags[key], ...value];
+      //     } else {
+      //       activityTags[key] = value;
+      //     }
+      //   }
+      // }
 
-      activityTags = JSON.stringify(activityTags);
-
-      itemRefIds = '"' + itemRefIds.join('","') + '"'
-      const activity = `{
-          "title": "${quizTitle}",
-          "reference": "${activityRefId}",
-          "status": "published",
-          "data": {
-              "items": [${itemRefIds}],
-              "config": {
-                  "configuration": {
-                      "shuffle_items": true
-                  },
-                  "regions": "main"
-              },
-              "rendering_type": "assess"
-          },
-          "tags": ${activityTags}
-          }`
+      const activity = quiz.getQuizPropsAsJSON();
 
       activities.push(activity);
     
@@ -706,75 +609,10 @@ async function generateIDs(num, endpoint) {
     }
 
     return refIds
-  } catch {
+  } catch (error) {
     console.error('Error generating IDs: ', error);
     throw error; // Rethrow the error to propagate it up the chain
   }
-}
-
-async function callDataAPI(body, action, endpoint){
-  // Things to do before completion of the promise
-  endpoint = 'https://data.learnosity.com/v2024.2.LTS/itembank/' + endpoint
-
-  // Instantiate the SDK
-  const learnositySdk = new Learnosity();
-
-  // Set the web server domain
-  const domain = 'localhost';
-
-  // Generate a Learnosity API initialization packet to the Data API
-  const dataAPIRequest = learnositySdk.init(
-    // Set the service type
-    'data',
-
-    // Security details - dataAPIRequest.security 
-    {
-        consumer_key: config.consumerKey, // Your actual consumer key goes here 
-        domain:       domain, // Your actual domain goes here
-        user_id:      '110961' // GH user id
-    },
-    // secret 
-    config.consumerSecret, // Your actual consumer secret here
-    
-    body, // request body
-    
-    action // request action
-    );
-
-  const form = new FormData();
-  /* Note: the same can be accomplished with using URLSearchParams 
-  (https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams)
-  const form = new URLSearchParams()
-  */
-  form.append("security", dataAPIRequest.security);
-  form.append("request", dataAPIRequest.request);
-  form.append("action", dataAPIRequest.action);
-
-  /* Define an async/await data api call function that takes in the following:
-  *
-  * @param endpoint : string
-  * @param requestParams : object
-  *
-  */
-  const makeDataAPICall = async (endpoint, requestParams) => {
-    // Use 'await' save the successful response to a variable called dataAPIResponse
-    const dataAPIResponse = await fetch(endpoint, {
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      body: requestParams 
-    });
-    // Return the response JSON
-    return dataAPIResponse.json(); 
-  }
-
-  /* Now call the function, passing in the desired endpoint, and pass in the fromData object (saved to the variable called 'form' here), which contains the requestParams: */
-
-  const response = await makeDataAPICall(endpoint, form)
-    .then(response => {
-      return response
-    })
-    .catch(error => console.log('There was an error calling the Learnosity API: ', error))
-  
-  return response
 }
 
 async function printQuizzes(quizzes, docPath) {
@@ -782,16 +620,19 @@ async function printQuizzes(quizzes, docPath) {
         const outputFilePath = path.join(docPath, 'review-file.txt');
         const outputStream = fs.createWriteStream(outputFilePath);
 
-        quizzes.forEach((quiz, index) => {
-            outputStream.write(`Quiz ${index + 1}:\n`);
-            outputStream.write(`Title: ${quiz.quizTitle}\n`);
-            outputStream.write(`Type: ${quiz.quizType}\n`);
-            quiz.questionBodies.forEach((questionBody, i) => {
+        for (i = 0; i < quizzes.length; i ++) {
+            const quiz = quizzes[i];
+            outputStream.write(`Quiz ${i + 1}:\n`);
+            outputStream.write(`Title: ${quiz.title}\n`);
+            outputStream.write(`Type: ${quiz.moduleType}\n`);
+            for (k = 0; k < quiz.questions.length; k ++) {
+                const question = quiz.questions[k];
+                const questionProps = JSON.stringify(question.getQuestionPropsAsJSON());
                 outputStream.write(`\tQuestion ${i + 1}:\n`);
-                outputStream.write(`\t${questionBody}\n`);
-            });
+                outputStream.write(`\t${questionProps}\n`);
+            }
             outputStream.write('\n');
-        });
+        }
 
         outputStream.end();
         console.log(`Quiz details written to ${outputFilePath}`);
@@ -833,7 +674,7 @@ async function main() {
   }
 
   const html = await convertDOCXtoHTML(src);
-  const quizzes = await processHTML(html, questionBankISBN, courseID, hasRationales, tagsData, outputPath)
+  const quizzes = await processHTML(html, hasRationales, quizType)
 
   createQuizzes(quizzes, questionBankISBN, courseID, tagsData, outputPath);  
 }
