@@ -461,9 +461,6 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
       // add supplement tags, if applicable
       if (tagsJSON !== undefined) {
         for (let [key, value] of Object.entries(tagsJSON)) {
-          if (!Array.isArray(value)) {
-            value = [value];
-          }
           quiz.updateOrAddTag(key, value)
         }
       }
@@ -483,9 +480,6 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
           // add supplement tags, if applicable
           if (tagsJSON !== undefined) {
             for (let [key, value] of Object.entries(tagsJSON)) {
-              if (!Array.isArray(value)) {
-                value = [value];
-              }
               question.updateOrAddTag(key, value)
             }
           }
@@ -636,15 +630,15 @@ async function printQuizzes(quizzes, docPath) {
         const outputFilePath = path.join(docPath, 'review-file.txt');
         const outputStream = fs.createWriteStream(outputFilePath);
 
-        for (i = 0; i < quizzes.length; i ++) {
+        for (let i = 0; i < quizzes.length; i ++) {
             const quiz = quizzes[i];
-            const quizTags = JSON.stringify(quiz.getItemPropsAsJson().tags);
+            const quizTags = JSON.stringify(quiz.getQuizPropsAsJSON().tags);
             outputStream.write(`Quiz ${i + 1}:\n`);
             outputStream.write(`Title: ${quiz.title}\n`);
             outputStream.write(`Type: ${quiz.moduleType || "none"}\n`);
             outputStream.write(`Quiz ${i + 1} tags:\n`);
             outputStream.write(`\t${quizTags}\n`);
-            for (k = 0; k < quiz.questions.length; k ++) {
+            for (let k = 0; k < quiz.questions.length; k ++) {
                 const question = quiz.questions[k];
                 const questionProps = JSON.stringify(question.getQuestionPropsAsJSON());
                 const itemTags = JSON.stringify(question.getItemPropsAsJson().tags);
@@ -693,7 +687,7 @@ async function main() {
   let tagsData = '';
 
   if (tagsFile != '') {
-    tagsData = readJSONFromFile(tagsFile);
+    tagsData = await readJSONFromFile(tagsFile);
   }
 
   const html = await convertDOCXtoHTML(src);
