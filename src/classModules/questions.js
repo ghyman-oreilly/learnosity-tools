@@ -50,13 +50,21 @@ class Question {
 		}
 	}
 
-    updateOrAddTag(tagName, tagValue) {
-        this.tags[tagName] = [tagValue];
+	updateOrAddTag(tagName, tagValue) {
+        if (Array.isArray(tagValue)) {
+			this.tags[tagName] = tagValue;
+		} else {
+			this.tags[tagName] = [tagValue];
+		}
     }
 
 	updateTag(tagName, tagValue) {
-		if (this.tags[tagName]) {
-			this.tags[tagName] = [tagValue];
+		if (this.tags[tagName]) {			
+			if (Array.isArray(tagValue)) {
+				this.tags[tagName] = tagValue;
+			} else {
+				this.tags[tagName] = [tagValue];
+			}
 		}
 	}
 
