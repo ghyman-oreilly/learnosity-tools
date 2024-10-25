@@ -12,7 +12,6 @@ class Quiz {
 		this.refId = ''
 		this.shuffleItems = true
 		this.questions = []
-		this.items = []
 		this.tags = { 
 			[publisherTagName]: [publisherTagValue],
 			[questionBankIdTagName]: ['']
@@ -42,18 +41,18 @@ class Quiz {
 		}
 	}
 
-	getItemRefIdsfromItems() {
+	getItemRefIdsfromQuestions() {
 		const itemRefIds = [];
-		for (let i = 0; i < this.items.length; i ++) {
-			const item = items[i];
-			const itemRefId = item.reference
+		for (let i = 0; i < this.questions.length; i ++) {
+			const question = this.questions[i];
+			const itemRefId = question.itemRefId;
 			itemRefIds.push(itemRefId);
 		}
 		return itemRefIds
 	}
 
 	getQuizPropsAsJSON() {
-		const itemRefIds = this.getItemRefIdsfromItems();
+		const itemRefIds = this.getItemRefIdsfromQuestions();
 		return {
 			title: this.title,
 			reference: this.refId,
