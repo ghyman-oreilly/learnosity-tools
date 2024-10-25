@@ -44,7 +44,7 @@ class Quiz {
 
 	getItemRefIdsfromItems() {
 		const itemRefIds = [];
-		for (i = 0; i < this.items.length; i ++) {
+		for (let i = 0; i < this.items.length; i ++) {
 			const item = items[i];
 			const itemRefId = item.reference
 			itemRefIds.push(itemRefId);
