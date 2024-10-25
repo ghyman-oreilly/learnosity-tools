@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./config'); // Load consumer key & secret from config.js
 const uuid = require('uuid');
-const { callDataAPI } = require('./shared/call-learnosity');
+const { callDataAPI, sendAPIRequests } = require('./shared/call-learnosity');
 const readJSONFromFile = require('./shared/read-json-from-file');
 const { StandardQuestion, DiagnosticQuestion } = require('./classModules/questions')
 const { StandardQuiz, DiagnosticQuiz } = require('./classModules/quizzes')
@@ -490,7 +490,7 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
       }
     }
 
-    let activities = [] // array for quizzes
+    let activitiesJsonArr = [] // array for quizzes
 
     // print quiz details output and hold for user Y/N to proceed with quiz creation
     await printQuizzes(quizzes, outputPath);
@@ -517,6 +517,9 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
       throw new Error('Number of quiz refIds did not match number of quizzes.');
     }
 
+    let questionsJsonArr = [];
+    let itemsJsonArr = [];
+
     // loop through quizzes
     for (let i = 0; i < quizzes.length; i++) {
       let quiz = quizzes[i];
@@ -526,10 +529,7 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
       
       // generate item IDs
       itemRefIds = await generateIDs(questions.length, 'items');
-
-      let questionsJsonArr = [];
-      let itemsJsonArr = [];
-            
+           
       // prepare questions and items json arrays
       if (questions.length == itemRefIds.length) {
         for (let k = 0; k < itemRefIds.length; k++) {
@@ -550,31 +550,24 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
         throw new Error('Number of questions did not match number of item refIds.');
       }
 
-      const questionsCallBody = `{"questions": [${questionsJsonArr}]}`
-      
-      // generate questions
-      callapi = await callDataAPI(questionsCallBody, 'set', 'questions');
-
-      const itemsCallBody = `{"items": [${itemsJsonArr}]}`
-
-      // generate items
-      callapi = await callDataAPI(itemsCallBody, 'set', 'items');
-
       // prepare quizzes
       quiz.refId = quizRefIds[i];
 
       const activity = JSON.stringify(quiz.getQuizPropsAsJSON());
 
-      activities.push(activity);
+      activitiesJsonArr.push(activity);
     
     }
- 
-    // create quizzes
-    const quizCallBody = `{"activities": [${activities}]}`
+    
+    // generate questions
+    callapi = await sendAPIRequests(questionsJsonArr, 'set', 'questions');
 
-    callapi = await callDataAPI(quizCallBody, 'set', 'activities');
+    // generate items
+    callapi = await sendAPIRequests(itemsJsonArr, 'set', 'items');
 
-    printRefIds(activities, outputPath);
+    callapi = await sendAPIRequests(activitiesJsonArr, 'set', 'activities');
+
+    printRefIds(activitiesJsonArr, outputPath);
 
   } catch (error) {
     console.error('Error creating quizzes: ', error);

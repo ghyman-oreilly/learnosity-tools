@@ -1,6 +1,26 @@
 const Learnosity = require('learnosity-sdk-nodejs');
 const config = require('../config'); // Load consumer key & secret from config.js
 
+
+async function sendAPIRequests(items, action, endpoint) {
+    const maxItems = 50; // Maximum number of items per request
+    let callBody
+
+    for (let i = 0; i < items.length; i += maxItems) {
+        // Get the current chunk of items
+        const chunk = items.slice(i, i + maxItems);
+        callBody = `{"${endpoint}": [${chunk}]}`
+
+        // Make the API call with the current chunk
+        try {
+            const response = await callDataAPI(callBody, action, endpoint);
+            console.log('Response:', response);
+        } catch (error) {
+            console.error('Error calling API:', error);
+        }
+    }
+}
+
 async function callDataAPI(body, action, endpoint){
   // Things to do before completion of the promise
   endpoint = 'https://data.learnosity.com/v2023.1.LTS/itembank/' + endpoint
@@ -66,4 +86,4 @@ async function callDataAPI(body, action, endpoint){
   return response
 }
 
-module.exports = { callDataAPI };
+module.exports = { callDataAPI, sendAPIRequests };
