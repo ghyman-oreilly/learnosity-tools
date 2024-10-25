@@ -235,7 +235,7 @@ async function processHTML(html, hasRationales, quizType) {
     const codeBlockBreaks = xpath.select('//span[@data-custom-style="Code Block"]/br', doc);
 
     // handling for manual breaks within code blocks
-    for (i = 0; i < codeBlockBreaks.length; i++) {
+    for (let i = 0; i < codeBlockBreaks.length; i++) {
       let codeBlockBreak = codeBlockBreaks[i];
       codeBlockBreak.parentNode.removeChild(codeBlockBreak);
     }
@@ -453,7 +453,7 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
   try {
 
     // add refIds and some tag values to questions
-    for (i = 0; i < quizzes.length; i++) {
+    for (let i = 0; i < quizzes.length; i++) {
       let quiz = quizzes[i];
       quiz.updateTag(questionBankIdTagName, questionBankISBN)
       quiz.updateTag(courseIdTagName, courseID);
@@ -518,57 +518,61 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
     }
 
     // loop through quizzes
-    for (i = 0; i < quizzes.length; i++) {
+    for (let i = 0; i < quizzes.length; i++) {
       let quiz = quizzes[i];
       let questions = quiz.questions;
      
       let itemRefIds = [];
-      let body = `{"questions": [${questions}]}`
-
-      // generate questions
-      callapi = await callDataAPI(body, 'set', 'questions');
-
+      
       // generate item IDs
       itemRefIds = await generateIDs(questions.length, 'items');
 
-      let items = [];
-      
-      // prepare items
+      let questionsJsonArr = [];
+      let itemsJsonArr = [];
+            
+      // prepare questions and items json arrays
       if (questions.length == itemRefIds.length) {
         for (let k = 0; k < itemRefIds.length; k++) {
           let question = questions[k];
+          
+          const questionJson = JSON.stringify(question.getQuestionPropsAsJSON());
+          questionsJsonArr.push(questionJson);
+          
           let itemRefId = itemRefIds[k];
           question.itemRefId = itemRefId;
 
-          const item = question.getItemPropsAsJson();
+          const itemJson = JSON.stringify(question.getItemPropsAsJson());
 
-          items.push(item);
+          itemsJsonArr.push(itemJson);
 
         }
       } else {
         throw new Error('Number of questions did not match number of item refIds.');
       }
 
+      const questionsCallBody = `{"questions": [${questionsJsonArr}]}`
       
-      body = `{"items": [${items}]}`
+      // generate questions
+      callapi = await callDataAPI(questionsCallBody, 'set', 'questions');
+
+      const itemsCallBody = `{"items": [${itemsJsonArr}]}`
 
       // generate items
-      callapi = await callDataAPI(body, 'set', 'items');
+      callapi = await callDataAPI(itemsCallBody, 'set', 'items');
 
       // prepare quizzes
       quiz.refId = quizRefIds[i];
 
-      const activity = quiz.getQuizPropsAsJSON();
+      const activity = JSON.stringify(quiz.getQuizPropsAsJSON());
 
       activities.push(activity);
     
     }
  
-
     // create quizzes
-    body = `{"activities": [${activities}]}`
+    const quizCallBody = `{"activities": [${activities}]}`
 
-    callapi = await callDataAPI(body, 'set', 'activities');
+    callapi = await callDataAPI(quizCallBody, 'set', 'activities');
 
     printRefIds(activities, outputPath);
 
