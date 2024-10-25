@@ -457,8 +457,20 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
       let quiz = quizzes[i];
       quiz.updateTag(questionBankIdTagName, questionBankISBN)
       quiz.updateTag(courseIdTagName, courseID);
+
+      // add supplement tags, if applicable
+      if (tagsJSON !== undefined) {
+        for (let [key, value] of Object.entries(tagsJSON)) {
+          if (!Array.isArray(value)) {
+            value = [value];
+          }
+          quiz.updateOrAddTag(key, value)
+        }
+      }
+
       let questions = quiz.questions;
       let questionRefIds = await generateIDs(questions.length, 'questions');
+      
       // loop through questions, adding refIds
       if (questions.length == questionRefIds.length) {
         for (k = 0; k < questions.length; k++) {
@@ -467,6 +479,17 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
           question.questionRefId = questionrefId;
           question.updateTag(courseIdTagName, courseID);
           question.updateTag(questionBankIdTagName, questionBankISBN);
+
+          // add supplement tags, if applicable
+          if (tagsJSON !== undefined) {
+            for (let [key, value] of Object.entries(tagsJSON)) {
+              if (!Array.isArray(value)) {
+                value = [value];
+              }
+              question.updateOrAddTag(key, value)
+            }
+          }
+
         }
       } else {
         throw new Error('Number of refIds does not match number of questions.');
@@ -516,19 +539,6 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
 
       let items = [];
       
-      // TODO: update to work with object-oriented approach
-      // merge any additional tags into tags object
-      // if (tagsJSON !== undefined) {
-      //   for (const [key, value] of Object.entries(tagsJSON)) {
-      //     if (itemTags[key]) {
-      //       itemTags[key] = [...itemTags[key], ...value];
-      //     } else {
-      //       itemTags[key] = value;
-      //     }
-      //   }
-      // }
-      //itemTags = JSON.stringify(itemTags);
-
       // prepare items
       if (questions.length == itemRefIds.length) {
         for (let k = 0; k < itemRefIds.length; k++) {
@@ -553,18 +563,6 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
 
       // prepare quizzes
       quiz.refId = quizRefIds[i];
-
-      // TODO: update to work with object-oriented approach
-      // merge any additional tags into tags object
-      // if (tagsJSON !== undefined) {
-      //   for (const [key, value] of Object.entries(tagsJSON)) {
-      //     if (activityTags[key]) {
-      //       activityTags[key] = [...activityTags[key], ...value];
-      //     } else {
-      //       activityTags[key] = value;
-      //     }
-      //   }
-      // }
 
       const activity = quiz.getQuizPropsAsJSON();
 
@@ -640,9 +638,12 @@ async function printQuizzes(quizzes, docPath) {
 
         for (i = 0; i < quizzes.length; i ++) {
             const quiz = quizzes[i];
+            const quizTags = JSON.stringify(quiz.getItemPropsAsJson().tags);
             outputStream.write(`Quiz ${i + 1}:\n`);
             outputStream.write(`Title: ${quiz.title}\n`);
-            outputStream.write(`Type: ${quiz.moduleType}\n`);
+            outputStream.write(`Type: ${quiz.moduleType || "none"}\n`);
+            outputStream.write(`Quiz ${i + 1} tags:\n`);
+            outputStream.write(`\t${quizTags}\n`);
             for (k = 0; k < quiz.questions.length; k ++) {
                 const question = quiz.questions[k];
                 const questionProps = JSON.stringify(question.getQuestionPropsAsJSON());
