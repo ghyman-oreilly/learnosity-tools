@@ -1,18 +1,37 @@
+const {
+	publisherTagName,
+	publisherTagValue,
+	questionBankIdTagName,
+	courseIdTagName,
+	quizTypeTagName
+} = require('../constants')
 
 class Quiz {
 	constructor() {
 		this.title = ''
 		this.refId = ''
 		this.shuffleItems = true
-		this.courseId = ''
-		this.questionBankId = ''
 		this.questions = []
 		this.items = []
-		this.publisher = "O'Reilly Media"
+		this.tags = { 
+			[publisherTagName]: [publisherTagValue],
+			[questionBankIdTagName]: ['']
+		 };
 	}
 	
-	assignQuizPropValues( {} = {}) {
+	// TODO: might be helpful to have an superclass for Quiz and Question - they share a lot of shape/behavior
 
+	assignQuizPropValues( {} = {}) {
+	}
+
+	updateOrAddTag(tagName, tagValue) {
+        this.tags[tagName] = [tagValue];
+    }
+
+	updateTag(tagName, tagValue) {
+		if (this.tags[tagName]) {
+			this.tags[tagName] = [tagValue];
+		}
 	}
 
 	getItemRefIdsfromItems() {
@@ -41,10 +60,7 @@ class Quiz {
 				},
 				rendering_type: "assess"
 			},
-			tags: {
-				Publisher: [this.publisher],
-				"Question Bank FPID": [this.questionBankId]
-			}
+			tags: this.tags
 		}
 	}
 
@@ -53,19 +69,15 @@ class Quiz {
 class StandardQuiz extends Quiz {
 	constructor() {
 		super();
-		this.moduleType
-	}
-
-	getQuizPropsAsJSON() {
-		const baseJson = super.assignQuizPropValues();
-		baseJson.tags["Course FPID"] = this.courseId;
-		return baseJson
+		this.moduleType; // unused for now
+		this.updateOrAddTag(courseIdTagName, '');
 	}
 }
 
 class DiagnosticQuiz extends Quiz {
 	constructor() {
 		super();
+		this.updateOrAddTag(quizTypeTagName, 'Diagnostic');
 	}
 }
 

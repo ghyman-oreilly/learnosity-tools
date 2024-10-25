@@ -10,8 +10,12 @@ const { callDataAPI } = require('./shared/call-learnosity');
 const readJSONFromFile = require('./shared/read-json-from-file');
 const { StandardQuestion, DiagnosticQuestion } = require('./classModules/questions')
 const { StandardQuiz, DiagnosticQuiz } = require('./classModules/quizzes')
+const {
+	questionBankIdTagName,
+	courseIdTagName
+} = require('./constants')
 
-async function getUserInput(enableDiagnostic=false) {
+async function getUserInput(enableDiagnostic=false, allowRationaleToggleInStandardQuizzes=false) {
   try {
     const questions = [
       {
@@ -42,12 +46,12 @@ async function getUserInput(enableDiagnostic=false) {
         name: 'hasRationales',
         choices: ["Yes", "No"],
         message: 'Do your quizzes have rationales?',
-        when: (answers) => answers.quizType === 'Standard',
+        when: (answers) => answers.quizType === 'Standard' && allowRationaleToggleInStandardQuizzes === true,
       },
       {
         type: 'list',
         name: 'addTags',
-        choices: ["Yes", "No"],
+        choices: ["No", "Yes"],
         message: 'Do you wish to add addl activity and item tags (e.g., Level, Topic, Role) via JSON file?',
         when: (answers) => answers.quizType === 'Standard',
       },
@@ -60,8 +64,15 @@ async function getUserInput(enableDiagnostic=false) {
     ];
 
     const answers = await inquirer.prompt(questions);
-    let hasRationales = 'hasRationales' in answers ? answers['hasRationales'] : false;
-    hasRationales = hasRationales === "Yes"; // convert to boolean
+    let hasRationales
+
+    // handle hasRationales, depending on quiz type, config, and user input
+    if (answers.quizType === 'Standard') {
+      hasRationales = 'hasRationales' in answers ? answers['hasRationales'] : true;
+    } else {
+      hasRationales = false;
+    }
+    hasRationales = hasRationales === "Yes" || hasRationales === true; // convert to boolean
     let addTags = 'addTags' in answers ? answers['addTags'] : '';
     addTags = addTags === "Yes";
 
@@ -70,8 +81,8 @@ async function getUserInput(enableDiagnostic=false) {
       'quizType' in answers ? answers['quizType'] : 'Standard',
       answers['questionBankISBN'],
       'courseID' in answers ? answers['courseID'] : '',
-      hasRationales ?? false,
-      addTags ?? '',
+      hasRationales,
+      addTags,
       'tagsFile' in answers ? answers['tagsFile'] : '',
     ];
   } catch (error) {
@@ -311,7 +322,7 @@ async function processHTML(html, hasRationales, quizType) {
     let shuffleTwoOptionQuestions = config.shuffleTwoOptionQuestions;
 
     const quizTitleElements = xpath.select('//h1[starts-with(@class, "QuizTitle")]', doc);
-    const quizSectionElements = xpath.select('//h1[starts-with(@class, "QuizSection")]', doc);
+    const quizSectionElements = xpath.select('//h2[starts-with(@class, "QuizSection")]', doc);
 
     // Loop through quiz titles
     for (let i = 0; i < quizTitleElements.length; i++) {
@@ -343,17 +354,18 @@ async function processHTML(html, hasRationales, quizType) {
         let skill
 
         if (quizType === 'Diagnostic') {
-          skill = quiz.title.replace(/\s*/, '-')
+          skill = quiz.title.replace(/\s+/g, '-')
         }
 
         while (nextElement && (!nextElement.getAttribute('class') || nextElement.getAttribute('class') !== 'QuizTitle')) {
+          
           // Parse quiz elements here
-          let elementType = nextElement.getAttribute('data-custom-style');
+          let elementType = nextElement.getAttribute('data-custom-style') || nextElement.getAttribute('class');
 
-          // skip elements that don't have data-custom-style attr (like [rationale] tag)
-          while (nextElement && !nextElement.getAttribute('data-custom-style')) {
+          // skip elements that don't have data-custom-style or class attr (like [rationale] tag)
+          while (nextElement && !elementType) {
               nextElement = nextElement.nextSibling; // move to next sibling
-              elementType = nextElement.getAttribute('data-custom-style');
+              elementType = nextElement.getAttribute('data-custom-style') || nextElement.getAttribute('class');
           }
 
           switch(true) {
@@ -377,7 +389,7 @@ async function processHTML(html, hasRationales, quizType) {
 
                 // if questionCounter > 1, record previous question (all but last question)
                 if (questionCounter > 1) {
-                  question.assignQuestionPropValues({ options, correctOptions, questionStem, shuffleTwoOptionQuestions, rationales, difficultyLevel, skill })
+                  question.assignQuestionPropValues({ options, correctOptions, questionStem, shuffleTwoOptionQuestions, hasRationales, rationales, difficultyLevel, skill })
                   questions.push(question);
                 }
 
@@ -385,14 +397,14 @@ async function processHTML(html, hasRationales, quizType) {
                 if (quizType === 'Diagnostic') {
                   if (quizSectionElements.length != 3) {
                     throw new Error('Diagnostic quizzes must contain 3 QuizSection elements. Please fix and rerun.')
-                  } else if (quizTitleElements.legnth != 1) {
+                  } else if (quizTitleElements.length != 1) {
                     throw new Error('Diagnostic quizzes must contain 1 QuizTitle element. Please fix and rerun.')
                   }
                     else {
                     question = new DiagnosticQuestion(difficultyLevel, skill);
                   }
                 } else {
-                  question = new StandardQuestion();
+                  question = new StandardQuestion(hasRationales);
                 }
 
                 questionStem = elementCleanup(serialize(nextElement));
@@ -423,23 +435,8 @@ async function processHTML(html, hasRationales, quizType) {
         }
 
         // last question: assign props and push question to array 
-        question.assignQuestionPropValues({ options, correctOptions, questionStem, shuffleTwoOptionQuestions, rationales, difficultyLevel, skill })
+        question.assignQuestionPropValues({ options, correctOptions, questionStem, shuffleTwoOptionQuestions, hasRationales, rationales, difficultyLevel, skill })
         questions.push(question);
-
-        // create refIds for questions
-        let questionRefIds = [];
-        questionRefIds = await generateIDs(questions.length, 'questions');
-
-        // loop through questions, adding refIds
-        if (questions.length == questionRefIds.length) {
-          for (k = 0; k < questions.length; k++) {
-            let question = questions[k];
-            let questionrefId = questionRefIds[k];
-            question.questionRefId = questionrefId;
-          }
-        } else {
-          throw new Error('Number of refIds does not match number of questions.');
-        }
 
         quiz.questions = questions;
         quizzes.push(quiz);
@@ -454,6 +451,27 @@ async function processHTML(html, hasRationales, quizType) {
 
 async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outputPath){
   try {
+
+    // add refIds and some tag values to questions
+    for (i = 0; i < quizzes.length; i++) {
+      let quiz = quizzes[i];
+      quiz.updateTag(questionBankIdTagName, questionBankISBN)
+      quiz.updateTag(courseIdTagName, courseID);
+      let questions = quiz.questions;
+      let questionRefIds = await generateIDs(questions.length, 'questions');
+      // loop through questions, adding refIds
+      if (questions.length == questionRefIds.length) {
+        for (k = 0; k < questions.length; k++) {
+          let question = questions[k];
+          let questionrefId = questionRefIds[k];
+          question.questionRefId = questionrefId;
+          question.updateTag(courseIdTagName, courseID);
+          question.updateTag(questionBankIdTagName, questionBankISBN);
+        }
+      } else {
+        throw new Error('Number of refIds does not match number of questions.');
+      }
+    }
 
     let activities = [] // array for quizzes
 
@@ -628,8 +646,11 @@ async function printQuizzes(quizzes, docPath) {
             for (k = 0; k < quiz.questions.length; k ++) {
                 const question = quiz.questions[k];
                 const questionProps = JSON.stringify(question.getQuestionPropsAsJSON());
-                outputStream.write(`\tQuestion ${i + 1}:\n`);
+                const itemTags = JSON.stringify(question.getItemPropsAsJson().tags);
+                outputStream.write(`\tQuestion ${k + 1}:\n`);
                 outputStream.write(`\t${questionProps}\n`);
+                outputStream.write(`\tQuestion ${k + 1} tags:\n`);
+                outputStream.write(`\t${itemTags}\n`);
             }
             outputStream.write('\n');
         }
@@ -665,7 +686,8 @@ async function printRefIds(activities, docPath) {
 
 async function main() {
   const enableDiagnostic = config.enableDiagnostic;
-  const [src, quizType, questionBankISBN, courseID, hasRationales, addTags, tagsFile] = await getUserInput(enableDiagnostic);
+  const allowRationaleToggleInStandardQuizzes = config.allowRationaleToggleInStandardQuizzes;
+  const [src, quizType, questionBankISBN, courseID, hasRationales, addTags, tagsFile] = await getUserInput(enableDiagnostic, allowRationaleToggleInStandardQuizzes);
   const outputPath = src.substring(0, src.lastIndexOf('/'));
   let tagsData = '';
 

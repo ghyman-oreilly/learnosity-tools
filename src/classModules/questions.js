@@ -1,4 +1,13 @@
 
+const {
+	publisherTagName,
+	publisherTagValue,
+	questionBankIdTagName,
+	courseIdTagName,
+	questionDifficultyTagName,
+	questionSkillTagName
+} = require('../constants')
+
 class Question {
 	constructor() {
 		this.type = 'mcq'
@@ -9,9 +18,7 @@ class Question {
 		this.itemRefId = '';
 		this.shuffleOptions = true;
 		this.multipleResponses = false;
-		this.courseId = '';
-		this.questionBankId = '';
-		this.publisher = "O'Reilly Media";
+		this.tags = { [publisherTagName]: [publisherTagValue] };
 	}
 
 	assignQuestionPropValues( { options, correctOptions, questionStem, shuffleTwoOptionQuestions } = {}) {
@@ -35,6 +42,22 @@ class Question {
 			this.multipleResponses = false;
 		}
 
+	}
+
+	updateProperty(propName, value) {
+	if (this.hasOwnProperty(propName)) {
+		this[propName] = value;
+		}
+	}
+
+    updateOrAddTag(tagName, tagValue) {
+        this.tags[tagName] = [tagValue];
+    }
+
+	updateTag(tagName, tagValue) {
+		if (this.tags[tagName]) {
+			this.tags[tagName] = [tagValue];
+		}
 	}
 
     getQuestionPropsAsJSON() {
@@ -82,68 +105,59 @@ class Question {
 					reference: this.questionRefId
 				}
 			],
-			tags: {
-				Publisher: [
-					this.publisher
-				]
-			}
+			tags: this.tags
 		}
 	}
 }
 
 class StandardQuestion extends Question {
-	constructor() {
+	constructor(hasRationales) {
 		super();
+		super.updateOrAddTag(courseIdTagName, '')
 		this.rationales = []
+		this.hasRationales = hasRationales;
 	}
 
 	assignQuestionPropValues(params) {
 		super.assignQuestionPropValues(params);
 
-		const { questionStem, options, rationales } = params;
+		const { questionStem, options, hasRationales, rationales } = params;
 		
-		if (!options || !rationales || options.length != rationales.length) {
-          console.log('Question has unequal number of options and rationales ' + questionStem);
-          throw new Error('At least one quiz question has an unequal number of options and rationales. Please fix and rerun.')
-        }
-		
-		this.rationales = rationales;
+		if (hasRationales) {
+			if (!options || !rationales || options.length != rationales.length) {
+			console.log('Question has unequal number of options and rationales ' + questionStem);
+			throw new Error('At least one quiz question has an unequal number of options and rationales. Please fix and rerun.')
+			}
+			this.hasRationales = hasRationales;
+			this.rationales = rationales;
+		}
 	}
 
 	getQuestionPropsAsJSON() {
 		const baseJson = super.getQuestionPropsAsJSON();
-		baseJson.data.metadata.distractor_rationale_response_level = this.rationales;
+		if (this.hasRationales) {
+			baseJson.data.metadata.distractor_rationale_response_level = this.rationales;
+		}
 		return baseJson
 	}
 
-	getItemPropsAsJson() {
-		const baseJson = super.getItemPropsAsJson();
-		baseJson.tags["Course FPID"] = [this.courseId];
-		return baseJson
-	}
 }
 
 class DiagnosticQuestion extends Question {
 	constructor(difficultyLevel, skill) {
 		super();
-		this.difficultyLevel = difficultyLevel;
-		this.skill = skill;
+		super.updateOrAddTag(questionBankIdTagName, '');
+		super.updateOrAddTag(questionDifficultyTagName, difficultyLevel);
+		super.updateOrAddTag(questionSkillTagName, skill);
 	}
 
 	assignQuestionPropValues(params) {
 		super.assignQuestionPropValues(params);
 
 		const { difficultyLevel, skill } = params;
-		this.difficultyLevel = difficultyLevel;
-		this.skill = skill;
-	}
-
-	getItemPropsAsJson() {
-		const baseJson = super.getItemPropsAsJson();
-		baseJson.tags.Level = [this.difficultyLevel];
-		baseJson.tags.Subject = [this.skill];
-		baseJson.tags["Question Bank FPID"] = [this.questionBankId]
-		return baseJson
+		
+		super.updateOrAddTag('Level', difficultyLevel);
+		super.updateOrAddTag('Subject', skill);
 	}
 
 }
