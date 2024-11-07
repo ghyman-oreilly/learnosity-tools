@@ -16,6 +16,7 @@ class Question {
 		this.correctOptions = [];
 		this.questionRefId = '';
 		this.itemRefId = '';
+		this.difficultyLevel = 0;
 		this.shuffleOptions = true;
 		this.multipleResponses = false;
 		this.tags = { [publisherTagName]: [publisherTagValue] };
@@ -155,17 +156,33 @@ class DiagnosticQuestion extends Question {
 	constructor(difficultyLevel, skill) {
 		super();
 		super.updateOrAddTag(questionBankIdTagName, '');
-		super.updateOrAddTag(questionDifficultyTagName, difficultyLevel);
 		super.updateOrAddTag(questionSkillTagName, skill);
+
+		// assign difficulty level
+		if (difficultyLevel == "Beginner") {
+			this.difficultyLevel = 1;
+		} else if (difficultyLevel == "Intermediate") {
+			this.difficultyLevel = 2;
+		} else if (difficultyLevel == "Advanced") {
+			this.difficultyLevel = 3;
+		}
 	}
 
 	assignQuestionPropValues(params) {
 		super.assignQuestionPropValues(params);
 
-		const { difficultyLevel, skill } = params;
+		const { skill } = params;
 		
-		super.updateOrAddTag('Level', difficultyLevel);
 		super.updateOrAddTag('Subject', skill);
+	}
+
+	getQuestionPropsAsJSON() {
+		const baseJson = super.getQuestionPropsAsJSON();
+		if (this.difficultyLevel != 0) {
+			baseJson.data.adaptive = baseJson.data.adaptive || {}; // ensure `adaptive` object exists
+			baseJson.data.adaptive.difficulty = this.difficultyLevel;
+		}
+		return baseJson
 	}
 
 }
