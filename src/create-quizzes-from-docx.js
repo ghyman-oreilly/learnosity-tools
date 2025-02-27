@@ -280,38 +280,59 @@ async function processHTML(html, hasRationales, quizType) {
     // set variable from config option for removing mark tags
     const stripMarksConfig = config.stripMarks;
 
-    // function to clean up question elements
-    function elementCleanup(text, stripMarks = stripMarksConfig){
+    function elementCleanupAndStringify(element, stripMarks = stripMarksConfig) {
+      /* function to clean up and stringfy elements
+          contained in quiz-element div
+       */
+
+      let combinedHtmlContentString = ""
       const strongReg = /(<strong>|<\/strong>)/gi;
       const itemPrefixReg = /^(\s*\<.[^\>]*\>)?\s*?((?:[A-Z]|(?:[0-9]*))\.\s*)/gim;
       const itemPrefixRegReplacement = "$1";
-      const paraReg = /<p>\s*(<pre>)|(<\/pre>)\s*<\/p>/g;
-      const paraRegReplacement = "$1$2";
+      const correctFlagReg = /\[Correct[^\]]*\]/i
 
-      // perform some text cleanup
-      text = text.replace(strongReg,"");
-      text = text.replace(itemPrefixReg, itemPrefixRegReplacement);
-      text = text.replace(paraReg, paraRegReplacement); // this must come after the prefix replacement
+      // Get child elements (e.g., paragraphs within div)
+      const topLevelElements = Array.from(element.childNodes).filter(node => node.nodeType === 1); // 1 = ELEMENT_NODE
 
-      // remove strip marks unless config specifies not to
-      if (stripMarks != 'undefined' && stripMarks != false) {
-        const markReg = /(<mark>|<\/mark>)/gi;
-        text = text.replace(markReg,"");
-      }
+      // Iterate over top-level elements
+      for (let i = 0; i < topLevelElements.length; i++) {
+        let currentElement = topLevelElements[i];
 
-      return text
-    }
-
-    // function to serialize node children to string
-    function serialize(element) {
-      if (element.hasChildNodes) {
-        let string = '';
-        while (element.firstChild) {
-          string += element.firstChild.toString();
-          element.removeChild(element.firstChild)
+        // Check if the element contains a <pre> element
+        const preElement = currentElement.getElementsByTagName('pre')[0];
+        if (preElement) {
+          // If the element contains a <pre> element, continue processing the pre element,
+          // effectively dropping the enclosing para
+          currentElement = preElement;
         }
-        return string
+
+        let htmlContentString = currentElement.toString();  // Get HTML content of element as a string
+
+        // skip to next element if textContent is null or undefined
+        if (htmlContentString == null) {
+          continue;
+        }
+
+        // Perform replacements
+        htmlContentString = htmlContentString.replace(strongReg, "");  // Remove strong tags
+        htmlContentString = htmlContentString.replace(correctFlagReg, "") // Remove correct flags
+
+        // remove strip marks unless config specifies not to
+        if (stripMarks != 'undefined' && stripMarks != false) {
+          const markReg = /(<mark>|<\/mark>)/gi;
+          htmlContentString = htmlContentString.replace(markReg,"");
+        }
+
+        // Perform the itemPrefixReg replacement on the element's text content (if it's not a <pre> element)
+        if (currentElement.nodeName.toLowerCase() !== 'pre') {
+          htmlContentString = htmlContentString.replace(itemPrefixReg, itemPrefixRegReplacement);
+        }
+
+        combinedHtmlContentString = combinedHtmlContentString + htmlContentString
       }
+
+      return combinedHtmlContentString;
+
     }
 
     let quizCounter = 0;
@@ -407,27 +428,24 @@ async function processHTML(html, hasRationales, quizType) {
                   question = new StandardQuestion(hasRationales);
                 }
 
-                questionStem = elementCleanup(serialize(nextElement));
+                questionStem = elementCleanupAndStringify(nextElement);
                 optionCounter = 0 // reset option counter (zero-indexed)
                 options = []; // Reset array when encountering a stem
                 correctOptions = []; // Reset array when encountering a stem
                 rationales = []; // Reset array when encountering a stem
                 break;
             case /^QuestionOption$/.test(elementType):    
-                questionOption = serialize(nextElement);
-                
                 // test for correct option(s)
-                const isCorrect = /\[Correct[^\]]*\]/i.test(questionOption);
+                const isCorrect = /\[Correct[^\]]*\]/i.test(nextElement.textContent);
                 if (isCorrect) {
                   correctOptions.push(optionCounter.toString()); 
                 }
-
-                questionOption = elementCleanup(questionOption.replace(/\[Correct[^\]]*\]/i, '').trim());
+                questionOption = elementCleanupAndStringify(nextElement);
                 options.push({label: questionOption, value: optionCounter.toString()})
                 optionCounter++ // increment option counter
                 break;
             case /^QuestionRationale$/.test(elementType):
-                questionRationale = elementCleanup(serialize(nextElement));
+                questionRationale = elementCleanupAndStringify(nextElement);
                 rationales.push(questionRationale);
                 break;
           }
