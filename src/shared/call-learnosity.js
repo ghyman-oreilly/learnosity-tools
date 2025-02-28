@@ -93,6 +93,11 @@ async function callDataAPI(body, action, endpoint){
   return response
 }
 
+async function getPublicUrl(publicUrl) {
+  const response = await fetch(publicUrl);
+  return response
+}
+
 async function uploadFileToPresignedUrl(filePath, contentType, presignedUrl) {
     const fileData = fs.readFileSync(filePath); // Read file as binary data
 
@@ -114,4 +119,4 @@ async function uploadFileToPresignedUrl(filePath, contentType, presignedUrl) {
     }
 }
 
-module.exports = { callDataAPI, sendAPIRequests, uploadFileToPresignedUrl };
+module.exports = { callDataAPI, sendAPIRequests, uploadFileToPresignedUrl, getPublicUrl };
