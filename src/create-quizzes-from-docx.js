@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./config'); // Load consumer key & secret from config.js
 const uuid = require('uuid');
-const { callDataAPI, sendAPIRequests } = require('./shared/call-learnosity');
+const { callDataAPI, sendAPIRequests, uploadFileToPresignedUrl } = require('./shared/call-learnosity');
 const readJSONFromFile = require('./shared/read-json-from-file');
 const { StandardQuestion, DiagnosticQuestion } = require('./classModules/questions')
 const { StandardQuiz, DiagnosticQuiz } = require('./classModules/quizzes')
@@ -91,11 +91,13 @@ async function getUserInput(enableDiagnostic=false, allowRationaleToggleInStanda
   }
 }
 
-async function convertDOCXtoHTML(filepath) {
+async function convertDOCXtoHTML(path_to_docx, path_to_temp_dir) {
   try {
-      const args = ['-f', 'docx+styles', '-t', 'html5', '--wrap=none'];
+      const extract_media_flag = '--extract-media=' + path_to_temp_dir
+      
+      const args = ['-f', 'docx+styles', '-t', 'html5', '--wrap=none', extract_media_flag];
 
-      const doc = await pandoc(filepath, args);
+      const doc = await pandoc(path_to_docx, args);
 
       if (!doc) {
         throw new Error('HTML output not received from pandoc')
@@ -167,6 +169,69 @@ async function processHTML(html, hasRationales, quizType) {
                   node.removeAttribute(attr);
               }
           });
+        }
+      }
+    }
+
+    /* TODO: calls to obtain presigned upload URLs,
+    upload images, and replace src paths could potentially be
+    abstracted out, though the replacements might need to rely
+    on regex instead of DOM manipulation */
+
+    // Image handling
+    const imagesForUpload = [];
+    const filenamesForUpload = [];
+    const images = xpath.select('//img', doc);
+
+    // get image elements and image attributes
+    for (const image of images) {
+        const src = image.getAttribute('src');
+        if (src) {
+          const filename = src.split('/').pop();
+          const fileExt = filename.split('.').pop();
+          const uniqueId = uuid.v4();
+          const uniqueFilename = uniqueId + "." + fileExt
+          imagesForUpload.push({ name: filename, path: src, uploadName: uniqueFilename });
+          filenamesForUpload.push(JSON.stringify(uniqueFilename));
+        }
+    }
+
+    let responses
+    let uploadData = []
+
+    // get presigned upload URLs and public URLs from Learnosity
+    if ((filenamesForUpload.length > 0) && (filenamesForUpload.length == imagesForUpload.length)) {
+      responses = await sendAPIRequests(filenamesForUpload, 'get', 'upload/assets');
+    }
+
+    for (const response of responses) {
+      if (response.meta.status === true) {
+        uploadData.push(...response.data)
+      }
+    }
+
+    let imageSrcReplacements = []
+
+    // upload images to Learnosity
+    if ((uploadData.length > 0) && uploadData.length == imagesForUpload.length) {
+      for (let i = 0; i < uploadData.length; i++) {
+        const response = await uploadFileToPresignedUrl(imagesForUpload[i].path, uploadData[i].content_type, uploadData[i].upload)
+        if (response) {
+          imageSrcReplacements.push({'oldSrc': imagesForUpload[i].path, 'newSrc': uploadData[i].public})
+        }
+      }
+    }
+
+    // add Learnosity public URLs to html
+    if (imageSrcReplacements.length > 0) {
+      for (const image of images) {
+        const src = image.getAttribute('src');
+        if (src) {
+          for (const imageSrcReplacement of imageSrcReplacements) {
+            if (imageSrcReplacement.oldSrc == src && imageSrcReplacement.newSrc) {
+              image.setAttribute('src', imageSrcReplacement.newSrc);
+            }
+          }
         }
       }
     }
@@ -526,8 +591,6 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
       process.exit();
     }
 
-    let callapi
-
     // generate quiz IDs
     let quizRefIds = await generateIDs(quizzes.length, 'activities');
 
@@ -577,6 +640,8 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
     
     }
     
+    let callapi
+
     // generate questions
     callapi = await sendAPIRequests(questionsJsonArr, 'set', 'questions');
 
@@ -584,6 +649,8 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
     callapi = await sendAPIRequests(itemsJsonArr, 'set', 'items');
 
     callapi = await sendAPIRequests(activitiesJsonArr, 'set', 'activities');
+
+    console.log("Quizzes successfully created!");
 
     printRefIds(activitiesJsonArr, outputPath);
 
@@ -705,10 +772,26 @@ async function main() {
     tagsData = await readJSONFromFile(tagsFile);
   }
 
-  const html = await convertDOCXtoHTML(src);
+  const timestamp = Date.now();
+  const temp_dir = path.join(outputPath, `temp_media_${timestamp}`);
+
+  fs.mkdir(temp_dir, { recursive: true }, (err) => {
+    if (err) {
+      console.error('Error creating directory:', err);
+    }
+  });
+
+  const html = await convertDOCXtoHTML(src, temp_dir);
   const quizzes = await processHTML(html, hasRationales, quizType)
 
   createQuizzes(quizzes, questionBankISBN, courseID, tagsData, outputPath);  
+
+  fs.rmdir(temp_dir, { recursive: true }, (err) => {
+    if (err) {
+      console.error('Error removing directory:', err);
+    }
+  });
+
 }
 
 main();
