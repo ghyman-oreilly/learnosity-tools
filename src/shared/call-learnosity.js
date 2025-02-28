@@ -1,24 +1,31 @@
 const Learnosity = require('learnosity-sdk-nodejs');
 const config = require('../config'); // Load consumer key & secret from config.js
+const fs = require('fs');
 
 
 async function sendAPIRequests(items, action, endpoint) {
     const maxItems = 50; // Maximum number of items per request
     let callBody
+    let responses = []
 
     for (let i = 0; i < items.length; i += maxItems) {
         // Get the current chunk of items
         const chunk = items.slice(i, i + maxItems);
-        callBody = `{"${endpoint}": [${chunk}]}`
+        if (endpoint.includes('upload')){
+          callBody = `{"subkeys": [${chunk}]}`
+        } else {
+          callBody = `{"${endpoint}": [${chunk}]}`
+        }     
 
         // Make the API call with the current chunk
         try {
             const response = await callDataAPI(callBody, action, endpoint);
-            console.log('Response:', response);
+            responses.push(response)
         } catch (error) {
             console.error('Error calling API:', error);
         }
     }
+    return responses
 }
 
 async function callDataAPI(body, action, endpoint){
@@ -86,4 +93,25 @@ async function callDataAPI(body, action, endpoint){
   return response
 }
 
-module.exports = { callDataAPI, sendAPIRequests };
+async function uploadFileToPresignedUrl(filePath, contentType, presignedUrl) {
+    const fileData = fs.readFileSync(filePath); // Read file as binary data
+
+    try {
+        const response = await fetch(presignedUrl, {
+            method: 'PUT',
+            body: fileData,
+            headers: {
+                'Content-Type': contentType // Ensure correct content type
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Upload failed: ${response.statusText}`);
+        }
+        return response
+    } catch (error) {
+        console.error('Error uploading file:', error);
+    }
+}
+
+module.exports = { callDataAPI, sendAPIRequests, uploadFileToPresignedUrl };
