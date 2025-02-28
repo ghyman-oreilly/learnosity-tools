@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./config'); // Load consumer key & secret from config.js
 const uuid = require('uuid');
-const { callDataAPI, sendAPIRequests, uploadFileToPresignedUrl } = require('./shared/call-learnosity');
+const { callDataAPI, sendAPIRequests, uploadFileToPresignedUrl, getPublicUrl } = require('./shared/call-learnosity');
 const readJSONFromFile = require('./shared/read-json-from-file');
 const { StandardQuestion, DiagnosticQuestion } = require('./classModules/questions')
 const { StandardQuiz, DiagnosticQuiz } = require('./classModules/quizzes')
@@ -179,21 +179,33 @@ async function processHTML(html, hasRationales, quizType) {
     on regex instead of DOM manipulation */
 
     // Image handling
+    const images = xpath.select('//img', doc);
+    const imageFileNames = []
     const imagesForUpload = [];
     const filenamesForUpload = [];
-    const images = xpath.select('//img', doc);
 
-    // get image elements and image attributes
+    // get images filenames
     for (const image of images) {
         const src = image.getAttribute('src');
         if (src) {
           const filename = src.split('/').pop();
-          const fileExt = filename.split('.').pop();
-          const uniqueId = uuid.v4();
-          const uniqueFilename = uniqueId + "." + fileExt
-          imagesForUpload.push({ name: filename, path: src, uploadName: uniqueFilename });
-          filenamesForUpload.push(JSON.stringify(uniqueFilename));
+          imageFileNames.push(filename);
         }
+    }
+
+    const imageUniqueKeys = await generateIDsOrKeys(imageFileNames.length, 'assets', imageFileNames);
+
+    if ((imageUniqueKeys.length > 0) && (imageUniqueKeys.length == images.length)) {
+      for (let i = 0; i < images.length; i++) {
+        const image = images[i];
+        const imageUniqueKey = imageUniqueKeys[i];
+        const src = image.getAttribute('src');
+        if (src) {           
+          const filename = src.split('/').pop();
+          imagesForUpload.push({ name: filename, path: src, uploadName: imageUniqueKey });
+          filenamesForUpload.push(JSON.stringify(imageUniqueKey));
+        }
+      }
     }
 
     let responses
@@ -549,7 +561,7 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
       }
 
       let questions = quiz.questions;
-      let questionRefIds = await generateIDs(questions.length, 'questions');
+      let questionRefIds = await generateIDsOrKeys(questions.length, 'questions');
       
       // loop through questions, adding refIds
       if (questions.length == questionRefIds.length) {
@@ -592,7 +604,7 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
     }
 
     // generate quiz IDs
-    let quizRefIds = await generateIDs(quizzes.length, 'activities');
+    let quizRefIds = await generateIDsOrKeys(quizzes.length, 'activities');
 
     if (quizRefIds.length != quizzes.length) {
       throw new Error('Number of quiz refIds did not match number of quizzes.');
@@ -609,7 +621,7 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
       let itemRefIds = [];
       
       // generate item IDs
-      itemRefIds = await generateIDs(questions.length, 'items');
+      itemRefIds = await generateIDsOrKeys(questions.length, 'items');
            
       // prepare questions and items json arrays
       if (questions.length == itemRefIds.length) {
@@ -660,52 +672,97 @@ async function createQuizzes(quizzes, questionBankISBN, courseID, tagsJSON, outp
   }
 }
 
-async function generateIDs(num, endpoint) {
+async function generateIDsOrKeys(num, endpoint, assetFilenames = []) {
   try {
-    let refIds = [];
+    let refIdsOrKeys = [];
 
     // Generate reference IDs for each object
     for (let i = 0; i < num; i++) {
-      let refId = uuid.v4();
-      refIds.push(refId);
+      if (assetFilenames.length == 0) {
+        const uniqueId = uuid.v4();
+        refIdsOrKeys.push(uniqueId);
+      } else if (assetFilenames.length == num) {
+        // if assets are passed, use uuids to generate asset keys
+        const uniqueId = uuid.v4();
+        const fileExt = assetFilenames[i].split('.').pop();
+        const key = uniqueId + "." + fileExt;
+        refIdsOrKeys.push(key);
+      } else {
+        return
+      }
     }
 
-    // Function to check if refIds are unique
-    const checkID = async (refIds, endpoint) => {
-      const body = JSON.stringify({ references: refIds });
-      const response = await callDataAPI(body, 'get', endpoint);
-      const records = response.meta.records;
-      return records;
-    };
-
     // Check if any reference IDs are not unique
-    let records = await checkID(refIds, endpoint);
+    let records
+    
+    if (assetFilenames.length == 0) {
+      records = await checkIDs(refIdsOrKeys, endpoint);
+    } else {
+      records = await checkPublicUrl(refIdsOrKeys);
+    }
+    
     let tries = 0;
 
     // Continue generating new reference IDs until all are unique
     while (records !== 0 && tries <= 5) {
-      for (let i = 0; i < objArr.length; i++) {
-        refIds[i] = uuid.v4();
+      for (let i = 0; i < refIdsOrKeys.length; i++) {
+        if (assetFilenames.length == 0) {
+          refIdsOrKeys[i] = uuid.v4();
+        } else {
+          const fileExt = refIdsOrKeys[i].split('.').pop();
+          const uniqueId = uuid.v4();
+          const key = uniqueId + "." + fileExt;
+          refIdsOrKeys[i] = key;
+        }
       }
-      records = await checkID(refIds, endpoint);
+      if (assetFilenames.length == 0) {
+        records = await checkIDs(refIdsOrKeys, endpoint);
+      } else {
+        records = await checkPublicUrl(refIdsOrKeys);
+      }
       tries++;
 
       if (tries === 5) {
-        console.log("Unable to produce unique IDs in 5 tries. Exiting...");
+        console.log("Unable to produce unique IDs or asset keys in 5 tries. Exiting...");
         return null;
       }
     }
 
-    if (num != refIds.length) {
-      console.log("Problem generating refIds. Exiting...");
+    if (num != refIdsOrKeys.length) {
+      console.log("Problem generating refIds or asset keys. Exiting...");
     }
 
-    return refIds
+    return refIdsOrKeys
   } catch (error) {
-    console.error('Error generating IDs: ', error);
+    console.error('Error generating IDs or asset keys: ', error);
     throw error; // Rethrow the error to propagate it up the chain
   }
 }
+
+  // Function to check if public URLs
+  // (with asset keys) exist
+  async function checkPublicUrl(assetKeys) {
+    let records = 0;
+    const organization = config.organization;
+    const publicUrlStub = 'https://assets.learnosity.com/organisations/' + organization + '/';
+    for (const assetKey of assetKeys) {
+      const publicUrl = publicUrlStub + assetKey;
+      const response = await getPublicUrl(publicUrl);
+      if (response.ok) {
+        // if response is okay, page has content (e.g., an image)
+        records = records + 1;
+      }
+    }
+    return records
+  }
+
+  // Function to check if refIds are unique
+  async function checkIDs(refIds, endpoint) {
+    const body = JSON.stringify({ "references": refIds });
+    const response = await callDataAPI(body, 'get', endpoint);
+    const records = response.meta.records;
+    return records;
+  };
 
 async function printQuizzes(quizzes, docPath) {
     try {        

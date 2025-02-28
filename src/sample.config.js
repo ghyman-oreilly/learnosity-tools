@@ -12,3 +12,5 @@ module.exports.stripMarks = true; // set flag for behavior that strips mark tags
 module.exports.allowRationaleToggleInStandardQuizzes = true; // allow user to indicate whether standard quiz will contain rationales
 
 module.exports.enableDiagnostic = false; // enable or disable diagnostic quiz imports
+
+module.exports.organization = "123"
