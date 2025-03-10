@@ -15,20 +15,31 @@ const {
 	courseIdTagName
 } = require('./constants')
 
-async function getUserInput(enableDiagnostic=false, allowRationaleToggleInStandardQuizzes=false) {
+async function getUserInput(enableDiagnostic = false, allowRationaleToggleInStandardQuizzes = false) {
   try {
+    let answers = {};
+
+    // If enableDiagnostic is true, ask for quizType first
+    if (enableDiagnostic) {
+      const { quizType } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'quizType',
+          message: 'Is this a Standard or Diagnostic Quiz?',
+          choices: ['Standard', 'Diagnostic'],
+        },
+      ]);
+      answers.quizType = quizType;
+    } else {
+      answers.quizType = 'Standard';
+    }
+
+    // Define remaining questions
     const questions = [
       {
         type: 'input',
         name: 'src',
         message: 'Please provide the filepath of the DOCX file to convert: ',
-      },
-      {
-      type: 'list',
-      name: 'quizType',
-      message: 'Is this a Standard or Diagnostic Quiz?',
-      choices: ['Standard', 'Diagnostic'],
-      when: enableDiagnostic === true,
       },
       {
         type: 'input',
@@ -39,57 +50,59 @@ async function getUserInput(enableDiagnostic=false, allowRationaleToggleInStanda
         type: 'input',
         name: 'courseID',
         message: 'Please provide the course FPID or book ISBN: ',
-        when: (answers) => answers.quizType === 'Standard',
+        when: () => answers.quizType === 'Standard',
       },
       {
         type: 'list',
         name: 'hasRationales',
         choices: ["Yes", "No"],
         message: 'Do your quizzes have rationales?',
-        when: (answers) => answers.quizType === 'Standard' && allowRationaleToggleInStandardQuizzes === true,
+        when: () => answers.quizType === 'Standard' && allowRationaleToggleInStandardQuizzes,
       },
       {
         type: 'list',
         name: 'addTags',
         choices: ["No", "Yes"],
-        message: 'Do you wish to add addl activity and item tags (e.g., Level, Topic, Role) via JSON file?',
-        when: (answers) => answers.quizType === 'Standard',
+        message: 'Do you wish to add additional activity and item tags (e.g., Level, Topic, Role) via JSON file?',
+        when: () => answers.quizType === 'Standard',
       },
       {
         type: 'input',
         name: 'tagsFile',
         message: 'Please provide the filepath of the JSON file containing your tags: ',
-        when: (answers) => answers.addTags === 'Yes',
+        when: (userAnswers) => userAnswers.addTags === 'Yes',
       },
     ];
 
-    const answers = await inquirer.prompt(questions);
-    let hasRationales
+    // Run inquirer prompt and merge responses with initial quizType
+    const userAnswers = await inquirer.prompt(questions);
+    let finalAnswers = { ...answers, ...userAnswers };
 
-    // handle hasRationales, depending on quiz type, config, and user input
-    if (answers.quizType === 'Standard') {
-      hasRationales = 'hasRationales' in answers ? answers['hasRationales'] : true;
-    } else {
-      hasRationales = false;
-    }
-    hasRationales = hasRationales === "Yes" || hasRationales === true; // convert to boolean
-    let addTags = 'addTags' in answers ? answers['addTags'] : '';
+    // Convert hasRationales to boolean
+    let hasRationales = finalAnswers.quizType === 'Standard'
+      ? ('hasRationales' in finalAnswers ? finalAnswers.hasRationales : true)
+      : false;
+    hasRationales = hasRationales === "Yes" || hasRationales === true; // Normalize boolean values
+
+    // Convert addTags to boolean
+    let addTags = 'addTags' in finalAnswers ? finalAnswers.addTags : '';
     addTags = addTags === "Yes";
 
     return [
-      answers['src'] ?? '',
-      'quizType' in answers ? answers['quizType'] : 'Standard',
-      answers['questionBankISBN'],
-      'courseID' in answers ? answers['courseID'] : '',
+      finalAnswers.src ?? '',
+      finalAnswers.quizType ?? 'Standard',
+      finalAnswers.questionBankISBN,
+      finalAnswers.courseID ?? '',
       hasRationales,
       addTags,
-      'tagsFile' in answers ? answers['tagsFile'] : '',
+      finalAnswers.tagsFile ?? '',
     ];
   } catch (error) {
     console.error('Error getting user input:', error);
     throw error; // Rethrow the error to propagate it up the chain
   }
 }
+
 
 async function convertDOCXtoHTML(path_to_docx, path_to_temp_dir) {
   try {
@@ -193,9 +206,15 @@ async function processHTML(html, hasRationales, quizType) {
         }
     }
 
-    const imageUniqueKeys = await generateIDsOrKeys(imageFileNames.length, 'assets', imageFileNames);
+    let imageUniqueKeys;
 
-    if ((imageUniqueKeys.length > 0) && (imageUniqueKeys.length == images.length)) {
+    // generate unique keys for images
+    // if images are present
+    if (imageFileNames.length > 0) {
+      imageUniqueKeys = await generateIDsOrKeys(imageFileNames.length, 'assets', imageFileNames);
+    } 
+
+    if (imageUniqueKeys && (imageUniqueKeys.length > 0) && (imageUniqueKeys.length == images.length)) {
       for (let i = 0; i < images.length; i++) {
         const image = images[i];
         const imageUniqueKey = imageUniqueKeys[i];
@@ -208,7 +227,7 @@ async function processHTML(html, hasRationales, quizType) {
       }
     }
 
-    let responses
+    let responses;
     let uploadData = []
 
     // get presigned upload URLs and public URLs from Learnosity
@@ -216,11 +235,14 @@ async function processHTML(html, hasRationales, quizType) {
       responses = await sendAPIRequests(filenamesForUpload, 'get', 'upload/assets');
     }
 
-    for (const response of responses) {
-      if (response.meta.status === true) {
-        uploadData.push(...response.data)
+    if (responses && responses.length > 0) {
+      for (const response of responses) {
+        if (response.meta.status === true) {
+          uploadData.push(...response.data)
+        }
       }
     }
+
 
     let imageSrcReplacements = []
 
