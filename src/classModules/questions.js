@@ -7,6 +7,8 @@ const {
 	questionDifficultyTagName,
 	questionSkillTagName
 } = require('../constants')
+const { deepSerialize } = require('../shared/helpers')
+
 
 class Question {
 	constructor() {
@@ -21,6 +23,11 @@ class Question {
 		this.multipleResponses = false;
 		this.tags = { [publisherTagName]: [publisherTagValue] };
 	}
+
+	toJSON() {
+		/* object serialization for testing */
+    	return deepSerialize(this);
+  	}
 
 	assignQuestionPropValues( { options, correctOptions, questionStem, shuffleTwoOptionQuestions } = {}) {
 		this.options = options;

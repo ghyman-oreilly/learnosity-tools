@@ -306,7 +306,6 @@ async function processHTML(html, hasRationales, quizType) {
     function encloseElementsWithinPreviousSiblings(elements) {
       if (elements) {
         for (const element of elements) {
-          console.log(element)
           let previousSib = element.previousSibling;
           if (previousSib) {
             previousSib.appendChild(element);
@@ -873,6 +872,11 @@ async function main() {
 
 }
 
-main();
+// Only run main if the file is executed directly, not when required
+if (require.main === module) {
+  main();
+}
+
+module.exports = { convertDOCXtoHTML, processHTML }
 
 
