@@ -25,8 +25,13 @@
     "convert-docx": "npm install && node ./src/convert-docx.js",
     "create-quizzes-from-docx": "npm install && node ./src/create-quizzes-from-docx.js",
     "append-item-tags": "npm install && node ./src/append-item-tags.js",
-    "archive-activities-and-items": "npm install && node ./src/archive-activities-and-items.js"
+    "archive-activities-and-items": "npm install && node ./src/archive-activities-and-items.js",
+    "test": "jest"
   },
   "author": "Greg Hyman",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "rewire": "^7.0.0"
+  }
 }
