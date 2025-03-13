@@ -5,6 +5,7 @@ const {
 	courseIdTagName,
 	quizTypeTagName
 } = require('../constants')
+const { deepSerialize } = require('../shared/helpers')
 
 class Quiz {
 	constructor() {
@@ -19,6 +20,11 @@ class Quiz {
 	}
 	
 	// TODO: might be helpful to have an superclass for Quiz and Question - they share a lot of shape/behavior
+
+	toJSON() {
+		/* object serialization for testing */
+    	return deepSerialize(this);
+  	}
 
 	assignQuizPropValues( {} = {}) {
 	}
