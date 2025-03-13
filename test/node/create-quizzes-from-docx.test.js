@@ -2,8 +2,8 @@ const assert = require('assert');
 const fs = require('fs');
 const { DOMParser, XMLSerializer } = require('xmldom');
 const path = require('path');
-const { convertDOCXtoHTML, processHTML } = require('../src/create-quizzes-from-docx');
-const { sendAPIRequests } = require('../src/shared/call-learnosity');
+const { convertDOCXtoHTML, processHTML } = require('../../src/create-quizzes-from-docx');
+const { sendAPIRequests } = require('../../src/shared/call-learnosity');
 
 
 const [SIMPLE_DOCX_PATH, SIMPLE_HTML_PATH, SIMPLE_JSON_PATH] = generateInputFilepaths('simple');

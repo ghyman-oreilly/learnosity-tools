@@ -2,15 +2,24 @@ const assert = require('assert');
 const fs = require('fs');
 const { DOMParser, XMLSerializer } = require('xmldom');
 const path = require('path');
-const { convertDOCXtoHTML, processHTML } = require('../src/create-quizzes-from-docx');
-const { sendAPIRequests } = require('../src/shared/call-learnosity');
+const { convertDOCXtoHTML, processHTML } = require('../../src/create-quizzes-from-docx');
+const { sendAPIRequests, getPublicUrl } = require('../../src/shared/call-learnosity');
 
 
 const [IMAGES_DOCX_PATH, IMAGES_HTML_PATH, IMAGES_JSON_PATH] = generateInputFilepaths('images');
 
+function generateInputFilepaths(descriptor, fileTypes = ['docx', 'html', 'json']) {
+  /* Generate file paths dynamically based on fileTypes array
+     The descriptor determines the base name for the file paths. 
+     Example: 'simple' -> 'data/simple.docx', 'data/simple.html', 'data/simple.json' */
+  
+  return fileTypes.map(type => path.resolve(__dirname, 'data', `${descriptor}.${type}`));
+}
+
 // mock API calls to learnosity
-jest.mock('../src/shared/call-learnosity', () => ({
-  sendAPIRequests: jest.fn()
+jest.mock('../../src/shared/call-learnosity', () => ({
+  sendAPIRequests: jest.fn(),
+  getPublicUrl: jest.fn(),
 }));
 
 function readFileContents(filePath) {
@@ -25,12 +34,15 @@ describe('processImageHtml', () => {
     // Mock sendAPIRequests to return mocked data
     sendAPIRequests.mockResolvedValue({ data: 'mocked data' });
 
+    // Mock getPublicUrl to return a mocked URL or value
+    getPublicUrl.mockResolvedValue('mocked-url');
+
     // Create a local mock for generateIDsOrKeys to return mock data
     const generateIDsOrKeysMock = jest.fn().mockResolvedValue(['mocked-id-1', 'mocked-id-2', 'mocked-id-3']);
     
     // Temporarily replace the generateIDsOrKeys function inside processHTML with the mock
     const rewire = require('rewire');
-    const yourModule = rewire('../src/create-quizzes-from-docx');
+    const yourModule = rewire('../../src/create-quizzes-from-docx');
     yourModule.__set__('generateIDsOrKeys', generateIDsOrKeysMock);
 
     // HTML input and expected JSON output
@@ -38,7 +50,7 @@ describe('processImageHtml', () => {
 	const expected_json = readFileContents(IMAGES_JSON_PATH);
 
     // Act: Call the processHTML function
-    const result = await processHTML(htmlInput);
+    const result = await processHTML(input_html);
 
     // Assert that the result from processHTML is as expected
     expect(result).toBeDefined(); // or other assertions based on what processHTML returns
