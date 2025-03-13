@@ -1,0 +1,220 @@
+[
+  {
+    "title": "Tables: Module 1",
+    "refId": "",
+    "shuffleItems": true,
+    "questions": [
+      {
+        "type": "mcq",
+        "stem": "<p>Check out this table:</p><table class=\"table table-bordered lrn_width_auto\"><thead><tr><th>Column1</th><th>Column2</th><th>Column3</th></tr></thead><tbody><tr><td>1</td><td>2</td><td>3</td></tr><tr><td>4</td><td>5</td><td>6</td></tr></tbody></table>",
+        "options": [
+          {
+            "label": "<p>Hey, that’s a cool table!</p>",
+            "value": "0"
+          },
+          {
+            "label": "<p>Not impressed.</p>",
+            "value": "1"
+          },
+          {
+            "label": "<p>Tell me more about tables…</p>",
+            "value": "2"
+          },
+          {
+            "label": "<p>A form of local area networking that uses the internet</p>",
+            "value": "3"
+          }
+        ],
+        "correctOptions": [
+          "0"
+        ],
+        "questionRefId": "",
+        "itemRefId": "",
+        "difficultyLevel": 0,
+        "shuffleOptions": true,
+        "multipleResponses": false,
+        "tags": {
+          "Publisher": [
+            "O'Reilly Media"
+          ],
+          "Course FPID": [
+            ""
+          ]
+        },
+        "rationales": [
+          "<p>Cloud computing is the delivery of various computing services such as databases, servers, apps, networking, analytics, and AI services over the internet or “the cloud.” See “A Brief History of the Cloud.”</p>",
+          "<p>Cloud computing eliminates the need for physical hardware by providing services over the internet. See “A Brief History of the Cloud.”</p>",
+          "<p>Cloud computing is not a software development methodology or process but a service model. See “A Brief History of the Cloud.”</p>",
+          "<p>Cloud computing is not limited to local area networking; it operates over the internet globally. See “A Brief History of the Cloud.”</p>"
+        ],
+        "hasRationales": true
+      },
+      {
+        "type": "mcq",
+        "stem": "<p>How does cloud computing impact cost management?</p>",
+        "options": [
+          {
+            "label": "<p>It always reduces costs.</p>",
+            "value": "0"
+          },
+          {
+            "label": "<p>It eliminates the need for budgeting.</p>",
+            "value": "1"
+          },
+          {
+            "label": "<p>It can lead to unpredictable expenses.</p>",
+            "value": "2"
+          },
+          {
+            "label": "<p>It guarantees fixed monthly costs.</p>",
+            "value": "3"
+          }
+        ],
+        "correctOptions": [
+          "2"
+        ],
+        "questionRefId": "",
+        "itemRefId": "",
+        "difficultyLevel": 0,
+        "shuffleOptions": true,
+        "multipleResponses": false,
+        "tags": {
+          "Publisher": [
+            "O'Reilly Media"
+          ],
+          "Course FPID": [
+            ""
+          ]
+        },
+        "rationales": [
+          "<p>While cloud computing can reduce costs, it does not always do so. See Module 1, “The Evolution of Cloud Computing.”</p>",
+          "<p>Budgeting is still necessary in cloud computing. See Module 1, “The Evolution of Cloud Computing.”</p>",
+          "<p>Cloud computing costs can vary based on usage, leading to unpredictable expenses. See Module 1, “The Evolution of Cloud Computing.”</p>",
+          "<p>Cloud costs are typically variable, not fixed. See Module 1, “The Evolution of Cloud Computing.”</p>"
+        ],
+        "hasRationales": true
+      }
+    ],
+    "tags": {
+      "Publisher": [
+        "O'Reilly Media"
+      ],
+      "Question Bank FPID": [
+        ""
+      ],
+      "Course FPID": [
+        ""
+      ]
+    },
+    "moduleType": "Formative"
+  },
+  {
+    "title": "Tables: Summative Quiz",
+    "refId": "",
+    "shuffleItems": true,
+    "questions": [
+      {
+        "type": "mcq",
+        "stem": "<p>Check out this other table:</p><table class=\"table table-bordered lrn_width_auto\"><thead><tr><th>Column1</th><th>Column2</th><th>Column3</th></tr></thead><tbody><tr><td>7</td><td>8</td><td>9</td></tr><tr><td>10</td><td>11</td><td>12</td></tr></tbody></table>",
+        "options": [
+          {
+            "label": "<p>Increased deployment time raised capital expenditures, limited collaboration, and worsened disaster recovery.</p>",
+            "value": "0"
+          },
+          {
+            "label": "<p>Cloud computing does not have any significant impact on businesses and IT operations.</p>",
+            "value": "1"
+          },
+          {
+            "label": "<p>Cloud computing helped in creating opportunities for cloud engineering career jobs. It also creates rapid deployment, reduces capital expenditures for IT, enhances collaboration, and helps in improved disaster recovery.</p>",
+            "value": "2"
+          },
+          {
+            "label": "<p>Cloud computing is primarily AI-assisted agents and copilots, leading to no increased demand of cloud engineers to work with the cloud today.</p>",
+            "value": "3"
+          }
+        ],
+        "correctOptions": [
+          "2"
+        ],
+        "questionRefId": "",
+        "itemRefId": "",
+        "difficultyLevel": 0,
+        "shuffleOptions": true,
+        "multipleResponses": false,
+        "tags": {
+          "Publisher": [
+            "O'Reilly Media"
+          ],
+          "Course FPID": [
+            ""
+          ]
+        },
+        "rationales": [
+          "<p>Cloud computing typically speeds up deployment, lowers capital expenditures, and enhances disaster recovery. See Module 1, “The Evolution of Cloud Computing.”</p>",
+          "<p>Cloud computing has had a significant positive impact on businesses and IT operations. See Module 1, “The Evolution of Cloud Computing.”</p>",
+          "<p>Cloud computing helps create various cloud engineering opportunities. It also enables rapid deployment, reduces capital IT expenditures, enhances collaboration, and improves disaster recovery. See Module 1, “The Evolution of Cloud Computing.”</p>",
+          "<p>Cloud computing is not solely focused on AI technologies. Furthermore, the increase in cloud services requires more skilled cloud engineers, not less, to manage the complexities and opportunities offered by cloud solutions. See Module 1, “The Evolution of Cloud Computing.”</p>"
+        ],
+        "hasRationales": true
+      },
+      {
+        "type": "mcq",
+        "stem": "<p>What is vendor lock-in in the context of cloud computing?</p>",
+        "options": [
+          {
+            "label": "<p>The ability to switch between cloud providers easily</p>",
+            "value": "0"
+          },
+          {
+            "label": "<p>The dependency on a single cloud provider’s service</p>",
+            "value": "1"
+          },
+          {
+            "label": "<p>The use of multiple cloud providers simultaneously</p>",
+            "value": "2"
+          },
+          {
+            "label": "<p>The implementation of open source cloud solutions</p>",
+            "value": "3"
+          }
+        ],
+        "correctOptions": [
+          "1"
+        ],
+        "questionRefId": "",
+        "itemRefId": "",
+        "difficultyLevel": 0,
+        "shuffleOptions": true,
+        "multipleResponses": false,
+        "tags": {
+          "Publisher": [
+            "O'Reilly Media"
+          ],
+          "Course FPID": [
+            ""
+          ]
+        },
+        "rationales": [
+          "<p>Vendor lock-in refers to the difficulty of switching providers, not the ease. See Module 1, “The Evolution of Cloud Computing.”</p>",
+          "<p>Vendor lock-in occurs when a business becomes dependent on one cloud provider, making it challenging to switch to another provider without significant costs or disruptions. See Module 1, “The Evolution of Cloud Computing.”</p>",
+          "<p>Using multiple cloud providers is known as a multicloud strategy. See Module 1, “The Evolution of Cloud Computing.”</p>",
+          "<p>Open source solutions aim to reduce vendor lock-in. See Module 1, “The Evolution of Cloud Computing.”</p>"
+        ],
+        "hasRationales": true
+      }
+    ],
+    "tags": {
+      "Publisher": [
+        "O'Reilly Media"
+      ],
+      "Question Bank FPID": [
+        ""
+      ],
+      "Course FPID": [
+        ""
+      ]
+    },
+    "moduleType": "Summative"
+  }
+]
