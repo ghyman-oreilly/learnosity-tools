@@ -3,12 +3,14 @@ const fs = require('fs');
 const { DOMParser, XMLSerializer } = require('xmldom');
 const path = require('path');
 const { convertDOCXtoHTML, processHTML } = require('../src/create-quizzes-from-docx');
+const { sendAPIRequests } = require('../src/shared/call-learnosity');
 
 
 const [SIMPLE_DOCX_PATH, SIMPLE_HTML_PATH, SIMPLE_JSON_PATH] = generateInputFilepaths('simple');
 const [CODE_DOCX_PATH, CODE_HTML_PATH, CODE_JSON_PATH] = generateInputFilepaths('code');
 const [MATH_DOCX_PATH, MATH_HTML_PATH, MATH_JSON_PATH] = generateInputFilepaths('math');
 const [TABLES_DOCX_PATH, TABLES_HTML_PATH, TABLES_JSON_PATH] = generateInputFilepaths('tables');
+const [IMAGES_DOCX_PATH, IMAGES_HTML_PATH, IMAGES_JSON_PATH] = generateInputFilepaths('images');
 
 function readFileContents(filePath) {
   const data = fs.readFileSync(filePath, 'utf8');
@@ -59,7 +61,6 @@ function generateInputFilepaths(descriptor, fileTypes = ['docx', 'html', 'json']
 async function testConvertDocxToHtml(input_docx_path, expected_html_path) {
 	/* Test that a quiz doc
 	converts to expected HTML. */
-
 	const expected_html = readFileContents(expected_html_path);
 	html = await convertDOCXtoHTML(input_docx_path);
 	assert.strictEqual(normalizeHTML(html), normalizeHTML(expected_html)); 
@@ -105,14 +106,28 @@ async function testTableDocxToHtml(TABLES_DOCX_PATH, TABLES_HTML_PATH) {
 	testConvertDocxToHtml(TABLES_DOCX_PATH, TABLES_HTML_PATH);
 }
 
-async function testImageDocxToHtml() {
+async function testImageDocxToHtml(IMAGES_DOCX_PATH, IMAGES_HTML_PATH) {
 	/* Test that a quiz doc with 
 	images converts to expected
 	HTML. */
+	const temp_dir = 'temp_media'
+	const expected_html = readFileContents(IMAGES_HTML_PATH);
+	const expectedFiles = ['image1.jpeg', 'image2.jpeg'];
+	const html = await convertDOCXtoHTML(IMAGES_DOCX_PATH, temp_dir);
 
-	/* TODO: image processing not yet available
-	in this branch */
+	const filesInDirectory = fs.readdirSync(temp_dir + '/media');
 
+    expectedFiles.forEach(file => {
+      assert(filesInDirectory.includes(file), `${file} is missing in the directory.`);
+    });
+
+	assert.strictEqual(normalizeHTML(html), normalizeHTML(expected_html)); 
+
+	fs.rm(temp_dir, { recursive: true }, (err) => {
+	if (err) {
+		console.error('Error removing directory:', err);
+	}
+	});
 }
 
 async function processSimpleHtml(SIMPLE_HTML_PATH, SIMPLE_JSON_PATH) {
@@ -153,8 +168,11 @@ async function processImageHtml() {
 	the expected JSON payload.
 	*/
 
-	/* TODO: image processing not yet available
-	in this branch */
+	/* TODO: this will required mocks, 
+	so we might need to use Jest.
+	
+	Do we want to migrate the other tests
+	to Jest as well? */
 }
 
 testSimpleDocxToHtml(SIMPLE_DOCX_PATH, SIMPLE_HTML_PATH);
@@ -165,3 +183,4 @@ testMathDocxToHtml(MATH_DOCX_PATH, MATH_HTML_PATH);
 processMathHtml(MATH_HTML_PATH, MATH_JSON_PATH);
 testTableDocxToHtml(TABLES_DOCX_PATH, TABLES_HTML_PATH);
 processTableHtml(TABLES_HTML_PATH, TABLES_JSON_PATH);
+testImageDocxToHtml(IMAGES_DOCX_PATH, IMAGES_HTML_PATH);
