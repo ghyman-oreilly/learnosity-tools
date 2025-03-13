@@ -1,0 +1,1405 @@
+<h1 class="QuizTitle" id="introduction-to-functional-programming-part-1">Introduction to Functional Programming: Part 1</h1>
+<div data-custom-style="QuizType">
+<p>Formative</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>What's the value of <span data-custom-style="Inline Code">filter(odd, [2, 25, 89, 32, 35])</span>?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">[25, 89, 35]</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">[2, 25, 89, 32, 35]</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">[2,32]</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A. The <span data-custom-style="Inline Code">filter</span> function returns a list consisting of all the numbers for which <span data-custom-style="Inline Code">odd</span> is true. See “Solving a Problem Both Ways.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>B. The <span data-custom-style="Inline Code">filter</span> function returns a list consisting of all the numbers for which <span data-custom-style="Inline Code">odd</span> is true, but 2 and 32 are not odd. See “Solving a Problem Both Ways.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>C. The <span data-custom-style="Inline Code">filter</span> function returns a list consisting of all the numbers for which <span data-custom-style="Inline Code">odd</span> is true, but 2 and 32 are even, not odd. See “Solving a Problem Both Ways.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Your credit card bill categorizes purchases into categories like Food, Entertainment, and so on. You want to display items in the Food category whose amounts are $10 or more. Which of the following code fragments solves that problem?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">for each purchase in purchasesList<br />
+    if purchase.category == Food</span><span data-custom-style="Code Block"><br />
+        if purchase.amount &gt;= 10</span><span data-custom-style="Code Block"><br />
+            print purchase</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">for each purchase in purchasesList<br />
+    if purchase.category == Food or purchase.amount &gt;= 10<br />
+       print purchase</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">for each purchase in purchasesList<br />
+    if purchase.amount &gt;= 10 or purchase.category == Food<br />
+        print purchase</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Code Block">for each purchase in purchasesList<br />
+    if purchase.amount == Food<br />
+        if purchase.category &gt; 10<br />
+            print purchase</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A. The <span data-custom-style="Inline Code">print purchase</span> statement is executed only if both <span data-custom-style="Inline Code">purchase.category == Food</span> and <span data-custom-style="Inline Code">purchase.amount &gt;= 10</span> are true. See “Solving a Problem Both Ways.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>B. With <span data-custom-style="Inline Code">or</span> in the condition, this code may print a purchase whose category is <span data-custom-style="Inline Code">Food</span> but whose amount is below <span data-custom-style="Inline Code">10</span>. See “Solving a Problem Both Ways.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>C. With <span data-custom-style="Inline Code">or</span> in the condition, this code may print a purchase whose category is <span data-custom-style="Inline Code">Food</span> but whose amount is below <span data-custom-style="Inline Code">10</span>. See “Solving a Problem Both Ways.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>D. This code doesn't print a <span data-custom-style="Inline Code">Food</span> purchase if its amount is exactly <span data-custom-style="Inline Code">10</span>. See “Solving a Problem Both Ways.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Your credit card bill categorizes purchases into categories like Food, Entertainment, and so on. You want to display items in the Food category whose amounts are $10 or more. Which of the following code fragments solves that problem?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">hasCategoryFood(purchase) = purchase.category == Food<br />
+tenOrMore(purchase) = purchase.amount &gt;= 10<br />
+print(filter(tenOrMore, filter(hasCategoryFood, purchasesList)))</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">hasCategoryFood(purchase) = purchase.category == Food<br />
+tenOrMore(purchase) = purchase.amount &gt;= 10<br />
+print(tenOrMore, hasCategoryFood, purchasesList)</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">hasCategoryFood(purchase) = purchase.category == Food<br />
+tenOrMore(purchase) = purchase.amount &gt;= 10<br />
+filter(print(tenOrMore, hasCategoryFood, purchasesList))</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Code Block">hasCategoryFood(purchase) = purchase.category == Food<br />
+tenOrMore(purchase) = purchase.amount &gt;= 10<br />
+print(filter(tenOrMore,filter(purchasesList, hasCategoryFood)))</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A. The <span data-custom-style="Inline Code">print</span> statement's argument filters first for Food and then for ten or more. See “Solving a Problem Both Ways.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>B. The code should use <span data-custom-style="Inline Code">filter</span>, but it doesn't. See “Solving a Problem Both Ways.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>C. The code should apply <span data-custom-style="Inline Code">filter</span> before applying <span data-custom-style="Inline Code">print</span>. This code applies <span data-custom-style="Inline Code">filter</span> after applying <span data-custom-style="Inline Code">print</span>. See “Solving a Problem Both Ways.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>D. This code doesn't follow a consistent pattern for the positions of its parameters. For the inner call to <span data-custom-style="Inline Code">filter</span>, the Boolean condition comes second. For the outer call to <span data-custom-style="Inline Code">filter</span>, the Boolean condition comes first. See “Solving a Problem Both Ways.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>What's the value of <span data-custom-style="Inline Code">map(timesTwo, [2, 4, 5])</span>?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">[4, 8, 10]</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">22</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">[2, 4]</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A. When you apply <span data-custom-style="Inline Code">timesTwo</span> to all three values in the list <span data-custom-style="Inline Code">[2, 4, 5]</span>, you get the list <span data-custom-style="Inline Code">[4, 8, 10]</span>. See “Using Filter, Map, and Fold.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>B. When you apply <span data-custom-style="Inline Code">map</span> to a list, you get another list. See “Using Filter, Map, and Fold.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>C. To evaluate this expression, you apply the <span data-custom-style="Inline Code">timesTwo</span> function to each of the numbers in the list <span data-custom-style="Inline Code">[2, 4, 5]</span>. See “Using Filter, Map, and Fold.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>You're given a list of customers. Each customer has a name and an outstanding balance. Which of the following code snippets prints the balance of the customer who has the smallest negative balance?</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>(Assume that the list has at least one customer in it and that customers' balances range between –1,000 and 1,000. Also, assume that the <span data-custom-style="Inline Code">max</span> function finds the largest of two numeric values.)</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">print(foldFromLeft(max, -1000,<br />
+  filter(λ number -&gt; number &lt; 0,<br />
+    map(λ customer -&gt; customer.balance , customersList))))</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">print(foldFromLeft(max, 1000,<br />
+  filter(λ number -&gt; number &lt; 0,<br />
+    map(λ customer -&gt; customer.balance , customersList))))</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">print(foldFromLeft(max, -1000,<br />
+  filter(λ number -&gt; number &lt; 0, customersList))))</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Code Block">print(foldFromLeft(max, 1000,<br />
+  map(λ customer -&gt; customer.balance,<br />
+    filter(λ number -&gt; number &lt; 0))))</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A. First, <span data-custom-style="Inline Code">map</span> creates a list of customer balances, then <span data-custom-style="Inline Code">filter</span> creates a list containing only the negative balances, and then <span data-custom-style="Inline Code">foldFromLeft</span> finds the largest of those remaining negative balances. See “Using Filter, Map, and Fold.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>B. Evaluating <span data-custom-style="Inline Code">foldFromLeft(max, 1000, ...)</span> will yield the value 1,000. See “Using Filter, Map, and Fold.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>C. You must create a list of customer balances from the <span data-custom-style="Inline Code">customersList</span>. See “Using Filter, Map, and Fold.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>D. This code starts by trying to find values less than 0 among the values in the <span data-custom-style="Inline Code">customersList</span>, but values in the <span data-custom-style="Inline Code">customersList</span> aren't numbers. See “Using Filter, Map, and Fold.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Which of the following is true?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. In functional programming, <span data-custom-style="Inline Code">map</span> behaves like an imperative loop, and <span data-custom-style="Inline Code">filter</span> behaves like an imperative <span data-custom-style="Inline Code">if</span>.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. In functional programming, <span data-custom-style="Inline Code">map</span> behaves like an imperative <span data-custom-style="Inline Code">if</span>, and <span data-custom-style="Inline Code">filter</span> behaves like an imperative loop.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. In imperative programming, <span data-custom-style="Inline Code">map</span> behaves like a functional loop, and <span data-custom-style="Inline Code">filter</span> behaves like a functional <span data-custom-style="Inline Code">if</span>.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A. The <span data-custom-style="Inline Code">map</span> function "iterates" over all values in a list, and the <span data-custom-style="Inline Code">filter</span> function checks to see if a particular condition is true. See “Imperative and Functional Programming Languages.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>B. An imperative <span data-custom-style="Inline Code">if</span> uses a Boolean expression, but a <span data-custom-style="Inline Code">map</span> function doesn't necessarily involve a Boolean expression. See “Imperative and Functional Programming Languages.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>C. Functional programming uses recursion instead of loops. So, there isn't really a "functional loop." See “Imperative and Functional Programming Languages.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>In the imperative programming style, we combine statements by performing them one after another, by performing them upon checking an <span data-custom-style="Inline Code">if</span> condition, or by repeating them in a loop. How do we combine evaluations of functions in the functional programming style?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. We take the result of evaluating one function and make that result an argument for evaluating the next function.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. We filter each function's input.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. We apply functions to one another in the order in which they're defined in the program.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. We use each function's result as an argument to every other function.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>For example, to find the sum of all food purchases, we take the result of filtering the <span data-custom-style="Inline Code">purchaseList</span> for <span data-custom-style="Inline Code">hasCategoryFood</span>, and make that result be an argument to the <span data-custom-style="Inline Code">map</span> function. See “Imperative and Functional Programming Languages.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Some functional programming doesn't involve filtering. For example, we may want to find the sum of all purchases, not only purchases satisfying the <span data-custom-style="Inline Code">hasCategoryFood</span> condition. See “Imperative and Functional Programming Languages.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The order in which functions are defined in the program doesn't matter. We apply functions in the order in which they need to be evaluated in order to get the desired result. See “Imperative and Functional Programming Languages.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>We don't use every function's result as an argument to every other function. For example, in calculating the sum of food purchase amounts, we don't sum up the purchases themselves. Instead, we sum up the amounts of those particular purchases. We apply the <span data-custom-style="Inline Code">map</span> function with <span data-custom-style="Inline Code">getAmount</span> before performing the sum. See “Imperative and Functional Programming Languages.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Which of the following <em>imperative</em> code fragments correctly displays the sum of the even numbers in a list?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">evenNumbers = filter(even, list)<br />
+total = sum(evenNumbers)<br />
+print(total)</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">print(total)<br />
+total = sum(evenNumbers)<br />
+evenNumbers = filter(even, list)</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">total = sum(evenNumbers)<br />
+evenNumbers = filter(even, list)<br />
+print(total)</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The <span data-custom-style="Inline Code">filter</span> function finds the even numbers. Then the <span data-custom-style="Inline Code">total</span> function sums up the even numbers. See “Imperative and Functional Programming Languages.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With imperative coding, statements are executed in the order in which they appear. In this code fragment, we're trying to print the <span data-custom-style="Inline Code">total</span> before we've calculated the value of <span data-custom-style="Inline Code">total</span>. See “Imperative and Functional Programming Languages.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With imperative coding, statements are executed in the order in which they appear. In this code fragment, we're trying to sum up the <span data-custom-style="Inline Code">evenNumbers</span> before we've applied <span data-custom-style="Inline Code">filter</span> to find the <span data-custom-style="Inline Code">evenNumbers</span> list. See “Imperative and Functional Programming Languages.”</p>
+</div>
+<h1 class="QuizTitle" id="introduction-to-functional-programming-part-2">Introduction to Functional Programming: Part 2</h1>
+<div data-custom-style="QuizType">
+<p>Formative</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Which of the following is a pure function?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">f(x) {<br />
+  return x + 1<br />
+}</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">f(x) {<br />
+  x = x + 7<br />
+  print x<br />
+}</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">f(x) {<br />
+  return x + y<br />
+}</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Code Block">f(x) {<br />
+  y = y + x<br />
+  return y<br />
+}</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This function is pure. It has no side effects because it uses only its parameter <span data-custom-style="Inline Code">x</span> and it doesn't modify any values that are declared outside of the function. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This function isn't pure because the <span data-custom-style="Inline Code">print</span> call modifies something that's outside of the function. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This function isn't pure because it uses the value of <span data-custom-style="Inline Code">y</span>, and <span data-custom-style="Inline Code">y</span> isn't defined inside the function. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This function isn't pure because it uses the value of <span data-custom-style="Inline Code">y</span> and modifies the value of <span data-custom-style="Inline Code">y</span>, and <span data-custom-style="Inline Code">y</span> isn't defined inside the function. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Which of the following is a pure function?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">length(the_string_s) =</span> <span data-custom-style="Code Block">number of characters in the_string_s</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">f(x) = x + current_day_of_the_month<br />
+where current_day_of_the_month is a number from 1 to 31</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">post(message, URL) {<br />
+  add the message to the message board at the URL<br />
+}</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This function is pure. It uses only its parameter, <span data-custom-style="Inline Code">s</span>. It returns a value, but it doesn't modify any value that's defined outside the function. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This function isn't pure because it uses the current day of the month, which is defined outside of the function. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This function isn't pure because it modifies the content of the message board, which is outside of the function. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Which of the following is a referentially transparent expression?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">7 + 6</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">inputFromKeyboard(x)</span></p>
+</div>
+<div data-custom-style="QuestionOptionContinued">
+<p>(If you execute <span data-custom-style="Inline Code">y = inputFromKeyboard(x)</span>, and the user types <span data-custom-style="Inline Code">7</span>, then the value of <span data-custom-style="Inline Code">y</span> becomes <span data-custom-style="Inline Code">7</span>.)</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">f(x) = x + current_day_of_the_month</span></p>
+</div>
+<div data-custom-style="QuestionOptionContinued">
+<p>where <span data-custom-style="Inline Code">current_day_of_the_month</span> is a number from 1 to 31</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This function is referentially transparent. You can substitute <span data-custom-style="Inline Code">13</span> for <span data-custom-style="Inline Code">7 + 6</span> anywhere in the code. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This function isn't referentially transparent. You can't substitute <span data-custom-style="Inline Code">7</span> for this function call because the user may input a value other than 7. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This function isn't referentially transparent. You can't substitute <span data-custom-style="Inline Code">x</span> plus a particular number from 1 to 31 for this function call, because you may call this function on any day of the month. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Which of the following is an advantage of using pure functions?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. Code that uses pure functions is easier to understand (and thus easier to maintain) than code that uses impure functions.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. Code that uses pure functions is more efficient (and thus runs faster) than code that uses impure functions.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. Code that uses pure functions consumes less memory than code that uses impure functions.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This is correct. A pure function doesn't refer to any values that live outside of its own definition, so you can understand a pure function by looking only at the function itself. You don't have to keep track of any elements outside of the function's own code. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>There's nothing about a pure function that makes it run faster than an impure function. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>There's nothing about a pure function that makes it consume less memory than an impure function. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Consider the following code:</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">total = 0<br />
+for n = 1 to 10 inclusive<br />
+  total = total + n<br />
+print(total)</span></p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>Which of the following is true about this code? Select all that apply.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. This code prints the value <span data-custom-style="Inline Code">55</span>.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] B. This code has a side effect.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] C. The <span data-custom-style="Inline Code">total</span> variable is mutable.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This code adds 1 + 2 + 3 + . . . + 10 = 55. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Printing is a side effect. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The <span data-custom-style="Inline Code">total</span> variable is on the left side of an assignment statement. See “Pure Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>You want to store as much as you can in a bag whose capacity is 9 kilograms. You have objects weighing 7 kilograms, 5 kilograms, and 4 kilograms. If you followed a greedy method to solve the problem, you would start by putting the 7-kilogram object in first. Why is this a bad idea?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. You can store more in the bag if you don't include the 7-kilogram object.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. A greedy method never yields the correct solution.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. The function from sets of objects to total weight in the bag isn't a pure function.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. You should always begin by putting the object with the least weight into the bag.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>If you include the 7-kilogram object, you have no room for anything else. But, if you omit the 7-kilogram object, you have room for the 5-kilogram and 4-kilogram objects, giving you a total of 9 kilograms. See “Testing, Debugging, and Memoization.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>In some situations, the greedy method works. For example, in US coinage, you can form any amount by taking the largest valued coin first. To make 33 cents, you take a 25-cent coin (the largest denomination that's less than 33 cents), then a 5-cent coin (the largest denomination that's less than the remaining 9 cents), and then four 1-cent coins. The greedy method works for all amounts in almost all of the world's currencies. See “Testing, Debugging, and Memoization.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The function from sets of objects to total weights is a pure function. See “Testing, Debugging, and Memoization.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Putting the smallest weight in the bag first doesn't always work. For example, if you had objects weighing 9 kilograms, 2 kilograms, and 1 kilogram, putting the 1-kilogram object into a 9-kilogram bag wouldn't use the bag's full capacity. See “Testing, Debugging, and Memoization.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Consider this code:</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">integer amount<br />
+amount = 0<br />
+f(7)<br />
+printToScreen(output)<br />
+<br />
+function f(n) {<br />
+  integer input<br />
+  input = readFromKeyboard()<br />
+  amount = input + n<br />
+  printToScreen(amount)<br />
+}</span></p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>Which feature of function <span data-custom-style="Inline Code">f</span> is considered to be a side effect? Select all that apply.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. The <span data-custom-style="Inline Code">f</span> function gets input from the keyboard, which is not internal to the function.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] B. The <span data-custom-style="Inline Code">f</span> function sends output to the screen, which is not internal to the function.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] C. The <span data-custom-style="Inline Code">f</span> function modifies the value of the <span data-custom-style="Inline Code">amount</span> variable, which is available outside of the function.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. The function <span data-custom-style="Inline Code">f</span> uses the value of the variable <span data-custom-style="Inline Code">n</span>, but <span data-custom-style="Inline Code">n</span> gets its value <span data-custom-style="Inline Code">7</span> from code that's outside of the function.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Since the exact value of a user's keyboard input is not coded into function <span data-custom-style="Inline Code">f</span>, keyboard input is a side effect. See “Testing, Debugging, and Memoization.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Since the computer screen is controlled outside of the function <span data-custom-style="Inline Code">f</span>, output to the screen is a side effect. See “Testing, Debugging, and Memoization.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This function modifies the value of the variable <span data-custom-style="Inline Code">amount</span>, which is referenced outside of the function. This is a side effect. See “Testing, Debugging, and Memoization.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A function can use a value that's passed to it in its parameter list. This is not considered to be a side effect. See “Testing, Debugging, and Memoization.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>What output(s) may result from running the following code?</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">x = 0<br />
+three times do {<br />
+  simultaneously do {<br />
+    x = x + 1<br />
+  }<br />
+  and<br />
+  {<br />
+    x = x + 1<br />
+  }<br />
+}<br />
+print x</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. 3, 4, 5, or 6</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. Only 3</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. Only 6</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. 1, 2, 3, 4, 5, or 6</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>During any iteration of the loop, we have two threads executing <span data-custom-style="Inline Code">x = x + 1</span>. If both threads fetch the value of <span data-custom-style="Inline Code">x</span> (on the right side of the assignment) before either thread has updated <span data-custom-style="Inline Code">x</span> (on the left side of the assignment), then the result from both threads is to add only 1 to <span data-custom-style="Inline Code">x</span>. But if one thread updates <span data-custom-style="Inline Code">x</span> before the other thread fetches <span data-custom-style="Inline Code">x</span>, the result from both threads is to add 2 to <span data-custom-style="Inline Code">x</span>. So, the printed value of <span data-custom-style="Inline Code">x</span> depends on how many times one thread updates before the other thread fetches. This can happen 0 times, 1 time, 2 times, or all 3 times. The resulting values of <span data-custom-style="Inline Code">x</span> are 3, 4, 5, and 6. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Outputs other than 3 may occur. For example, the system may start and finish executing each assignment statement before executing any other assignment statement. In that case, no race condition occurs, and the output is 6. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Outputs other than 6 may occur. For example, during the first iteration, both threads may fetch the value of <span data-custom-style="Inline Code">x</span> (the value 0 on the right side of the assignment) before either thread has updated <span data-custom-style="Inline Code">x</span> (on the left side of the assignment). In that situation, both threads assign 1 to <span data-custom-style="Inline Code">x</span>. If this happens during all three iterations, the value of <span data-custom-style="Inline Code">x</span> goes from 0 to 1, then from 1 to 2, and finally from 2 to 3. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Each of the three iterations results in an increment of either 1 or 2 to the value of <span data-custom-style="Inline Code">x</span>. So, the printed value of <span data-custom-style="Inline Code">x</span> is at least 3. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Alice visits an automated teller machine. She checks her account and learns that she has a $400 balance. Then she issues a request to withdraw $100, and the teller machine denies the request. How can this have been caused by a race condition?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. Between the time Alice checked her balance and the time she issued the withdrawal request, Alice's partner made a withdrawal from the same account.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. Between the time Alice checked her balance and the time she issued the withdrawal request, the bank's computers went down.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. Alice isn't permitted to withdraw more than $100 during a visit to the teller machine.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. The teller machine is almost out of cash.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A race condition occurs when two or more agents attempt to modify a particular value at the same time. In this case, the agents are Alice and her partner. The value is the amount in the account. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A race condition occurs when two or more agents attempt to modify a particular value at the same time. The bank's computer going down isn't an attempt to modify a particular value. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A race condition occurs when two or more agents attempt to modify a particular value at the same time. Alice's maximum withdrawal isn't an attempt to modify the value of the amount in her account. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A race condition occurs when two or more agents attempt to modify a particular value at the same time. The amount of cash in the teller machine is not an attempt to modify the amount in Alice's account. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Which of the following phenomena make code susceptible to race conditions? Select all that apply.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. Impure functions</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] B. Shared variables</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] C. Simultaneous threads</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. Memoization</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A race condition occurs when two or more agents attempt to modify a particular value at the same time. An impure function may modify the value of a variable that's referenced by code outside the function. The impure function and the code outside the function are two agents, both of which may modify the variable's value. So, a race condition may occur. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A race condition occurs when two or more agents attempt to modify a particular value at the same time. If a value is shared between two agents, they may both try to update that variable at the same time. Thus, a race condition may occur. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A race condition occurs when two or more agents attempt to modify a particular value at the same time. When you have simultaneous threads, both threads may attempt to modify the value of a variable at the same time. Thus, a race condition may occur. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Memoization is a way of avoiding unnecessary function calls. The idea behind memoization doesn't involve the updating of a value by two agents at the same time. See “Avoiding Race Conditions and Achieving Thread Safety.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Which of the following parameter passing schemes is the least safe?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. Pass by reference to an impure function</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. Pass by value to an impure function</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. Pass by reference to a pure function</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. Pass by value to a pure function</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Impure functions aren't as safe as pure functions. In addition, pass by reference lets a function point to values that are defined outside the function. Since the function can modify these values that live outside of the function, pass by reference is unsafe. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Impure functions aren't safe, but pass by value is safer than pass by reference. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Pure functions are safer than impure functions, but pass by reference isn't safe. One might argue that a function whose arguments are passed by reference is inherently impure. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Pass by value is safer than pass by reference, and pure functions are safer than impure functions. This scheme is the safest of all. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>What's the output of the following code?</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">x = 7<br />
+f(x)<br />
+print(x)<br />
+Stop<br />
+f(x) {<br />
+    x = x + 1<br />
+}</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. We're unable to determine the output without more information.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. 7</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. 8</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. Runtime error</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>We're not told whether this code uses pass by value or pass by reference. If the code uses pass by value, the output is 7. But if the code uses pass by reference, the output is 8. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>If this code uses pass by reference, the output is 8, not 7. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>If this code uses pass by value, the output is 7, not 8. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Using pass by reference or pass by value, a run of this code will not generate an error. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>A particular programming language implements parameter passing in three steps:</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>1. Copy the value of the calling code's variable to a target variable inside the function.</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>2. Execute the code inside the function.</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>3. Copy the value of the target variable inside the function back to the calling code's variable.</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>Which of the following is true about this parameter passing scheme?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. It's not safe and not efficient.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. It's safe, but it's not efficient.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. It's efficient, but it's not safe.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. It's safe and efficient.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This scheme isn't safe because copying a value from inside the function out to the calling code is a side effect. This scheme isn't efficient because it may involve copying a large amount of data from the calling code to the function and then back to the calling code. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This scheme isn't safe because copying a value from inside the function out to the calling code is a side-effect. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This scheme isn't efficient because it may involve copying a large amount of data from the calling code to the function and then back to the calling code. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This scheme is neither safe nor efficient. See “Efficient Parameter Passing.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>In this problem, <span data-custom-style="Inline Code">++x</span> behaves as both an instruction and an expression. As an instruction, <span data-custom-style="Inline Code">++x</span> adds 1 to the value of <span data-custom-style="Inline Code">x</span>. As an expression, the value of <span data-custom-style="Inline Code">++x</span> is the newly obtained value of <span data-custom-style="Inline Code">x</span>. For example, the code</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">x=7<br />
+print(++x)<br />
+print(x)</span></p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>displays the numbers <span data-custom-style="Code Block">8 8</span>.</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>With that in mind, what's the output of the following code when the language uses <em>eager</em> evaluation?</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">x = 18<br />
+if ++x &gt; 19 &amp; ++x is even<br />
+    print("*", x, "*")<br />
+print(x)</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">20</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">*19* 19</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">19</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Code Block">*20* 20</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With eager evaluation, the code checks both conditions <span data-custom-style="Inline Code">++x &gt; 19</span> and <span data-custom-style="Inline Code">++x is even</span>. The condition <span data-custom-style="Inline Code">++x &gt; 19</span> makes the value of <span data-custom-style="Inline Code">x</span> be 19, and this condition is false (because <span data-custom-style="Inline Code">19 &gt; 19</span> is false). With eager evaluation, the condition <span data-custom-style="Inline Code">++x is even</span> makes the value of <span data-custom-style="Inline Code">x</span> be 20. The combined condition, <span data-custom-style="Inline Code">++x &gt; 19 &amp; ++x is even</span>, is false. So, the code doesn't print <span data-custom-style="Inline Code">*20*</span>. Instead, the code goes directly to the last statement, where it prints only the number <span data-custom-style="Inline Code">20</span>. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With eager evaluation, the code checks both conditions <span data-custom-style="Inline Code">++x &gt; 19</span> and <span data-custom-style="Inline Code">++x is even</span>. In evaluating the expression <span data-custom-style="Inline Code">++x &gt; 19 &amp; ++x is even</span>, the value of <span data-custom-style="Inline Code">++x</span> becomes 19 and then 20. Also note that the combined expression, <span data-custom-style="Inline Code">++x &gt; 19 &amp; ++x is even</span>, is false. So the code never prints a number surrounded by asterisks. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With eager evaluation, the code checks both conditions <span data-custom-style="Inline Code">++x &gt; 19</span> and <span data-custom-style="Inline Code">++x is even</span>. In evaluating the expression <span data-custom-style="Inline Code">++x &gt; 19 &amp; ++x is even</span>, the value of <span data-custom-style="Inline Code">++x</span> becomes 19 and then 20. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>In the expression <span data-custom-style="Inline Code">++x &gt; 19</span>, the value of <span data-custom-style="Inline Code">++x</span> is 19. So, the combined condition, <span data-custom-style="Inline Code">++x &gt; 19 &amp; ++x is even</span>, is false. So, the code doesn't print <span data-custom-style="Inline Code">*20*</span>. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>In this problem, <span data-custom-style="Inline Code">++x</span> behaves as both an instruction and an expression. As an instruction, <span data-custom-style="Inline Code">++x</span> adds 1 to the value of <span data-custom-style="Inline Code">x</span>. As an expression, the value of <span data-custom-style="Inline Code">++x</span> is the newly obtained value of <span data-custom-style="Inline Code">x</span>. For example, the code</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">x=7<br />
+print(++x)<br />
+print(x)</span></p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>displays the numbers <span data-custom-style="Code Block">8 8</span>.</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>With that in mind, what's the output of the following code when the language uses <em>lazy</em> evaluation?</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">x = 18<br />
+if ++x &gt; 19 &amp; ++x is even<br />
+    print("*", x, "*")<br />
+print(x)</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">19</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">18</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. No output</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Code Block">20</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With lazy evaluation, the code checks only one condition: <span data-custom-style="Inline Code">++x &gt; 19</span>. The condition <span data-custom-style="Inline Code">++x &gt; 19</span> makes the value of <span data-custom-style="Inline Code">x</span> be 19, and this condition is false (because <span data-custom-style="Inline Code">19 &gt; 19</span> is false). So, the code doesn't print a value with asterisks. Instead, the code goes directly to the last statement, where it prints the number <span data-custom-style="Inline Code">19</span>. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With lazy evaluation, the code checks only one condition: <span data-custom-style="Inline Code">++x &gt; 19</span>. The condition <span data-custom-style="Inline Code">++x &gt; 19</span> makes the value of <span data-custom-style="Inline Code">x</span> be 19, not 18. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The last statement in the code isn't inside the <span data-custom-style="Inline Code">if</span> statement. So the last statement in the code prints something. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With lazy evaluation, the code checks only one condition: <span data-custom-style="Inline Code">++x &gt; 19</span>. The condition <span data-custom-style="Inline Code">++x &gt; 19</span> makes the value of <span data-custom-style="Inline Code">x</span> be 19. The code never checks the other condition, <span data-custom-style="Inline Code">++x is even</span>, so the value of <span data-custom-style="Inline Code">x</span> never becomes 20. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>A function named <span data-custom-style="Inline Code">firstOf</span> returns the first of two values in a pair of arguments. For example, <span data-custom-style="Inline Code">firstOf(25, 13)</span> is 25. Consider the following code:</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">x = 0<br />
+print(firstOf(x, 1/x))</span></p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>What's the output of this code when the system uses <em>eager</em> evaluation?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. An error message</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. 0</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. 1/0</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. No output, because there’s an endless loop</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With eager evaluation, the system tries to evaluate both <span data-custom-style="Inline Code">x</span> and <span data-custom-style="Inline Code">1/x</span>. Evaluation of <span data-custom-style="Inline Code">x</span> goes smoothly, but evaluation of <span data-custom-style="Inline Code">1/x</span> causes an error because we can't divide by 0. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With eager evaluation, the system tries to evaluate both <span data-custom-style="Inline Code">x</span> and <span data-custom-style="Inline Code">1/x</span> before attempting to print the entire expression's value. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The first argument of the function isn't 1/0. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With eager evaluation, the system tries to evaluate both <span data-custom-style="Inline Code">x</span> and <span data-custom-style="Inline Code">1/x</span>. Evaluation of <span data-custom-style="Inline Code">1/x</span> causes an error because we can't divide by 0. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>A function named <span data-custom-style="Inline Code">firstOf</span> returns the first of two values in a pair of arguments. For example, <span data-custom-style="Inline Code">firstOf(25, 13)</span> is 25. Consider the following code:</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">x = 0<br />
+print(firstOf(x, 1/x))</span></p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>What's the output of this code when the system uses <em>lazy</em> evaluation?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. 0</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. An error message</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. No output, because there's an endless loop</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. 1/0</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With lazy evaluation, the system doesn't try to evaluate <span data-custom-style="Inline Code">1/x</span>. So, the program evaluates <span data-custom-style="Inline Code">x</span> and prints that value, which is 0. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With lazy evaluation, the system doesn't try to evaluate <span data-custom-style="Inline Code">1/x</span>. So, the program doesn't try to divide by 0. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This program has no looping. See “Lazy Evaluation.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The first argument of this function isn't 1/0. See “Lazy Evaluation.”</p>
+</div>
+<h1 class="QuizTitle" id="introduction-to-functional-programming-summative-quiz">Introduction to Functional Programming: Summative Quiz</h1>
+<div data-custom-style="QuizType">
+<p>Summative</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>What's the value of <span data-custom-style="Inline Code">filter( isMammal, [cat, fly, rose] )</span>?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">[cat]</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">cat</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">[]</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Code Block">[fly, rose]</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The <span data-custom-style="Inline Code">filter</span> function returns a list containing all the items for which <span data-custom-style="Inline Code">isMammal</span> is true.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The <span data-custom-style="Inline Code">filter</span> function returns a list, even if that list contains a single element or no elements at all.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The correct answer would be <span data-custom-style="Inline Code">[]</span> only if none of the items in the list <span data-custom-style="Inline Code">[cat, fly, rose]</span> satisfied the <span data-custom-style="Inline Code">isMammal</span> condition.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The <span data-custom-style="Inline Code">filter</span> function doesn't eliminate list items that satisfy the <span data-custom-style="Inline Code">isMammal</span> condition.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>What's the value of the following expression?</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">sum( filter( isPositive, map(subtractTenFrom,[9,15,21,10,-4]) ) )</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">16</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">55</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">45</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Code Block">51</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The expression's value is:</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p><span data-custom-style="Code Block">  sum( filter( isPositive, [-1,5,11,0,-14] ) )<br />
+= sum( [5,11] )<br />
+= 16</span></p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Apply the <span data-custom-style="Inline Code">map</span> function first. Then, apply <span data-custom-style="Inline Code">filter isPositive</span> to the result.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Start the calculation by subtracting 10 from each number in the list. Then apply the <span data-custom-style="Inline Code">filter</span> function and, finally, apply the <span data-custom-style="Inline Code">sum</span> function.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Did you forget to apply the <span data-custom-style="Inline Code">filter</span> function?</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>What's the value of the following expression?</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">foldFromLeft( smallerOf, 100, [9, 18, 21, 1] )</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">1</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">100</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">[9, 18, 21, 1]</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. None of the other choices are correct.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The value of <span data-custom-style="Inline Code">foldFromLeft( smallerOf, 100, [9, 18, 21, 1] )</span> is:</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p><span data-custom-style="Code Block">  smallerOf(smallerOf(smallerOf(smallerOf(100,9),18),21),1)<br />
+= smallerOf(smallerOf(smallerOf(      9         ,18),21),1)<br />
+= smallerOf(smallerOf(             9                ,21),1)<br />
+= smallerOf(                    9                       ,1)<br />
+= 1</span></p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>When you start applying the <span data-custom-style="Inline Code">smallerOf</span> function, you find <span data-custom-style="Inline Code">smallerOf(100,9)</span>, which is <span data-custom-style="Inline Code">9</span>. So, the value <span data-custom-style="Inline Code">100</span> is eliminated immediately.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The value of this expression is a number, not a list of numbers.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>One of the other choices is correct.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>A <em>side effect</em> occurs when...</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. Evaluating an expression interacts with something other than the expression itself.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. Your code involves an infinite loop.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. You call a function with no parameters and no return value.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. Evaluating an expression requires a call to a function.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>"Something other than the expression" is what's on the side in the term <em>side effect</em>.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Infinite loops are bad, but the presence of an infinite loop doesn't always imply the existence of a side effect.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A pure function with no parameters and no return value is probably useless, but it doesn't automatically have side effects.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Calling a function isn't a side effect.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Which of the following is an example of a <em>side effect</em>?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. Referring to the same variable both inside and outside of a function</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. Calling a recursive function that has no base case</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. Attempting to call a function with an argument of the wrong type</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. Execution of any function written in an imperative programming style</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>For example, in the following code, the fact that <span data-custom-style="Inline Code">x</span> is referenced inside and outside of the function <span data-custom-style="Inline Code">f</span> constitutes a side effect:</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p><span data-custom-style="Code Block">x = 0<br />
+f(7)<br />
+<br />
+f(y) {<br />
+    x = x + y<br />
+}</span></p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A recursive function with no base case can be very bad, but it's not an example of a side effect.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Calling a function with an argument of the wrong type may cause an error, but it's not an example of a side effect.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Some functions written in the imperative style don't have side effects. Here's an example using pass by value:</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p><span data-custom-style="Code Block">f(x, y) {<br />
+   x = x + 1<br />
+   y = 2 * y<br />
+   return x + y<br />
+}</span></p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>A <em>pure function</em> is...</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. A function with no side effects</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. A function with no output to the screen or to a file</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. A recursive function</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. A function with parameters and a return value</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Any side effect makes a function impure.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A function with no output may be impure in other ways.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Recursive functions can be pure.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>This choice is only partly correct. A pure function communicates with other code <em>only</em> through its parameters and return value.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>Which of the following is <em>not</em> an advantage of using pure functions?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. They can call themselves recursively.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. They can be reused without regard to the context in which they're run.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. They can be tested without any setup.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. They can be memoized.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A function that calls itself recursively may have side effects. Both pure and impure functions may call themselves recursively.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>A pure function has no side effects. So, when you execute a pure function, the context in which you run it doesn't matter.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The only preparation required for testing a pure function is to supply parameter values to the function.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>When you run a pure function twice with the same parameter values, the return result will be the same. So, after running it the first time, you can save the return result for the next time you run it with the same parameter values.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>What's the output of the following code?</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">x = 7<br />
+f(x)<br />
+print(x)<br />
+Stop<br />
+f(x) {<br />
+    x = x + 1<br />
+}</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. 7 with pass by value; 8 with pass by reference</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. 7</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. 8</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. 7 with pass by reference; 8 with pass by value</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With pass by value, when a function changes the value of one of its parameters, that change affects the value in the code that calls the function. With pass by reference, the change doesn't affect the value in the calling code.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The output depends on whether the code uses pass by value or pass by reference.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The output depends on whether the code uses pass by value or pass by reference.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With pass by value, when a function changes the value of one of its parameters, that change affects the value in the code that calls the function. With pass by reference, the change doesn't affect the value in the calling code.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>In a language with lazy evaluation, what's the output of the following code?</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">f(x) = x + f(x)<br />
+g(x,y) = x + x<br />
+print g(3,f(5))</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. 6</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. 5 + 5 + 5 + ...</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. No output. The program runs forever.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. No output. The program stops running and displays an error message.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With lazy evaluation, the system doesn't try to find the value of <span data-custom-style="Inline Code">f(5)</span>. So the value that's printed is <span data-custom-style="Inline Code">g(3,f(5)) = 3 + 3 = 6</span>.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Only the first argument of <span data-custom-style="Inline Code">g</span> (namely, the number <span data-custom-style="Inline Code">3</span>), is used in evaluating <span data-custom-style="Inline Code">g(3,f(5))</span>.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>An attempt to evaluate <span data-custom-style="Inline Code">f(5)</span> would make the program run forever (or until the system ran out of memory). But, with lazy evaluation, the system avoids having to evaluate <span data-custom-style="Inline Code">f(5)</span>.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With an attempt to evaluate <span data-custom-style="Inline Code">f(5)</span>, the program would keep running until it ran out of memory. At that point, the program would stop running and display an error message. But, with lazy evaluation, this code doesn't keep running. This code doesn't attempt to evaluate <span data-custom-style="Inline Code">f(5)</span>.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>In a language with eager evaluation, what's the output of the following code?</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">x = 2<br />
+print secondElementOf([0*x,3*x,6*x,9*x,...])</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. No output with an infinite loop or terminating error</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">6</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. <span data-custom-style="Code Block">[6]</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Code Block">12</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>With eager evaluation, the system tries to find infinitely many values in the list before looking for a second element.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>If the list's indices start with 1, and the language uses lazy evaluation, the output is <span data-custom-style="Inline Code">6</span>.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The value <span data-custom-style="Inline Code">[6]</span> is a list. It's not an element of the list <span data-custom-style="Inline Code">[0*x,3*x,6*x,9*x,...]</span>.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>If the list's indices start with 0, and the language uses lazy evaluation, the output is <span data-custom-style="Inline Code">12</span>.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Distinguish pure functions from impure functions; declaring and evaluating pure functions. Review “Part 2: Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>In JavaScript, the call <span data-custom-style="Inline Code">setTimeout(code,delay)</span> executes the instructions in the <span data-custom-style="Inline Code">code</span> after waiting at least <span data-custom-style="Inline Code">delay</span> milliseconds. Which of the following statements is true about the <span data-custom-style="Inline Code">setTimeout</span> function?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Inline Code">setTimeout</span> is a higher-order function.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. The instructions in the <span data-custom-style="Inline Code">code</span> must be a pure function.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. The instructions in the <span data-custom-style="Inline Code">code</span> must be referentially transparent.</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Inline Code">setTimeout</span> is a composite function.</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>In the call <span data-custom-style="Inline Code">setTimeout(code,delay)</span>, the <span data-custom-style="Inline Code">code</span> is a set of instructions to be executed. In other words, the <span data-custom-style="Inline Code">code</span> is a function.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>No such restriction exists. For example, the <span data-custom-style="Inline Code">code</span> might direct the system to print to the screen. If so, the <span data-custom-style="Inline Code">code</span> doesn't describe a pure function.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>No such restriction exists. For example, the <span data-custom-style="Inline Code">code</span> might call the system to obtain a randomly generated number. If so, the <span data-custom-style="Inline Code">code</span> isn't referentially transparent.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Function composition plays no explicit role in the description of the <span data-custom-style="Inline Code">setTimeout</span> function.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>An empty list has no tail. But we can define</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">tailMaybe([]) = Nothing<br />
+tailMaybe(h::t) = Just t</span></p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>What's the value of <span data-custom-style="Inline Code">tailMaybe([3,2]) &gt;&gt;= tailMaybe</span>?</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">Just []</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">[]</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. Undefined or error message</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Code Block">Nothing</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p><span data-custom-style="Code Block">tailMaybe([3,2])<br />
+= tailMaybe(3::[2])<br />
+= Just [2]</span></p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>and</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p><span data-custom-style="Code Block">Just [2] &gt;&gt;= tailMaybe<br />
+= Just 2::[] &gt;&gt;= tailMaybe<br />
+= Just []</span></p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand monad operations and use them to create elegant code. Review “Part 5: Monads.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The value returned from a <span data-custom-style="Inline Code">Maybe</span> function is either <span data-custom-style="Inline Code">Just</span> a value or <span data-custom-style="Inline Code">Nothing</span>.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand monad operations and use them to create elegant code. Review “Part 5: Monads.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Remember that <span data-custom-style="Inline Code">tail(tail([3,2])) = []</span>. The empty list <span data-custom-style="Inline Code">[]</span> is a legal value. It doesn't automatically make the program crash.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand monad operations and use them to create elegant code. Review “Part 5: Monads.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Remember that <span data-custom-style="Inline Code">tail(tail([3,2])) = []</span>. The empty list <span data-custom-style="Inline Code">[]</span> isn't the same as the <span data-custom-style="Inline Code">Nothing</span> value.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand monad operations and use them to create elegant code. Review “Part 5: Monads.”</p>
+</div>
+<div data-custom-style="QuestionStem">
+<p>An empty list has no tail. But we can define</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">tailMaybe([]) = Nothing<br />
+tailMaybe(h::t) = Just t</span></p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p>What's the value of the following expression?</p>
+</div>
+<div data-custom-style="QuestionStemContinued">
+<p><span data-custom-style="Code Block">tailMaybe([3,2]) &gt;&gt;= tailMaybe &gt;&gt;= tailMaybe &gt;&gt;= tailMaybe</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>[Correct Answer] A. <span data-custom-style="Code Block">Nothing</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>B. <span data-custom-style="Code Block">Just []</span></p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>C. Undefined or error message</p>
+</div>
+<div data-custom-style="QuestionOption">
+<p>D. <span data-custom-style="Code Block">[]</span></p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p><span data-custom-style="Code Block">tailMaybe([3,2])<br />
+= tailMaybe(3::[2])<br />
+= Just [2]</span></p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>and</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p><span data-custom-style="Code Block">Just [2] &gt;&gt;= tailMaybe<br />
+= Just 2::[] &gt;&gt;= tailMaybe<br />
+= Just []</span></p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>So,</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p><span data-custom-style="Code Block">tailMaybe([3,2]) &gt;&gt;= tailMaybe &gt;&gt;= tailMaybe<br />
+= Just [] &gt;&gt;= tailMaybe<br />
+= Nothing</span></p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>And once you have <span data-custom-style="Inline Code">Nothing</span> in a chain of <span data-custom-style="Inline Code">Maybe</span> binds, all binds that come later in the sequence have the <span data-custom-style="Inline Code">Nothing</span> value.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand monad operations and use them to create elegant code. Review “Part 5: Monads.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Once you have <span data-custom-style="Inline Code">Nothing</span> in a chain of <span data-custom-style="Inline Code">Maybe</span> binds, all binds that come later in the sequence have the <span data-custom-style="Inline Code">Nothing</span> value, not a <span data-custom-style="Inline Code">Just</span> value.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand monad operations and use them to create elegant code. Review “Part 5: Monads.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>Once you have <span data-custom-style="Inline Code">Nothing</span> in a chain of <span data-custom-style="Inline Code">Maybe</span> binds, all binds that come later in the sequence have the <span data-custom-style="Inline Code">Nothing</span> value, and <span data-custom-style="Inline Code">Nothing</span> values aren't "undefined." A <span data-custom-style="Inline Code">Nothing</span> value doesn't automatically cause the program to crash.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand monad operations and use them to create elegant code. Review “Part 5: Monads.”</p>
+</div>
+<div data-custom-style="QuestionRationale">
+<p>The value returned from a <span data-custom-style="Inline Code">Maybe</span> function is either <span data-custom-style="Inline Code">Just</span> a value or <span data-custom-style="Inline Code">Nothing</span>.</p>
+</div>
+<div data-custom-style="QuestionRationaleContinued">
+<p>Learning Objective: Understand monad operations and use them to create elegant code. Review “Part 5: Monads.”</p>
+</div>
