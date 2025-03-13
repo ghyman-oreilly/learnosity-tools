@@ -250,7 +250,7 @@ async function processHTML(html, hasRationales, quizType) {
     if ((uploadData.length > 0) && uploadData.length == imagesForUpload.length) {
       for (let i = 0; i < uploadData.length; i++) {
         const response = await uploadFileToPresignedUrl(imagesForUpload[i].path, uploadData[i].content_type, uploadData[i].upload)
-        if (response) {
+        if (response.ok) {
           imageSrcReplacements.push({'oldSrc': imagesForUpload[i].path, 'newSrc': uploadData[i].public})
         }
       }
