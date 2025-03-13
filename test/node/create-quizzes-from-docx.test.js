@@ -168,10 +168,11 @@ async function processImageHtml() {
 	the expected JSON payload.
 	*/
 
-	/* TODO: this will required mocks, 
-	so we might need to use Jest.
+	/* NOTE: this requires mocks, 
+	so the test have been implemented
+	using the Jest framework.
 	
-	Do we want to migrate the other tests
+	TODO: Do we want to migrate the other tests
 	to Jest as well? */
 }
 
