@@ -6,6 +6,7 @@ const {
 	quizTypeTagName
 } = require('../constants')
 const { deepSerialize } = require('../shared/helpers')
+const { Question } = require('./questions')
 
 class Quiz {
 	constructor() {
@@ -18,6 +19,39 @@ class Quiz {
 			[questionBankIdTagName]: ['']
 		 };
 	}
+
+	// Static method to create a Quiz (Standard or Diagnostic)
+	static fromJSON(json, type = 'Standard') {
+		// Create an instance of the appropriate Quiz subclass
+		let instance;
+		if (type === 'Diagnostic') {
+			instance = new DiagnosticQuiz();
+		} else {
+			instance = new StandardQuiz();
+		}
+
+		// Initialize properties from JSON
+		for (let key in json) {
+			if (json.hasOwnProperty(key)) {
+				const value = json[key];
+				// Handle questions array
+				if (key === 'questions' && Array.isArray(value)) {
+					// Create the questions using the same type as the Quiz
+					instance[key] = value.map(questionData => {
+						return Question.fromJSON(questionData, type); // Pass type to Question.fromJSON
+					});
+				} else if (Array.isArray(value)) {
+					instance[key] = value;
+				} else if (typeof value === 'object' && value !== null) {
+					instance[key] = value;
+				} else {
+					instance[key] = value;
+				}
+			}
+		}
+		return instance;
+	}
+
 	
 	// TODO: might be helpful to have an superclass for Quiz and Question - they share a lot of shape/behavior
 

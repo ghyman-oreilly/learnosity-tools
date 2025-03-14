@@ -864,7 +864,7 @@ async function main() {
 
   createQuizzes(quizzes, questionBankISBN, courseID, tagsData, outputPath);  
 
-  fs.rmdir(temp_dir, { recursive: true }, (err) => {
+  fs.rm(temp_dir, { recursive: true }, (err) => {
     if (err) {
       console.error('Error removing directory:', err);
     }
@@ -877,6 +877,6 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { convertDOCXtoHTML, processHTML }
+module.exports = { convertDOCXtoHTML, processHTML, createQuizzes }
 
 
