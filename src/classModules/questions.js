@@ -24,6 +24,37 @@ class Question {
 		this.tags = { [publisherTagName]: [publisherTagValue] };
 	}
 
+	// Static method to create a Question (Standard or Diagnostic)
+	static fromJSON(json, type = 'Standard') {
+		// Decide which class to instantiate
+		let instance;
+		if (type === 'Diagnostic') {
+			instance = new DiagnosticQuestion();
+		} else {
+			instance = new StandardQuestion();
+		}
+
+		// Iterate over the JSON properties and assign them to the instance
+		for (let key in json) {
+			if (json.hasOwnProperty(key)) {
+				const value = json[key];
+				// Handle arrays and nested objects as needed
+				if (Array.isArray(value)) {
+					instance[key] = value;
+				} else if (typeof value === 'object' && value !== null) {
+					if (key === 'tags') {
+						instance[key] = { ...value };  // Directly copy tags if they are objects
+					} else {
+						instance[key] = value;
+					}
+				} else {
+					instance[key] = value;
+				}
+			}
+		}
+		return instance;
+	}
+
 	toJSON() {
 		/* object serialization for testing */
     	return deepSerialize(this);
@@ -194,4 +225,4 @@ class DiagnosticQuestion extends Question {
 
 }
 
-module.exports = { StandardQuestion, DiagnosticQuestion };
+module.exports = { Question, StandardQuestion, DiagnosticQuestion };
