@@ -6,7 +6,7 @@
     "questions": [
       {
         "type": "mcq",
-        "stem": "<p>A workflow is defined as following:</p><p><img src=\"temp_media/media/image1.jpeg\" alt=\"A cat looking at the camera AI-generated content may be incorrect.\"/></p><p>If Task B failed during a job run, which statement is correct?</p>",
+        "stem": "<p>A workflow is defined as following:</p><p><img src=\"https://www.example.com/image1.jpeg\" alt=\"A cat looking at the camera AI-generated content may be incorrect.\"/></p><p>If Task B failed during a job run, which statement is correct?</p>",
         "options": [
           {
             "label": "<p>Task A completed successfully. Some of Task B and Task C’s operations may be completed successfully.</p>",
@@ -51,7 +51,7 @@
       },
       {
         "type": "mcq",
-        "stem": "<p>Given the following workflow definition, what will happen if Task A is successful and Task B fails? Assuming Task C’s data operation can be generated without the result of B.</p><p><img src=\"temp_media/media/image2.jpeg\" alt=\"A close up of a cat's face AI-generated content may be incorrect.\"/></p>",
+        "stem": "<p>Given the following workflow definition, what will happen if Task A is successful and Task B fails? Assuming Task C’s data operation can be generated without the result of B.</p><p><img src=\"https://www.example.com/image2.jpeg\" alt=\"A close up of a cat's face AI-generated content may be incorrect.\"/></p>",
         "options": [
           {
             "label": "<p>Operations in Task A and C are completely successful. Some operations in Task B may be successful.</p>",
