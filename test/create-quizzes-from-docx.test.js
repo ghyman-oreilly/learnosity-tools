@@ -2,7 +2,7 @@ const assert = require('assert');
 const fs = require('fs');
 const inquirer = require('inquirer');
 const path = require('path');
-const { DOMParser, XMLSerializer } = require('xmldom');
+const { DOMParser, XMLSerializer } = require('@xmldom/xmldom');
 const { convertDOCXtoHTML, processHTML, createQuizzes } = require('@src/create-quizzes-from-docx');
 const { sendAPIRequests, getPublicUrl, uploadFileToPresignedUrl, callDataAPI } = require('@src/shared/call-learnosity');
 const { StandardQuestion, DiagnosticQuestion } = require('@src/classModules/questions');
@@ -46,6 +46,7 @@ function readFileContents(filePath) {
 }
 
 function normalizeHTML(html) {
+    html = '<!DOCTYPE html><html><head></head><body>' + html + '</body></html>';
     const doc = new DOMParser().parseFromString(html, 'text/html');
 
     function normalizeNode(node) {
