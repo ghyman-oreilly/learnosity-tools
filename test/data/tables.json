@@ -41,12 +41,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>Cloud computing is the delivery of various computing services such as databases, servers, apps, networking, analytics, and AI services over the internet or “the cloud.” See “A Brief History of the Cloud.”</p>",
-          "<p>Cloud computing eliminates the need for physical hardware by providing services over the internet. See “A Brief History of the Cloud.”</p>",
-          "<p>Cloud computing is not a software development methodology or process but a service model. See “A Brief History of the Cloud.”</p>",
-          "<p>Cloud computing is not limited to local area networking; it operates over the internet globally. See “A Brief History of the Cloud.”</p>"
-        ],
+        "rationale": "<p>Cloud computing is the delivery of various computing services such as databases, servers, apps, networking, analytics, and AI services over the internet or “the cloud.” See “A Brief History of the Cloud.”</p>",
         "hasRationales": true
       },
       {
@@ -86,15 +81,14 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>While cloud computing can reduce costs, it does not always do so. See Module 1, “The Evolution of Cloud Computing.”</p>",
-          "<p>Budgeting is still necessary in cloud computing. See Module 1, “The Evolution of Cloud Computing.”</p>",
-          "<p>Cloud computing costs can vary based on usage, leading to unpredictable expenses. See Module 1, “The Evolution of Cloud Computing.”</p>",
-          "<p>Cloud costs are typically variable, not fixed. See Module 1, “The Evolution of Cloud Computing.”</p>"
-        ],
+        "rationale": "<p>While cloud computing can reduce costs, it does not always do so. See Module 1, “The Evolution of Cloud Computing.”</p>",
         "hasRationales": true
       }
     ],
+    "show_distractor_rationale": {
+      "per_question": "incorrect",
+      "per_response": "never"
+    },
     "tags": {
       "Publisher": [
         "O'Reilly Media"
@@ -150,12 +144,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>Cloud computing typically speeds up deployment, lowers capital expenditures, and enhances disaster recovery. See Module 1, “The Evolution of Cloud Computing.”</p>",
-          "<p>Cloud computing has had a significant positive impact on businesses and IT operations. See Module 1, “The Evolution of Cloud Computing.”</p>",
-          "<p>Cloud computing helps create various cloud engineering opportunities. It also enables rapid deployment, reduces capital IT expenditures, enhances collaboration, and improves disaster recovery. See Module 1, “The Evolution of Cloud Computing.”</p>",
-          "<p>Cloud computing is not solely focused on AI technologies. Furthermore, the increase in cloud services requires more skilled cloud engineers, not less, to manage the complexities and opportunities offered by cloud solutions. See Module 1, “The Evolution of Cloud Computing.”</p>"
-        ],
+        "rationale": "<p>Cloud computing typically speeds up deployment, lowers capital expenditures, and enhances disaster recovery. See Module 1, “The Evolution of Cloud Computing.”</p>",
         "hasRationales": true
       },
       {
@@ -195,15 +184,14 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>Vendor lock-in refers to the difficulty of switching providers, not the ease. See Module 1, “The Evolution of Cloud Computing.”</p>",
-          "<p>Vendor lock-in occurs when a business becomes dependent on one cloud provider, making it challenging to switch to another provider without significant costs or disruptions. See Module 1, “The Evolution of Cloud Computing.”</p>",
-          "<p>Using multiple cloud providers is known as a multicloud strategy. See Module 1, “The Evolution of Cloud Computing.”</p>",
-          "<p>Open source solutions aim to reduce vendor lock-in. See Module 1, “The Evolution of Cloud Computing.”</p>"
-        ],
+        "rationale": "<p>Vendor lock-in refers to the difficulty of switching providers, not the ease. See Module 1, “The Evolution of Cloud Computing.”</p>",
         "hasRationales": true
       }
     ],
+    "show_distractor_rationale": {
+      "per_question": "incorrect",
+      "per_response": "never"
+    },
     "tags": {
       "Publisher": [
         "O'Reilly Media"

@@ -18,16 +18,7 @@
 <p>D. <span class="math inline"><em>λ</em>  <em>x</em> + 1</span></p>
 </div>
 <div data-custom-style="QuestionRationale">
-<p>A. This is correct. When you use lambda notation, you put the Greek letter <span class="math inline"><em>λ</em></span> before the function's parameter and put the function's formula after the right arrow. See “Using Filter, Map, and Fold.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>B. A lambda expression must use the <span class="math inline"><em>λ</em></span> symbol to indicate the function's parameter. See “Using Filter, Map, and Fold.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>C. This is an assignment statement, not a lambda expression. See “Using Filter, Map, and Fold.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>D. A lambda expression uses an arrow to separate the function's parameter from the function's formula. See “Using Filter, Map, and Fold.”</p>
+<p>When you use lambda notation, you put the Greek letter <span class="math inline"><em>λ</em></span> before the function's parameter and put the function's formula after the right arrow. See “Using Filter, Map, and Fold.”</p>
 </div>
 <div data-custom-style="QuestionStem">
 <p>What's the value of the expression (<span class="math inline"><em>λ</em> <em>x</em> → 6 * <em>x</em>)(21) </span>?</p>
@@ -45,16 +36,7 @@
 <p>D. 21</p>
 </div>
 <div data-custom-style="QuestionRationale">
-<p>A. If we translate this expression into conventional function notation, we're applying the function <span class="math inline"><em>f</em>(<em>x</em>) = 6 * <em>x</em></span> to the value 21. And 6 times 21 is 126. See “Using Filter, Map, and Fold.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>B. Evaluating this expression means plugging 21 into <span class="math inline">6 * <em>x</em></span>. See “Using Filter, Map, and Fold.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>C. The value of this lambda expression is a number, not a function definition. See “Using Filter, Map, and Fold.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>D. If we translate this expression into conventional function notation, we're applying the function <span class="math inline"><em>f</em>(<em>x</em>) = 6 * <em>x</em></span> to the value 21. But 6 times 21 isn't 21. See “Using Filter, Map, and Fold.”</p>
+<p>If we translate this expression into conventional function notation, we're applying the function <span class="math inline"><em>f</em>(<em>x</em>) = 6 * <em>x</em></span> to the value 21. And 6 times 21 is 126. See “Using Filter, Map, and Fold.”</p>
 </div>
 <div data-custom-style="QuestionStem">
 <p>What's the value of <span data-custom-style="Inline Code">foldFromLeft(minus, 7, [3, –8, 9])</span>?</p>
@@ -69,13 +51,7 @@
 <p>C. 5</p>
 </div>
 <div data-custom-style="QuestionRationale">
-<p>A. Applying <span data-custom-style="Inline Code">minus</span> from left to right, we have <span class="math inline">7 − 3 − (−8) − 9 = 3</span>. See “Using Filter, Map, and Fold.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>B. Applying <span data-custom-style="Inline Code">minus</span> from left to right, we don't get the value –13. See “Using Filter, Map, and Fold.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>C. Applying <span data-custom-style="Inline Code">minus</span> from left to right, we don't get the value 5. See “Using Filter, Map, and Fold.”</p>
+<p>Applying <span data-custom-style="Inline Code">minus</span> from left to right, we have <span class="math inline">7 − 3 − (−8) − 9 = 3</span>. See “Using Filter, Map, and Fold.”</p>
 </div>
 <h1 class="QuizTitle" id="introduction-to-functional-programming-part-3">Introduction to Functional Programming: Part 3</h1>
 <div data-custom-style="QuizType">
@@ -96,12 +72,6 @@
 <div data-custom-style="QuestionRationale">
 <p><span class="math inline">$f \circ g \circ h(5) = f \circ g\left( \frac{1}{5} \right) = f\left( \frac{1}{25} \right) = 7\frac{1}{25}$</span>.</p>
 </div>
-<div data-custom-style="QuestionRationale">
-<p><span class="math inline">$h \circ g \circ f(5) = h\left( g(12) \right) = h(144) = \frac{1}{144}$</span>.<span class="math inline"> </span> But <span class="math inline"><em>f</em>  ∘ <em>g</em>  ∘ <em>h</em></span> isn't the same as <span class="math inline"><em>h</em>  ∘ <em>g</em> ∘ <em>f</em></span>.</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p><span class="math inline">$g \circ f \circ h(5) = g\left( f\left( \frac{1}{5} \right) \right) = g\left( 7\frac{1}{5} \right) = \frac{1296}{25}$</span>.<span class="math inline"> </span> But <span class="math inline"><em>g</em>  ∘ <em>f</em>  ∘ <em>h</em></span> isn't the same as <span class="math inline"><em>h</em>  ∘ <em>g</em> ∘ <em>f</em> </span></p>
-</div>
 <div data-custom-style="QuestionStem">
 <p>Which of the following is a higher-order function?</p>
 </div>
@@ -120,15 +90,6 @@
 <div data-custom-style="QuestionRationale">
 <p>The second argument of the <span data-custom-style="Inline Code">forEach</span> function is a function, <span data-custom-style="Inline Code">f</span>. So <span data-custom-style="Inline Code">forEach</span> is a higher-order function. See “Higher-Order Functions.”</p>
 </div>
-<div data-custom-style="QuestionRationale">
-<p>The <span data-custom-style="Inline Code">sum</span> function has only one argument, and that argument isn't a function. See “Higher-Order Functions.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>The <span data-custom-style="Inline Code">addAndSquare</span> function has two arguments, and neither of these arguments is a function. See “Higher-Order Functions.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>At first glance, <span data-custom-style="Inline Code">mapSquare</span> might seem to be a higher-order function because it's the same as <span data-custom-style="Inline Code">map(square, list)</span>. But the <span data-custom-style="Inline Code">mapSquare</span> function has only one argument, and that argument is a list, not a function. See “Higher-Order Functions.”</p>
-</div>
 <div data-custom-style="QuestionStem">
 <p>Which of the following is <em>not</em> true about function composition?</p>
 </div>
@@ -146,15 +107,6 @@
 </div>
 <div data-custom-style="QuestionRationale">
 <p>Let <span class="math inline"><em>f</em>(<em>x</em>) = <em>x</em> + 1</span> and <span class="math inline"><em>g</em>(<em>x</em>) = <em>x</em><sup>2</sup></span>. Then <span class="math inline"><em>f</em> ∘ <em>g</em>(2) = 5</span> and <span class="math inline"><em>g</em> ∘ <em>f</em>(2) = 9</span>. In this case, <span class="math inline"><em>f</em>  ∘ <em>g</em>  ≠ <em>g</em>  ∘ <em>f</em></span>. See “Higher-Order Functions.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>The <span class="math inline">∘</span> operator takes two functions as its arguments, so <span class="math inline">∘</span> is a higher-order function. See “Higher-Order Functions.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>Let <span class="math inline"><em>f</em>(<em>x</em>) = <em>x</em> + 1</span> and <span class="math inline"><em>g</em>(<em>x</em>) = <em>x</em><sup>2</sup></span>. Then <span class="math inline"><em>f</em> ∘ <em>g</em>(<em>x</em>) = <em>x</em><sup>2</sup> + 1</span>. So <span class="math inline"><em>f</em>  ∘ <em>g</em></span> is a function. See “Higher-Order Functions.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>In this expression, we apply the map function and then apply the sum function to the result we got when we applied the map function. That's function composition. See “Higher-Order Functions.”</p>
 </div>
 <div data-custom-style="QuestionStem">
 <p>In the video, we describe the <span data-custom-style="Inline Code">filter</span> function as follows:</p>
@@ -180,15 +132,6 @@
 <div data-custom-style="QuestionRationale">
 <p>The argument of <span data-custom-style="Inline Code">f</span> is a number, and <span data-custom-style="Inline Code">f</span> returns a number as its result. See “Currying.”</p>
 </div>
-<div data-custom-style="QuestionRationale">
-<p>When we use this notation, we describe the types of the function's argument(s) and the type of the function's result. We don't describe the formula or rule that the function implements. So <span data-custom-style="Inline Code">+ 1</span> doesn't belong in this kind of notation. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>The argument of <span data-custom-style="Inline Code">f</span> isn't a function, and the result returned by <span data-custom-style="Inline Code">f</span> isn't a function. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>When we use this notation, we describe the types of the function's argument(s). The name <span data-custom-style="Inline Code">x</span> doesn't stand for a type; it stands for a variable. See “Currying.”</p>
-</div>
 <div data-custom-style="QuestionStem">
 <p>In the video, we describe the filter function as follows:</p>
 </div>
@@ -212,15 +155,6 @@
 </div>
 <div data-custom-style="QuestionRationale">
 <p>The new function, <span data-custom-style="Inline Code">f</span>, is defined as follows: <span class="math inline"><em>f</em>(<em>y</em>) = 2 + <em>y</em></span>. The argument of <span data-custom-style="Inline Code">f</span> is a number, and the result returned by <span data-custom-style="Inline Code">f</span> is a number. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>The new function, <span data-custom-style="Inline Code">f</span>, has one argument, not two arguments. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>The new function's argument is not a list. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>When we use this notation, we describe the types of the function's argument(s) and the type of the function's result. We don't describe the formula or rule that the function implements. So <span data-custom-style="Inline Code">+ 2</span> doesn't belong in this kind of notation. See “Currying.”</p>
 </div>
 <div data-custom-style="QuestionStem">
 <p>What functions do you get when you curry the function <span class="math inline"><em>f</em>(<em>x</em>,<em>y</em>) = <em>x</em><sup>2</sup> − <em>y</em></span>?</p>
@@ -275,15 +209,6 @@ curryF(2) = f(2, 2) = 22 - 2 = 2</span></p>
 <div data-custom-style="QuestionRationaleContinued">
 <p>And so on. See “Currying.”</p>
 </div>
-<div data-custom-style="QuestionRationale">
-<p>When you curry a two-argument function, you plug a value into the function's first argument. What you get is a function that applies to the original function's second argument. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>Currying isn't the same as flipping. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p><em>Currying</em> doesn't mean applying the same value to both arguments. See “Currying.”</p>
-</div>
 <div data-custom-style="QuestionStem">
 <p>In the video, we describe the <span data-custom-style="Inline Code">filter</span> function as follows:</p>
 </div>
@@ -308,15 +233,6 @@ curryF(2) = f(2, 2) = 22 - 2 = 2</span></p>
 <div data-custom-style="QuestionRationale">
 <p>If you have two functions, <span class="math inline"><em>f</em></span> and <span class="math inline"><em>g</em></span>, applying <span class="math inline">∘</span> to these functions gives you a new function, namely <span class="math inline"><em>f</em>  ∘ <em>g</em></span>. See “Currying.”</p>
 </div>
-<div data-custom-style="QuestionRationale">
-<p>This choice incorrectly asserts that the <span class="math inline">∘</span> operator takes only one argument. The <span class="math inline">∘</span> operator takes two arguments. For example, in the expression <span class="math inline"><em>f</em>  ∘ <em>g</em></span>, the first argument is <span class="math inline"><em>f</em></span>and the second argument is <span class="math inline"><em>g</em></span>. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>This choice incorrectly asserts that the <span class="math inline">∘</span> operator takes two arguments, each of type <span data-custom-style="Inline Code">number</span>. But, in the expression <span class="math inline"><em>f</em>  ∘ <em>g</em></span>, the arguments <span class="math inline"><em>f</em></span> and <span class="math inline"><em>g</em></span> aren't numbers. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>This choice incorrectly asserts that the <span class="math inline">∘</span> operator takes two arguments, one of which is a <span data-custom-style="Inline Code">number</span>. But, in the expression <span class="math inline"><em>f</em>  ∘ <em>g</em></span>, neither of the arguments <span class="math inline"><em>f</em></span> and <span class="math inline"><em>g</em></span> are numbers. See “Currying.”</p>
-</div>
 <div data-custom-style="QuestionStem">
 <p>What do you get when you perform partial application twice on <span data-custom-style="Inline Code">foldFromLeft(f, n, list)</span>, using <span data-custom-style="Inline Code">sum</span> for <span data-custom-style="Inline Code">f</span> and <span data-custom-style="Inline Code">0</span> for <span data-custom-style="Inline Code">n</span>?</p>
 </div>
@@ -334,15 +250,6 @@ curryF(2) = f(2, 2) = 22 - 2 = 2</span></p>
 </div>
 <div data-custom-style="QuestionRationale">
 <p>With one partial application, you get a function <span data-custom-style="Inline Code">sumOf : number, list</span> <span class="math inline">→</span> <span data-custom-style="Inline Code">number</span>. This function adds up its <span data-custom-style="Inline Code">number</span> argument plus all the numbers in its <span data-custom-style="Inline Code">list</span> argument. With the second partial application, the new <span data-custom-style="Inline Code">sum</span> function adds up <span data-custom-style="Inline Code">0</span> plus all the numbers in its <span data-custom-style="Inline Code">list</span>. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>Performing two partial applications on a function with three arguments gives you a new function with one argument. It doesn't give you a number. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>This choice describes what you get when you perform partial application only once. See “Currying.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>This choice describes the original <span data-custom-style="Inline Code">foldFromLeft</span> function before you've performed partial application. See “Currying.”</p>
 </div>
 <div data-custom-style="QuestionStem">
 <p>In mathematics, <span class="math inline"><em>n</em>!</span> = the product of all numbers from 1 to <span class="math inline"><em>n</em>.</span> For example, <span class="math inline">5! = 1 ⋅ 2 ⋅ 3 ⋅ 4 ⋅ 5 = 120</span>. Which recursive definition of <span data-custom-style="Inline Code">fact</span> takes a number <span class="math inline"><em>n</em></span>, and returns <span class="math inline"><em>n</em>!</span> as a numeric value?</p>
@@ -373,15 +280,6 @@ fact(n) = n * (n - 1)</span></p>
 </div>
 <div data-custom-style="QuestionRationaleContinued">
 <p>And so on. See “Lists.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>With this definition, <span data-custom-style="Inline Code">fact(3) = fact(2 + 1) = fact(2 - 1) * 3 = fact(1) * 3 = 3</span>. But <span data-custom-style="Inline Code">fact(3)</span> is <span class="math inline">1 ⋅ 2 ⋅ 3 = 6</span>, not <span class="math inline">3</span>. See “Lists.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>With this definition, <span data-custom-style="Inline Code">fact(4) = 4 * 3 = 12</span>. But <span data-custom-style="Inline Code">fact(4)</span> is <span class="math inline">1 ⋅ 2 ⋅ 3 ⋅ 4 = 24</span>, not <span class="math inline">12</span>. See “Lists.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>This code has no base case. So, for example, <span data-custom-style="Inline Code">fact(3) = 3 * fact(2) = 3 * 2 * fact(1) = 3 * 2 * 1 * fact(0) = 3 * 2 * 1 * 0 * fact(-1)</span>, and so on. The calculation never ends. See “Lists.”</p>
 </div>
 <div data-custom-style="QuestionStem">
 <p>The Fibonacci sequence starts with the two numbers 1, 1. Each number thereafter is the sum of the two numbers before it in the sequence. For example, the sequence's third number is 1 + 1 = 2. The sequence's fourth number is 1 + 2 = 3. The sequence's fifth number is 2 + 3 = 5. And so on.</p>
@@ -414,15 +312,6 @@ fib(5) = fib(3) + fib(4) = 2 + 3 = 5</span></p>
 <div data-custom-style="QuestionRationaleContinued">
 <p>And so on. See “Lists.”</p>
 </div>
-<div data-custom-style="QuestionRationale">
-<p>This code has no base case. For example, <span data-custom-style="Inline Code">fib(3) = fib(1) + fib(2) = (fib(-1) + fib(0)) + (fib(0) + fib(1)) = fib(-3) + fib(-2) + . . <mark>.</mark></span> , and so on. See “Lists.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>This code needs an additional base case. With this code, <span data-custom-style="Inline Code">fib(2) = fib(0) + fib(1)</span>. Since there's no specific definition for <span data-custom-style="Inline Code">fib(0)</span>, the code's second line applies, so <span data-custom-style="Inline Code">fib(0) = fib(-2) + fib(-1)</span>, and so on. See “Lists.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>With this definition, <span data-custom-style="Inline Code">fib(3) = fib(1 * 2) = fib(2) = 1</span>. But <span data-custom-style="Inline Code">fib(3)</span> is <span class="math inline">2</span>, not <span class="math inline">1</span>. See “Lists.”</p>
-</div>
 <div data-custom-style="QuestionStem">
 <p>A function named <span data-custom-style="Inline Code">up</span> takes a number, <span class="math inline"><em>n</em></span>, and returns a list whose values are <span class="math inline">0, 1, 2, …, <em>n</em></span>. Which recursive definition of <span data-custom-style="Inline Code">up</span> is correct?</p>
 </div>
@@ -454,15 +343,6 @@ up(n) = (n-1)::up(n)</span></p>
 </div>
 <div data-custom-style="QuestionRationaleContinued">
 <p>See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>With this definition, <span data-custom-style="Inline Code">up(1) = up(0)::[1] = [0]::[1] = [[0], 1]</span>. But <span data-custom-style="Inline Code">up(1)</span> is <span data-custom-style="Inline Code">[0,1]</span>, not <span data-custom-style="Inline Code">[[0],1]</span>. See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>With this definition, <span data-custom-style="Inline Code">up(1) = concat( [1], up(0) ) = concat( [1], [0] ) = [1,0]</span>. But the value of <span data-custom-style="Inline Code">up(1)</span> is <span data-custom-style="Inline Code">[0,1]</span>, not <span data-custom-style="Inline Code">[1,0]</span>. See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>With this definition, <span data-custom-style="Inline Code">up(1) = 0::up(1) = 0::(0::up(1)) = 0::(0::(0::up(1)))</span>, and so on. The expansion never ends. See “More Recursion Examples.”</p>
 </div>
 <div data-custom-style="QuestionStem">
 <p>Ackermann's function is defined as follows:</p>
@@ -517,15 +397,6 @@ ack(n,x) = ack(n-1, ack(n,x-1))</span></p>
 <div data-custom-style="QuestionRationaleContinued">
 <p>See “More Recursion Examples.”</p>
 </div>
-<div data-custom-style="QuestionRationale">
-<p>The definition of Ackermann's function consists of three lines. When you find the value of <span data-custom-style="Inline Code">ack(1,1)</span>, you apply each line at least once. See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>The definition of Ackermann's function consists of three lines. When you find the value of <span data-custom-style="Inline Code">ack(1,1)</span>, you apply each line at least once. See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>The definition of Ackermann's function consists of three lines. When you find the value of <span data-custom-style="Inline Code">ack(1,1)</span>, you apply each line at least once. See “More Recursion Examples.”</p>
-</div>
 <h1 class="QuizTitle" id="introduction-to-functional-programming-part-5">Introduction to Functional Programming: Part 5</h1>
 <div data-custom-style="QuizType">
 <p>Formative</p>
@@ -560,18 +431,6 @@ ack(n,x) = ack(n-1, ack(n,x-1))</span></p>
 <div data-custom-style="QuestionRationaleContinued">
 <p>See “More Recursion Examples.”</p>
 </div>
-<div data-custom-style="QuestionRationale">
-<p>The result from a <span data-custom-style="Inline Code">Maybe</span> function is a <span data-custom-style="Inline Code">Just</span> value or <span data-custom-style="Inline Code">Nothing</span>. See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>In this code, the only function that can trigger a sequence of <span data-custom-style="Inline Code">Nothing</span> values is <span data-custom-style="Inline Code">reciprocalMaybe</span>. But the value that we're feeding to <span data-custom-style="Inline Code">reciprocalMaybe</span> isn't zero. So this code doesn't return the <span data-custom-style="Inline Code">Nothing</span> value. See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p><span class="math display">$$\frac{1}{(10 - 10) - 4} + \ 13 \neq 0$$</span></p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>See “More Recursion Examples.”</p>
-</div>
 <div data-custom-style="QuestionStem">
 <p>What's the value of <span data-custom-style="Inline Code">sqrtMaybe(x-1) &gt;&gt;= minus4Maybe &gt;&gt;= reciprocalMaybe &gt;&gt;= plus13Maybe</span> when <span data-custom-style="Inline Code">x</span> is <span data-custom-style="Inline Code">17</span>?</p>
 </div>
@@ -588,31 +447,7 @@ ack(n,x) = ack(n-1, ack(n,x-1))</span></p>
 <p>D. <span data-custom-style="Code Block">0</span></p>
 </div>
 <div data-custom-style="QuestionRationale">
-<p><span data-custom-style="Inline Code">sqrtMaybe(17-1)</span> is <span data-custom-style="Inline Code">Just 4</span>.</p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>Binding <span data-custom-style="Inline Code">Just 4</span> with <span data-custom-style="Inline Code">minus4Maybe</span> yields <span data-custom-style="Inline Code">Just 0</span>.</p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>Binding <span data-custom-style="Inline Code">Just 0</span> with <span data-custom-style="Inline Code">reciprocalMaybe</span> yields <span data-custom-style="Inline Code">Nothing</span>.</p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>Binding <span data-custom-style="Inline Code">Nothing</span> with <span data-custom-style="Inline Code">plus13Maybe</span> yields <span data-custom-style="Inline Code">Nothing</span>.</p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
 <p><span class="math inline">$\frac{1}{(17 - 1) - 4} + \ 13 \neq 12.75$</span></p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>The result from a <span data-custom-style="Inline Code">Maybe</span> function is a <span data-custom-style="Inline Code">Just</span> value or <span data-custom-style="Inline Code">Nothing</span>. See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p><span class="math display">$$\frac{1}{(17 - 1) - 4} + \ 13 \neq 0$$</span></p>
 </div>
 <div data-custom-style="QuestionRationaleContinued">
 <p>See “More Recursion Examples.”</p>
@@ -647,19 +482,6 @@ ack(n,x) = ack(n-1, ack(n,x-1))</span></p>
 <div data-custom-style="QuestionRationaleContinued">
 <p>See “More Recursion Examples.”</p>
 </div>
-<div data-custom-style="QuestionRationale">
-<p>In our system, there's no such thing as <span data-custom-style="Inline Code">Just Nothing</span>. See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>In our system, there's no such thing as <span data-custom-style="Inline Code">Just</span>. There has to be a value after the<br />
-word <span data-custom-style="Inline Code">Just</span>. See “More Recursion Examples.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p><span class="math display">$$\frac{1}{(9 - 10) - 4} + \ 13 \neq 12.9230789231$$</span></p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>See “More Recursion Examples.”</p>
-</div>
 <h1 class="QuizTitle" id="introduction-to-functional-programming-summative-quiz">Introduction to Functional Programming: Summative Quiz</h1>
 <div data-custom-style="QuizType">
 <p>Summative</p>
@@ -680,25 +502,7 @@ word <span data-custom-style="Inline Code">Just</span>. See “More Recursion Ex
 <p>D. <span data-custom-style="Code Block">-14</span></p>
 </div>
 <div data-custom-style="QuestionRationale">
-<p>A. Applying <span data-custom-style="Inline Code">minus</span> from right to left, we have <span class="math inline">3  − ((−8) −</span> (9<span class="math inline"> − 0)) = 3 − (−17) = 20</span>.</p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>B. Applying <span data-custom-style="Inline Code">minus</span> from right to left, we don't get the value <span class="math inline">2</span>.</p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>C. Applying <span data-custom-style="Inline Code">minus</span> from right to left, we don't get the value <span class="math inline"> − 4</span>.</p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>D. Applying <span data-custom-style="Inline Code">minus</span> from right to left, we don't get the value <span class="math inline"> − 14</span>.</p>
+<p>Applying <span data-custom-style="Inline Code">minus</span> from right to left, we have <span class="math inline">3  − ((−8) −</span> (9<span class="math inline"> − 0)) = 3 − (−17) = 20</span>.</p>
 </div>
 <div data-custom-style="QuestionRationaleContinued">
 <p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>
@@ -720,24 +524,6 @@ word <span data-custom-style="Inline Code">Just</span>. See “More Recursion Ex
 </div>
 <div data-custom-style="QuestionRationale">
 <p><span class="math display"><em>f</em> ∘ <em>g</em> ∘ <em>f</em>(5) = <em>f</em> ∘ <em>g</em>(10) = <em>f</em>(100) = 200</span></p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p><span class="math inline"><em>g</em> ∘ <em>f</em>(5) = <em>g</em>(10) = 100</span>.<span class="math inline"> </span> But <span class="math inline"><em>g</em> ∘ <em>f</em></span> isn't the same as <span class="math inline"><em>f</em>  ∘ <em>g</em> ∘ <em>f</em></span>.</p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p><span class="math inline"><em>f</em> ∘ <em>g</em>(5) = <em>f</em>(25) = 50</span>.<span class="math inline"> </span> But <span class="math inline"><em>f</em> ∘ <em>g</em></span> isn't the same as <span class="math inline"><em>f</em>  ∘ <em>g</em> ∘ <em>f</em></span>.</p>
-</div>
-<div data-custom-style="QuestionRationaleContinued">
-<p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>
-</div>
-<div data-custom-style="QuestionRationale">
-<p>One of the other choices is correct. Find the value of <span class="math inline"><em>f</em>(<em>g</em>(<em>f</em>(5)))</span>.</p>
 </div>
 <div data-custom-style="QuestionRationaleContinued">
 <p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>

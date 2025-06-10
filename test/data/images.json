@@ -41,12 +41,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>Task C will complete as it is not dependent on Task B. See “Task Management.”</p>",
-          "<p>Task C will complete as it is not dependent on Task B. See “Task Management.”</p>",
-          "<p>Some of Task B’s operations may be completed successfully. See “Task Management.”</p>",
-          "<p>Both Task A and Task C completed successfully. Some of Task B’s operations may have been completed successfully. See “Task Management.”</p>"
-        ],
+        "rationale": "<p>Task C will complete as it is not dependent on Task B. See “Task Management.”</p>",
         "hasRationales": true
       },
       {
@@ -86,15 +81,14 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>Task C is not started. See Module 5, “Testing and Deployment.”</p>",
-          "<p>Task C is not started. See Module 5, “Testing and Deployment.”</p>",
-          "<p>Some operations in Task B may be successful. See Module 5, “Testing and Deployment.”</p>",
-          "<p>C depends on B so if B fails C will not get executed. See Module 5, “Testing and Deployment.”</p>"
-        ],
+        "rationale": "<p>Task C is not started. See Module 5, “Testing and Deployment.”</p>",
         "hasRationales": true
       }
     ],
+    "show_distractor_rationale": {
+      "per_question": "incorrect",
+      "per_response": "never"
+    },
     "tags": {
       "Publisher": [
         "O'Reilly Media"

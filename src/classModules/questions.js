@@ -161,7 +161,7 @@ class StandardQuestion extends Question {
 	constructor(hasRationales) {
 		super();
 		super.updateOrAddTag(courseIdTagName, '')
-		this.rationales = []
+		this.rationale = ''
 		this.hasRationales = hasRationales;
 	}
 
@@ -171,19 +171,19 @@ class StandardQuestion extends Question {
 		const { questionStem, options, hasRationales, rationales } = params;
 		
 		if (hasRationales) {
-			if (!options || !rationales || options.length != rationales.length) {
-			console.log('Question has unequal number of options and rationales ' + questionStem);
-			throw new Error('At least one quiz question has an unequal number of options and rationales. Please fix and rerun.')
+			if (!options || !rationales || rationales.length != 1) {
+			console.log('Question does not have one rationale, as required: ' + questionStem);
+			throw new Error('At least one quiz question has the wrong number of rationales (must have exactly 1). Please fix and rerun.')
 			}
 			this.hasRationales = hasRationales;
-			this.rationales = rationales;
+			this.rationale = rationales[0];
 		}
 	}
 
 	getQuestionPropsAsJSON() {
 		const baseJson = super.getQuestionPropsAsJSON();
 		if (this.hasRationales) {
-			baseJson.data.metadata.distractor_rationale_response_level = this.rationales;
+			baseJson.data.metadata.distractor_rationale = this.rationale;
 		}
 		return baseJson
 	}

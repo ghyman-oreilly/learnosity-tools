@@ -8,12 +8,17 @@ const {
 const { deepSerialize } = require('../shared/helpers')
 const { Question } = require('./questions')
 
+
 class Quiz {
-	constructor() {
+	constructor(QuizInitOptions) {
 		this.title = ''
 		this.refId = ''
 		this.shuffleItems = true
 		this.questions = []
+		this.show_distractor_rationale =  {
+			per_question: "incorrect",
+			per_response: "never"
+		}
 		this.tags = { 
 			[publisherTagName]: [publisherTagValue],
 			[questionBankIdTagName]: ['']
@@ -102,6 +107,9 @@ class Quiz {
 				config: {
 					configuration: {
 						shuffle_items: this.shuffleItems
+					},
+					questions_api_init_options: {
+						show_distractor_rationale: 	this.show_distractor_rationale
 					},
 					regions: "main"
 				},

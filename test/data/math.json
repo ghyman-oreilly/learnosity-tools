@@ -41,12 +41,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>This is correct. When you use lambda notation, you put the Greek letter <span><em>λ</em></span> before the function's parameter and put the function's formula after the right arrow. See “Using Filter, Map, and Fold.”</p>",
-          "<p>A lambda expression must use the <span><em>λ</em></span> symbol to indicate the function's parameter. See “Using Filter, Map, and Fold.”</p>",
-          "<p>This is an assignment statement, not a lambda expression. See “Using Filter, Map, and Fold.”</p>",
-          "<p>A lambda expression uses an arrow to separate the function's parameter from the function's formula. See “Using Filter, Map, and Fold.”</p>"
-        ],
+        "rationale": "<p>When you use lambda notation, you put the Greek letter <span><em>λ</em></span> before the function's parameter and put the function's formula after the right arrow. See “Using Filter, Map, and Fold.”</p>",
         "hasRationales": true
       },
       {
@@ -86,12 +81,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>If we translate this expression into conventional function notation, we're applying the function <span><em>f</em>(<em>x</em>) = 6 * <em>x</em></span> to the value 21. And 6 times 21 is 126. See “Using Filter, Map, and Fold.”</p>",
-          "<p>Evaluating this expression means plugging 21 into <span>6 * <em>x</em></span>. See “Using Filter, Map, and Fold.”</p>",
-          "<p>The value of this lambda expression is a number, not a function definition. See “Using Filter, Map, and Fold.”</p>",
-          "<p>If we translate this expression into conventional function notation, we're applying the function <span><em>f</em>(<em>x</em>) = 6 * <em>x</em></span> to the value 21. But 6 times 21 isn't 21. See “Using Filter, Map, and Fold.”</p>"
-        ],
+        "rationale": "<p>If we translate this expression into conventional function notation, we're applying the function <span><em>f</em>(<em>x</em>) = 6 * <em>x</em></span> to the value 21. And 6 times 21 is 126. See “Using Filter, Map, and Fold.”</p>",
         "hasRationales": true
       },
       {
@@ -127,14 +117,14 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>Applying <code>minus</code> from left to right, we have <span>7 − 3 − (−8) − 9 = 3</span>. See “Using Filter, Map, and Fold.”</p>",
-          "<p>Applying <code>minus</code> from left to right, we don't get the value –13. See “Using Filter, Map, and Fold.”</p>",
-          "<p>Applying <code>minus</code> from left to right, we don't get the value 5. See “Using Filter, Map, and Fold.”</p>"
-        ],
+        "rationale": "<p>Applying <code>minus</code> from left to right, we have <span>7 − 3 − (−8) − 9 = 3</span>. See “Using Filter, Map, and Fold.”</p>",
         "hasRationales": true
       }
     ],
+    "show_distractor_rationale": {
+      "per_question": "incorrect",
+      "per_response": "never"
+    },
     "tags": {
       "Publisher": [
         "O'Reilly Media"
@@ -186,11 +176,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p><span>$f \\circ g \\circ h(5) = f \\circ g\\left( \\frac{1}{5} \\right) = f\\left( \\frac{1}{25} \\right) = 7\\frac{1}{25}$</span>.</p>",
-          "<p><span>$h \\circ g \\circ f(5) = h\\left( g(12) \\right) = h(144) = \\frac{1}{144}$</span>.<span> </span> But <span><em>f</em>  ∘ <em>g</em>  ∘ <em>h</em></span> isn't the same as <span><em>h</em>  ∘ <em>g</em> ∘ <em>f</em></span>.</p>",
-          "<p><span>$g \\circ f \\circ h(5) = g\\left( f\\left( \\frac{1}{5} \\right) \\right) = g\\left( 7\\frac{1}{5} \\right) = \\frac{1296}{25}$</span>.<span> </span> But <span><em>g</em>  ∘ <em>f</em>  ∘ <em>h</em></span> isn't the same as <span><em>h</em>  ∘ <em>g</em> ∘ <em>f</em> </span></p>"
-        ],
+        "rationale": "<p><span>$f \\circ g \\circ h(5) = f \\circ g\\left( \\frac{1}{5} \\right) = f\\left( \\frac{1}{25} \\right) = 7\\frac{1}{25}$</span>.</p>",
         "hasRationales": true
       },
       {
@@ -230,12 +216,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>The second argument of the <code>forEach</code> function is a function, <code>f</code>. So <code>forEach</code> is a higher-order function. See “Higher-Order Functions.”</p>",
-          "<p>The <code>sum</code> function has only one argument, and that argument isn't a function. See “Higher-Order Functions.”</p>",
-          "<p>The <code>addAndSquare</code> function has two arguments, and neither of these arguments is a function. See “Higher-Order Functions.”</p>",
-          "<p>At first glance, <code>mapSquare</code> might seem to be a higher-order function because it's the same as <code>map(square, list)</code>. But the <code>mapSquare</code> function has only one argument, and that argument is a list, not a function. See “Higher-Order Functions.”</p>"
-        ],
+        "rationale": "<p>The second argument of the <code>forEach</code> function is a function, <code>f</code>. So <code>forEach</code> is a higher-order function. See “Higher-Order Functions.”</p>",
         "hasRationales": true
       },
       {
@@ -275,12 +256,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>Let <span><em>f</em>(<em>x</em>) = <em>x</em> + 1</span> and <span><em>g</em>(<em>x</em>) = <em>x</em><sup>2</sup></span>. Then <span><em>f</em> ∘ <em>g</em>(2) = 5</span> and <span><em>g</em> ∘ <em>f</em>(2) = 9</span>. In this case, <span><em>f</em>  ∘ <em>g</em>  ≠ <em>g</em>  ∘ <em>f</em></span>. See “Higher-Order Functions.”</p>",
-          "<p>The <span>∘</span> operator takes two functions as its arguments, so <span>∘</span> is a higher-order function. See “Higher-Order Functions.”</p>",
-          "<p>Let <span><em>f</em>(<em>x</em>) = <em>x</em> + 1</span> and <span><em>g</em>(<em>x</em>) = <em>x</em><sup>2</sup></span>. Then <span><em>f</em> ∘ <em>g</em>(<em>x</em>) = <em>x</em><sup>2</sup> + 1</span>. So <span><em>f</em>  ∘ <em>g</em></span> is a function. See “Higher-Order Functions.”</p>",
-          "<p>In this expression, we apply the map function and then apply the sum function to the result we got when we applied the map function. That's function composition. See “Higher-Order Functions.”</p>"
-        ],
+        "rationale": "<p>Let <span><em>f</em>(<em>x</em>) = <em>x</em> + 1</span> and <span><em>g</em>(<em>x</em>) = <em>x</em><sup>2</sup></span>. Then <span><em>f</em> ∘ <em>g</em>(2) = 5</span> and <span><em>g</em> ∘ <em>f</em>(2) = 9</span>. In this case, <span><em>f</em>  ∘ <em>g</em>  ≠ <em>g</em>  ∘ <em>f</em></span>. See “Higher-Order Functions.”</p>",
         "hasRationales": true
       },
       {
@@ -320,12 +296,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>The argument of <code>f</code> is a number, and <code>f</code> returns a number as its result. See “Currying.”</p>",
-          "<p>When we use this notation, we describe the types of the function's argument(s) and the type of the function's result. We don't describe the formula or rule that the function implements. So <code>+ 1</code> doesn't belong in this kind of notation. See “Currying.”</p>",
-          "<p>The argument of <code>f</code> isn't a function, and the result returned by <code>f</code> isn't a function. See “Currying.”</p>",
-          "<p>When we use this notation, we describe the types of the function's argument(s). The name <code>x</code> doesn't stand for a type; it stands for a variable. See “Currying.”</p>"
-        ],
+        "rationale": "<p>The argument of <code>f</code> is a number, and <code>f</code> returns a number as its result. See “Currying.”</p>",
         "hasRationales": true
       },
       {
@@ -365,12 +336,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>The new function, <code>f</code>, is defined as follows: <span><em>f</em>(<em>y</em>) = 2 + <em>y</em></span>. The argument of <code>f</code> is a number, and the result returned by <code>f</code> is a number. See “Currying.”</p>",
-          "<p>The new function, <code>f</code>, has one argument, not two arguments. See “Currying.”</p>",
-          "<p>The new function's argument is not a list. See “Currying.”</p>",
-          "<p>When we use this notation, we describe the types of the function's argument(s) and the type of the function's result. We don't describe the formula or rule that the function implements. So <code>+ 2</code> doesn't belong in this kind of notation. See “Currying.”</p>"
-        ],
+        "rationale": "<p>The new function, <code>f</code>, is defined as follows: <span><em>f</em>(<em>y</em>) = 2 + <em>y</em></span>. The argument of <code>f</code> is a number, and the result returned by <code>f</code> is a number. See “Currying.”</p>",
         "hasRationales": true
       },
       {
@@ -410,12 +376,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>When you curry a function of two arguments, you get several single-argument functions. You get each single-argument function by selecting a constant value for the first of the original two arguments. Therefore,</p><p><span>(<em>c</em><em>u</em><em>r</em><em>r</em><em>y</em><em>F</em>(0))(<em>y</em>) = 0<sup>2</sup> − <em>y</em>=  − <em>y</em> </span></p><p><span>(<em>c</em><em>u</em><em>r</em><em>r</em><em>y</em><em>F</em>(1))(<em>y</em>) = 1<sup>2</sup> − <em>y</em> = 1 − <em>y</em></span></p><p><span>(<em>c</em><em>u</em><em>r</em><em>r</em><em>y</em><em>F</em>(2))(<em>y</em>) = 2<sup>2</sup> − <em>y</em> = 4 − <em>y</em></span></p><p>And so on. See “Currying.”</p>",
-          "<p>When you curry a two-argument function, you plug a value into the function's first argument. What you get is a function that applies to the original function's second argument. See “Currying.”</p>",
-          "<p>Currying isn't the same as flipping. See “Currying.”</p>",
-          "<p><em>Currying</em> doesn't mean applying the same value to both arguments. See “Currying.”</p>"
-        ],
+        "rationale": "<p>When you curry a function of two arguments, you get several single-argument functions. You get each single-argument function by selecting a constant value for the first of the original two arguments. Therefore,</p><p><span>(<em>c</em><em>u</em><em>r</em><em>r</em><em>y</em><em>F</em>(0))(<em>y</em>) = 0<sup>2</sup> − <em>y</em>=  − <em>y</em> </span></p><p><span>(<em>c</em><em>u</em><em>r</em><em>r</em><em>y</em><em>F</em>(1))(<em>y</em>) = 1<sup>2</sup> − <em>y</em> = 1 − <em>y</em></span></p><p><span>(<em>c</em><em>u</em><em>r</em><em>r</em><em>y</em><em>F</em>(2))(<em>y</em>) = 2<sup>2</sup> − <em>y</em> = 4 − <em>y</em></span></p><p>And so on. See “Currying.”</p>",
         "hasRationales": true
       },
       {
@@ -455,12 +416,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>If you have two functions, <span><em>f</em></span> and <span><em>g</em></span>, applying <span>∘</span> to these functions gives you a new function, namely <span><em>f</em>  ∘ <em>g</em></span>. See “Currying.”</p>",
-          "<p>This choice incorrectly asserts that the <span>∘</span> operator takes only one argument. The <span>∘</span> operator takes two arguments. For example, in the expression <span><em>f</em>  ∘ <em>g</em></span>, the first argument is <span><em>f</em></span>and the second argument is <span><em>g</em></span>. See “Currying.”</p>",
-          "<p>This choice incorrectly asserts that the <span>∘</span> operator takes two arguments, each of type <code>number</code>. But, in the expression <span><em>f</em>  ∘ <em>g</em></span>, the arguments <span><em>f</em></span> and <span><em>g</em></span> aren't numbers. See “Currying.”</p>",
-          "<p>This choice incorrectly asserts that the <span>∘</span> operator takes two arguments, one of which is a <code>number</code>. But, in the expression <span><em>f</em>  ∘ <em>g</em></span>, neither of the arguments <span><em>f</em></span> and <span><em>g</em></span> are numbers. See “Currying.”</p>"
-        ],
+        "rationale": "<p>If you have two functions, <span><em>f</em></span> and <span><em>g</em></span>, applying <span>∘</span> to these functions gives you a new function, namely <span><em>f</em>  ∘ <em>g</em></span>. See “Currying.”</p>",
         "hasRationales": true
       },
       {
@@ -500,12 +456,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>With one partial application, you get a function <code>sumOf : number, list</code><span>→</span><code>number</code>. This function adds up its <code>number</code> argument plus all the numbers in its <code>list</code> argument. With the second partial application, the new <code>sum</code> function adds up <code>0</code> plus all the numbers in its <code>list</code>. See “Currying.”</p>",
-          "<p>Performing two partial applications on a function with three arguments gives you a new function with one argument. It doesn't give you a number. See “Currying.”</p>",
-          "<p>This choice describes what you get when you perform partial application only once. See “Currying.”</p>",
-          "<p>This choice describes the original <code>foldFromLeft</code> function before you've performed partial application. See “Currying.”</p>"
-        ],
+        "rationale": "<p>With one partial application, you get a function <code>sumOf : number, list</code><span>→</span><code>number</code>. This function adds up its <code>number</code> argument plus all the numbers in its <code>list</code> argument. With the second partial application, the new <code>sum</code> function adds up <code>0</code> plus all the numbers in its <code>list</code>. See “Currying.”</p>",
         "hasRationales": true
       },
       {
@@ -545,12 +496,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>Substituting 2 for <code>n</code>, <code>fact(2) = fact(2-1)*2 = fact(1)*2 = 1*2 = 2</code>.</p><p>Substituting 3 for <code>n</code>, <code>fact(3) = fact(3-1)*3 = fact(2)*3 = 2*3 = 6</code>.</p><p>Substituting 4 for <code>n</code>, <code>fact(4) = fact(4-1)*4 = fact(3)*4 = 6*4 = 24</code>.</p><p>And so on. See “Lists.”</p>",
-          "<p>With this definition, <code>fact(3) = fact(2 + 1) = fact(2 - 1) * 3 = fact(1) * 3 = 3</code>. But <code>fact(3)</code> is <span>1 ⋅ 2 ⋅ 3 = 6</span>, not <span>3</span>. See “Lists.”</p>",
-          "<p>With this definition, <code>fact(4) = 4 * 3 = 12</code>. But <code>fact(4)</code> is <span>1 ⋅ 2 ⋅ 3 ⋅ 4 = 24</span>, not <span>12</span>. See “Lists.”</p>",
-          "<p>This code has no base case. So, for example, <code>fact(3) = 3 * fact(2) = 3 * 2 * fact(1) = 3 * 2 * 1 * fact(0) = 3 * 2 * 1 * 0 * fact(-1)</code>, and so on. The calculation never ends. See “Lists.”</p>"
-        ],
+        "rationale": "<p>Substituting 2 for <code>n</code>, <code>fact(2) = fact(2-1)*2 = fact(1)*2 = 1*2 = 2</code>.</p><p>Substituting 3 for <code>n</code>, <code>fact(3) = fact(3-1)*3 = fact(2)*3 = 2*3 = 6</code>.</p><p>Substituting 4 for <code>n</code>, <code>fact(4) = fact(4-1)*4 = fact(3)*4 = 6*4 = 24</code>.</p><p>And so on. See “Lists.”</p>",
         "hasRationales": true
       },
       {
@@ -590,12 +536,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<pre>fib(3) = fib(1) + fib(2) = 1 + 1 = 2\nfib(4) = fib(2) + fib(3) = 1 + 2 = 3\nfib(5) = fib(3) + fib(4) = 2 + 3 = 5</pre><p>And so on. See “Lists.”</p>",
-          "<p>This code has no base case. For example, <code>fib(3) = fib(1) + fib(2) = (fib(-1) + fib(0)) + (fib(0) + fib(1)) = fib(-3) + fib(-2) + . . .</code> , and so on. See “Lists.”</p>",
-          "<p>This code needs an additional base case. With this code, <code>fib(2) = fib(0) + fib(1)</code>. Since there's no specific definition for <code>fib(0)</code>, the code's second line applies, so <code>fib(0) = fib(-2) + fib(-1)</code>, and so on. See “Lists.”</p>",
-          "<p>With this definition, <code>fib(3) = fib(1 * 2) = fib(2) = 1</code>. But <code>fib(3)</code> is <span>2</span>, not <span>1</span>. See “Lists.”</p>"
-        ],
+        "rationale": "<pre>fib(3) = fib(1) + fib(2) = 1 + 1 = 2\nfib(4) = fib(2) + fib(3) = 1 + 2 = 3\nfib(5) = fib(3) + fib(4) = 2 + 3 = 5</pre><p>And so on. See “Lists.”</p>",
         "hasRationales": true
       },
       {
@@ -635,12 +576,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>For example:</p><pre>up(2) = concat(       up(1)        , [2] )\n      = concat( concat( up(0),[1] ), [2] )\n      = concat( concat(  [0] ,[1] ), [2] )\n      = concat(       [0,1]        , [2] )\n      = [0,1,2]</pre><p>See “More Recursion Examples.”</p>",
-          "<p>With this definition, <code>up(1) = up(0)::[1] = [0]::[1] = [[0], 1]</code>. But <code>up(1)</code> is <code>[0,1]</code>, not <code>[[0],1]</code>. See “More Recursion Examples.”</p>",
-          "<p>With this definition, <code>up(1) = concat( [1], up(0) ) = concat( [1], [0] ) = [1,0]</code>. But the value of <code>up(1)</code> is <code>[0,1]</code>, not <code>[1,0]</code>. See “More Recursion Examples.”</p>",
-          "<p>With this definition, <code>up(1) = 0::up(1) = 0::(0::up(1)) = 0::(0::(0::up(1)))</code>, and so on. The expansion never ends. See “More Recursion Examples.”</p>"
-        ],
+        "rationale": "<p>For example:</p><pre>up(2) = concat(       up(1)        , [2] )\n      = concat( concat( up(0),[1] ), [2] )\n      = concat( concat(  [0] ,[1] ), [2] )\n      = concat(       [0,1]        , [2] )\n      = [0,1,2]</pre><p>See “More Recursion Examples.”</p>",
         "hasRationales": true
       },
       {
@@ -680,15 +616,14 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>To find the value of <code>ack(1,1)</code>, start by applying the third line in the definition:</p><pre>ack(1,1) = ack(0, ack(1,0))</pre><p>Then, apply the second line in the definition:</p><pre>         = ack(0, ack(0,1))</pre><p>Then, apply the first line in the definition:</p><pre>         = ack(0,     2   )</pre><p>Then, apply the first line again:</p><pre>         = 3</pre><p>See “More Recursion Examples.”</p>",
-          "<p>The definition of Ackermann's function consists of three lines. When you find the value of <code>ack(1,1)</code>, you apply each line at least once. See “More Recursion Examples.”</p>",
-          "<p>The definition of Ackermann's function consists of three lines. When you find the value of <code>ack(1,1)</code>, you apply each line at least once. See “More Recursion Examples.”</p>",
-          "<p>The definition of Ackermann's function consists of three lines. When you find the value of <code>ack(1,1)</code>, you apply each line at least once. See “More Recursion Examples.”</p>"
-        ],
+        "rationale": "<p>To find the value of <code>ack(1,1)</code>, start by applying the third line in the definition:</p><pre>ack(1,1) = ack(0, ack(1,0))</pre><p>Then, apply the second line in the definition:</p><pre>         = ack(0, ack(0,1))</pre><p>Then, apply the first line in the definition:</p><pre>         = ack(0,     2   )</pre><p>Then, apply the first line again:</p><pre>         = 3</pre><p>See “More Recursion Examples.”</p>",
         "hasRationales": true
       }
     ],
+    "show_distractor_rationale": {
+      "per_question": "incorrect",
+      "per_response": "never"
+    },
     "tags": {
       "Publisher": [
         "O'Reilly Media"
@@ -744,12 +679,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p><code>sqrtMaybe(10-10)</code> is <code>Just 0</code>.</p><p>Binding <code>Just 0</code> with <code>minus4Maybe</code> yields <code>Just -4</code>.</p><p>Binding <code>Just -4</code> with <code>reciprocalMaybe</code> yields <code>Just -1/4</code>.</p><p>Binding <code>Just -1/4</code> with <code>plus13Maybe</code> yields <code>Just 12.75</code>.</p><p>See “More Recursion Examples.”</p>",
-          "<p>The result from a <code>Maybe</code> function is a <code>Just</code> value or <code>Nothing</code>. See “More Recursion Examples.”</p>",
-          "<p>In this code, the only function that can trigger a sequence of <code>Nothing</code> values is <code>reciprocalMaybe</code>. But the value that we're feeding to <code>reciprocalMaybe</code> isn't zero. So this code doesn't return the <code>Nothing</code> value. See “More Recursion Examples.”</p>",
-          "<p><span>$$\\frac{1}{(10 - 10) - 4} + \\ 13 \\neq 0$$</span></p><p>See “More Recursion Examples.”</p>"
-        ],
+        "rationale": "<p><code>sqrtMaybe(10-10)</code> is <code>Just 0</code>.</p><p>Binding <code>Just 0</code> with <code>minus4Maybe</code> yields <code>Just -4</code>.</p><p>Binding <code>Just -4</code> with <code>reciprocalMaybe</code> yields <code>Just -1/4</code>.</p><p>Binding <code>Just -1/4</code> with <code>plus13Maybe</code> yields <code>Just 12.75</code>.</p><p>See “More Recursion Examples.”</p>",
         "hasRationales": true
       },
       {
@@ -789,12 +719,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p><code>sqrtMaybe(17-1)</code> is <code>Just 4</code>.</p><p>Binding <code>Just 4</code> with <code>minus4Maybe</code> yields <code>Just 0</code>.</p><p>Binding <code>Just 0</code> with <code>reciprocalMaybe</code> yields <code>Nothing</code>.</p><p>Binding <code>Nothing</code> with <code>plus13Maybe</code> yields <code>Nothing</code>.</p><p>See “More Recursion Examples.”</p>",
-          "<p><span>$\\frac{1}{(17 - 1) - 4} + \\ 13 \\neq 12.75$</span></p><p>See “More Recursion Examples.”</p>",
-          "<p>The result from a <code>Maybe</code> function is a <code>Just</code> value or <code>Nothing</code>. See “More Recursion Examples.”</p>",
-          "<p><span>$$\\frac{1}{(17 - 1) - 4} + \\ 13 \\neq 0$$</span></p><p>See “More Recursion Examples.”</p>"
-        ],
+        "rationale": "<p><span>$\\frac{1}{(17 - 1) - 4} + \\ 13 \\neq 12.75$</span></p><p>See “More Recursion Examples.”</p>",
         "hasRationales": true
       },
       {
@@ -834,15 +759,14 @@
             ""
           ]
         },
-        "rationales": [
-          "<p><code>sqrtMaybe(9-10)</code> is <code>Nothing</code> (assuming we're not using imaginary numbers).</p><p>Binding <code>Nothing</code> with <code>minus4Maybe</code> yields <code>Nothing</code>.</p><p>Binding <code>Nothing</code> with <code>reciprocalMaybe</code> yields <code>Nothing</code>.</p><p>Binding <code>Nothing</code> with <code>plus13Maybe</code> yields <code>Nothing</code>.</p><p>See “More Recursion Examples.”</p>",
-          "<p>In our system, there's no such thing as <code>Just Nothing</code>. See “More Recursion Examples.”</p>",
-          "<p>In our system, there's no such thing as <code>Just</code>. There has to be a value after the<br/>\nword <code>Just</code>. See “More Recursion Examples.”</p>",
-          "<p><span>$$\\frac{1}{(9 - 10) - 4} + \\ 13 \\neq 12.9230789231$$</span></p><p>See “More Recursion Examples.”</p>"
-        ],
+        "rationale": "<p><code>sqrtMaybe(9-10)</code> is <code>Nothing</code> (assuming we're not using imaginary numbers).</p><p>Binding <code>Nothing</code> with <code>minus4Maybe</code> yields <code>Nothing</code>.</p><p>Binding <code>Nothing</code> with <code>reciprocalMaybe</code> yields <code>Nothing</code>.</p><p>Binding <code>Nothing</code> with <code>plus13Maybe</code> yields <code>Nothing</code>.</p><p>See “More Recursion Examples.”</p>",
         "hasRationales": true
       }
     ],
+    "show_distractor_rationale": {
+      "per_question": "incorrect",
+      "per_response": "never"
+    },
     "tags": {
       "Publisher": [
         "O'Reilly Media"
@@ -898,12 +822,7 @@
             ""
           ]
         },
-        "rationales": [
-          "<p>Applying <code>minus</code> from right to left, we have <span>3  − ((−8) −</span> (9<span> − 0)) = 3 − (−17) = 20</span>.</p><p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>",
-          "<p>Applying <code>minus</code> from right to left, we don't get the value <span>2</span>.</p><p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>",
-          "<p>Applying <code>minus</code> from right to left, we don't get the value <span> − 4</span>.</p><p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>",
-          "<p>Applying <code>minus</code> from right to left, we don't get the value <span> − 14</span>.</p><p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>"
-        ],
+        "rationale": "<p>Applying <code>minus</code> from right to left, we have <span>3  − ((−8) −</span> (9<span> − 0)) = 3 − (−17) = 20</span>.</p><p>Learning Objective: Understand what distinguishes functional programming from other programming paradigms. Review “Part 1: Getting Started with Functional Programming.”</p>",
         "hasRationales": true
       },
       {
@@ -943,15 +862,14 @@
             ""
           ]
         },
-        "rationales": [
-          "<p><span><em>f</em> ∘ <em>g</em> ∘ <em>f</em>(5) = <em>f</em> ∘ <em>g</em>(10) = <em>f</em>(100) = 200</span></p><p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>",
-          "<p><span><em>g</em> ∘ <em>f</em>(5) = <em>g</em>(10) = 100</span>.<span> </span> But <span><em>g</em> ∘ <em>f</em></span> isn't the same as <span><em>f</em>  ∘ <em>g</em> ∘ <em>f</em></span>.</p><p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>",
-          "<p><span><em>f</em> ∘ <em>g</em>(5) = <em>f</em>(25) = 50</span>.<span> </span> But <span><em>f</em> ∘ <em>g</em></span> isn't the same as <span><em>f</em>  ∘ <em>g</em> ∘ <em>f</em></span>.</p><p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>",
-          "<p>One of the other choices is correct. Find the value of <span><em>f</em>(<em>g</em>(<em>f</em>(5)))</span>.</p><p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>"
-        ],
+        "rationale": "<p><span><em>f</em> ∘ <em>g</em> ∘ <em>f</em>(5) = <em>f</em> ∘ <em>g</em>(10) = <em>f</em>(100) = 200</span></p><p>Learning Objective: Declare and evaluate functions whose parameters or result values (or both) are functions. Review “Part 3: Higher-Order Functions.”</p>",
         "hasRationales": true
       }
     ],
+    "show_distractor_rationale": {
+      "per_question": "incorrect",
+      "per_response": "never"
+    },
     "tags": {
       "Publisher": [
         "O'Reilly Media"
